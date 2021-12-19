@@ -76,4 +76,3 @@ Si usted descubre algún problema con algunos caracteres después de la restaura
 Buena suerte. ;)";
 $lang['L_DOWNLOAD_FILE']="Descargos ficheros";
 $lang['L_BACKUP_NOT_POSSIBLE'] = "¡Una copia de seguridad de la base de datos del sistema `%s` no es posible realizarla!";
-?>

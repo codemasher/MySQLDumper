@@ -54,12 +54,13 @@ elseif ($r == 3)
 	$lfile=$config['paths']['log'] . "error.log";
 	$lcap="PHP Error-Log";
 }
-if ($config['logcompression'] == 1) $lfile.=".gz";
+if ( isset($config['logcompression']) && $config['logcompression'] == 1) $lfile.=".gz";
 if (!file_exists($lfile) && $r == 0)
 {
 	DeleteLog();
 }
-$loginfo=LogFileInfo($config['logcompression']);
+$nLogcompression = isset($config['logcompression']) ? $config['logcompression'] : 0;
+$loginfo = LogFileInfo($nLogcompression );
 
 echo headline($lcap);
 if (!is_writable($config['paths']['log'])) die('<p class="error">ERROR !<br>Logdir is not writable</p>');
@@ -80,8 +81,9 @@ echo "\n" . $errorbutton . "\n" . $perlbutton . "\n" . $perlbutton2 . "\n";
 echo '</tr></table><br>';
 
 //Status Logfiles
-echo '<div align="left"><table class="bdr"><tr><td><table><tr><td valign="top"><strong>' . $lang['L_LOGFILEFORMAT'] . '</strong><br><br>' . ( ( $config['logcompression'] == 1 ) ? '<img src="' . $config['files']['iconpath'] . 'gz.gif" width="32" height="32" alt="compressed" align="left">' : '<img src="' . $icon['blank'].'" width="32" height="32" alt="" align="left">' );
-echo '' . ( ( $config['logcompression'] == 1 ) ? $lang['L_COMPRESSED'] : $lang['L_NOTCOMPRESSED'] ) . '</td>';
+$icon['blank'] = isset($icon['blank']) ? $icon['blank'] : $config['files']['iconpath'] . 'blank.gif';
+echo '<div align="left"><table class="bdr"><tr><td><table><tr><td valign="top"><strong>' . $lang['L_LOGFILEFORMAT'] . '</strong><br><br>' . ( (isset($config['logcompression']) && ($config['logcompression'] == 1) ) ? '<img src="' . $config['files']['iconpath'] . 'gz.gif" width="32" height="32" alt="compressed" align="left">' : '<img src="' . $icon['blank'].'" width="32" height="32" alt="" align="left">' );
+echo '' . ( ((isset($config['logcompression']) && $config['logcompression'] == 1 )) ? $lang['L_COMPRESSED'] : $lang['L_NOTCOMPRESSED'] ) . '</td>';
 echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="top" align="right">';
 echo '<a href="' . $loginfo['log'] . '">' . substr($loginfo['log'],strrpos($loginfo['log'],"/") + 1) . '</a><br>';
 echo ( $loginfo['errorlog_size'] > 0 ) ? '<a href="' . $loginfo['errorlog'] . '">' . substr($loginfo['errorlog'],strrpos($loginfo['errorlog'],"/") + 1) . '</a><br>' : substr($loginfo['errorlog'],strrpos($loginfo['errorlog'],"/") + 1) . '<br>';
@@ -95,7 +97,7 @@ if ($r != 2) $out.='<pre>';
 
 if (file_exists($lfile))
 {
-	$zeilen=( $config['logcompression'] == 1 ) ? gzfile($lfile) : file($lfile);
+	$zeilen=( (isset($config['logcompression']) && $config['logcompression'] == 1 )) ? gzfile($lfile) : file($lfile);
 	if ($r == 30)
 	{
 		echo '<pre>' . print_r($zeilen,true) . '</pre>';
@@ -123,13 +125,13 @@ if (file_exists($lfile))
 if ($r != 2) $out.='</pre>';
 
 $suchen=array(
-			
-			'</html>', 
+
+			'</html>',
 			'</body>'
 );
 $ersetzen=array(
-				
-				'', 
+
+				'',
 				''
 );
 $out=str_replace($suchen,$ersetzen,$out);

@@ -4,15 +4,19 @@ function nl2null($string)
 {
 	$search=array("\r","\n");
 	$replace=array('','');
-	return trim(str_replace($search,$replace,$string));	
+	return trim(str_replace($search,$replace,$string));
 }
 //SQL-Strings
-echo $aus.='<h4>' . $lang['L_SQL_BEFEHLE'] . ' (' . (is_array($SQL_ARRAY)? count($SQL_ARRAY) : 0) . ')</h4>';
+	if ( !is_array($SQL_ARRAY) )
+	{
+		$SQL_ARRAY = array();
+	}
+echo $aus.='<h4>' . $lang['L_SQL_BEFEHLE'] . ' (' . count($SQL_ARRAY) . ')</h4>';
 echo '<a href="' . $params . '&amp;sqlconfig=1&amp;new=1">' . $lang['L_SQL_BEFEHLNEU'] . '</a><br><br>';
 if (isset($_POST['sqlnewupdate']))
 {
-	$ind=(is_array($SQL_ARRAY))? count($SQL_ARRAY) : 0;
-	if ($ind > 0) array_push($SQL_ARRAY,$_POST['sqlname' . $ind] . "|" . $_POST['sqlstring' . $ind]);
+	$ind=count($SQL_ARRAY);
+	if (count($SQL_ARRAY) > 0) array_push($SQL_ARRAY,$_POST['sqlname' . $ind] . "|" . $_POST['sqlstring' . $ind]);
 	else $SQL_ARRAY[0]=htmlspecialchars($_POST['sqlname0'],ENT_COMPAT ,'UTF-8') . '|' . $_POST['sqlstring0'];
 	WriteSQL();
 	echo '<p>' . $lang['L_SQL_BEFEHLSAVED1'] . ' \'' . $_POST['sqlname' . $ind] . '\' ' . $lang['L_SQL_BEFEHLSAVED2'] . '</p>';
@@ -24,14 +28,14 @@ echo '<form name="sqlform" action="sql.php" method="post">
 	<input type="hidden" name="dbid" value="' . $dbid . '">';
 echo '<table class="bdr" style="width:100%"><tr class="thead"><th>#</th><th>' . $lang['L_NAME'] . '</th><th>SQL</th><th>' . $lang['L_COMMAND'] . '</th></tr>';
 $i=0;
-if (is_array($SQL_ARRAY) && count($SQL_ARRAY) > 0)
+if (count($SQL_ARRAY) > 0)
 {
 	for ($i=0; $i < count($SQL_ARRAY); $i++)
 	{
 		if (isset($_POST['sqlupdate' . $i]))
 		{
-			
-			echo '<tr><td colspan="4"><p class="success">' . $lang['L_SQL_BEFEHLSAVED1'] 
+
+			echo '<tr><td colspan="4"><p class="success">' . $lang['L_SQL_BEFEHLSAVED1']
 			. ' \'' . htmlspecialchars($_POST['sqlname' . $i],ENT_COMPAT ,'UTF-8') . '\' ' . $lang['L_SQL_BEFEHLSAVED3'] . '</p></td></tr>';
 			$SQL_ARRAY[$i]=$_POST['sqlname' . $i] . "|" . nl2null($_POST['sqlstring' . $i]);
 			WriteSQL();
@@ -39,7 +43,8 @@ if (is_array($SQL_ARRAY) && count($SQL_ARRAY) > 0)
 		if (isset($_POST['sqlmove' . $i]))
 		{
 			echo '<tr><td colspan="4"><p class="success">' . $lang['L_SQL_BEFEHLSAVED1'] . ' \'' . $_POST['sqlname' . $i] . '\' ' . $lang['L_SQL_BEFEHLSAVED4'] . '</p></td></tr>';
-			$a[]=$SQL_ARRAY[$i];
+#			$a[]=$SQL_ARRAY[$i]; // @todo: $a is undefined and it's unclear whether the value should be appended or a single element array created in order to merge
+			$a=[$SQL_ARRAY[$i]];
 			array_splice($SQL_ARRAY,$i,1);
 			$SQL_ARRAY=array_merge($a,$SQL_ARRAY);
 			WriteSQL();

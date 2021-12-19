@@ -55,7 +55,7 @@
 			<td style="text-align:right;">{HITS.TABLEROW.NR}.&nbsp;</td>
 			<!-- BEGIN TABLEDATA -->
 				<td>{HITS.TABLEROW.TABLEDATA.VAL}</td>
-			<!-- END TABLEDATA -->	
+			<!-- END TABLEDATA -->
 		</tr>
 		<!-- END TABLEROW -->
 	</table>
@@ -70,4 +70,4 @@
 <!-- END NO_ENTRIES -->
 </div>
 
-<script type="text/javascript">document.suche.suchbegriffe.focus();</script>
+<script>document.suche.suchbegriffe.focus();</script>

@@ -1,5 +1,6 @@
 <?php
 $lang['L_DUMP_HEADLINE']="Crea backup...";
+$lang['L_DUMP_INFO']="Please wait! The database tables are optimized before the backup.";
 $lang['L_GZIP_COMPRESSION']="Compressione-GZip";
 $lang['L_SAVING_TABLE']="Salva tabella ";
 $lang['L_OF']="da";
@@ -47,10 +48,9 @@ $lang['L_FTPCONNERROR3']="FTP-Upload errato! ";
 $lang['L_FTPCONNECTED1']="Connesso con ";
 $lang['L_FTPCONNECTED2']="sul ";
 $lang['L_FTPCONNECTED3']="trasferimento completato con successo";
+$lang['L_FILESENDSFTP']="Invio del file via SFTP in corso... un attimo di pazienza prego. ";
+$lang['L_SFTPCONNERROR']="Connessione SFTP non riuscita! Connessione con ";
 $lang['L_NR_TABLES_SELECTED']="- con %s tabelle selezionate";
 $lang['L_NR_TABLES_OPTIMIZED']="<span class=\"small\">%s tabelle sono state ottimizzate.</span>";
 $lang['L_DUMP_ERRORS']="<p class=\"error\">%s errori riscontrati: <a href=\"log.php?r=3\">controllare gli errori</a></p>";
 $lang['L_FATAL_ERROR_DUMP']="Errore fatale: l'istruzione di creazione della tabella '%s' nel database '%s' non è leggibile! <br> Controlla se ci sono dei errori nella tabella.";
-
-
-?>

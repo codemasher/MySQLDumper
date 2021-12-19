@@ -98,7 +98,7 @@ class MSDTemplate
         }
 
         reset($filename_array);
-        while (list ($handle, $filename) = each($filename_array)) {
+		foreach($filename_array as $handle => $filename) {
             $this->files[$handle] = $this->make_filename($filename);
         }
 
@@ -202,7 +202,7 @@ class MSDTemplate
     public function assign_vars($vararray)
     {
         global $lang;
-        while (list ($key, $val) = each($vararray)) {
+		foreach($vararray as $key => $val) {
             $this->_tpldata['.'][0][$key] = $val;
         }
 
@@ -386,8 +386,9 @@ class MSDTemplate
                         $code_lines[$i] .= "\n" . '{';
                     }
                 }
-            } else {
-                if (preg_match('#<!-- END (.*?) -->#', $code_lines[$i], $m)) {
+			}
+			elseif (preg_match('#<!-- END (.*?) -->#',$code_lines[$i],$m))
+			{
                     // We have the end of a block.
                     unset($block_names[$block_nesting_level]);
                     $block_nesting_level--;
@@ -401,7 +402,6 @@ class MSDTemplate
                     }
                 }
             }
-        }
 
         // Bring it back into a single string of lines of code.
         $code = implode("\n", $code_lines);

@@ -61,29 +61,25 @@ $img_failed='<img src="' . $config['files']['iconpath'] . 'notok.gif" width="16"
 $href="install.php?language=$language&phase=$phase&connstr=$connstr";
 header('content-type: text/html; charset=utf-8');
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="pragma" content="no-cache">
-<meta http-equiv="expires" content="0">
-<meta http-equiv="cache-control" content="must-revalidate">
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
-<title>MySQLDumper - Installation</title>
-
-<link rel="stylesheet" type="text/css" href="css/msd/style.css">
-<script src="js/script.js" type="text/javascript"></script>
-<style type="text/css" media="screen">
-td {
-	border: 1px solid #ddd;
-}
-
-td table td {
-	border: 0;
-}
-</style>
+	<meta charset="utf-8" />
+	<meta name="robots" content="noindex,nofollow" />
+	<title>MySQLDumper - Installation</title>
+	<link rel="stylesheet" type="text/css" href="css/msd/style.css">
+	<script src="js/script.js"></script>
+	<style media="screen">
+	td {
+		border: 1px solid #ddd;
+	}
+	td table td {
+		border: 0;
+	}
+	</style>
 </head>
 <body class="content">
-<script language="JavaScript" type="text/javascript">
+<script>
 function hide_tooldivs() {
 	<?php
 	foreach ($lang['languages'] as $key)
@@ -156,10 +152,10 @@ switch ($phase)
 		}
 
 		echo ( "\n</td></tr><tr><td colspan=\"2\" style=\"padding: 4px\"><input type=\"submit\" name=\"submit\" value=\"Installation\" class=\"Formbutton\"></td></tr></table></form>" );
-		echo '<script language="JavaScript" type="text/javascript">show_tooldivs("' . $language . '");</script>';
+		echo '<script>show_tooldivs("' . $language . '");</script>';
 		break;
 	case 1: // checken
-		@chmod("config.php",0777);
+		@chmod("config.php",0666);
 		echo '<h6>' . $lang['L_DBPARAMETER'] . '</h6>';
 		if (!is_writable("config.php"))
 		{
@@ -313,26 +309,19 @@ switch ($phase)
 		$ret=true;
 		if ($fp=fopen("config.php","wb"))
 		{
-			if (!fwrite($fp,implode($tmp,""))) $ret=false;
-			if (!fclose($fp)) $ret=false;
+			if (!fwrite($fp, implode('', $tmp))) $ret=false;
 			@chmod("config.php",0644);
 		}
 		if (!$ret)
 		{
-			echo '<p class="warnung">' . $lang['L_CONFIG_SAVE_ERROR'] . '</p>';
-		}
-		else
-		{
-			if (ini_get('safe_mode') == 1)
-			{
-				$nextphase=( extension_loaded("ftp") ) ? 10 : 9;
+			echo '<p class="warnung">' . $lang['L_SAVE_ERROR'] . '</p>';
 			}
 			else
-				$nextphase=$phase + 2;
+		{
 			echo $lang['L_INSTALL_STEP2FINISHED'];
 			echo '<p>&nbsp;</p>';
-			echo '<form action="install.php?language=' . $language . '&phase=' . $nextphase . '" method="post" name="continue"><input type="hidden" name="connstr" value="' . $connstr . '"><input class="Formbutton" style="width:360px;" type="submit" name="continue2" value=" ' . $lang['L_INSTALL_STEP2_1'] . ' "></form>';
-			echo '<script language="javascript">';
+			echo '<form action="install.php?language=' . $language . '&phase=' . ($phase + 2) . '" method="post" name="continue"><input type="hidden" name="connstr" value="' . $connstr . '"><input class="Formbutton" style="width:360px;" type="submit" name="continue2" value=" ' . $lang['L_INSTALL_STEP2_1'] . ' "></form>';
+			echo '<script>';
 			echo 'document.forms["continue"].submit();';
 			echo '</script>';
 		}
@@ -359,7 +348,7 @@ switch ($phase)
 		}
 
 		echo '<h6>' . $lang['L_CREATEDIRS'] . '</h6>';
-		$check_dirs=ARRAY(
+		$check_dirs= array (
 
 							"work/",
 							"work/config/",
@@ -379,23 +368,10 @@ switch ($phase)
 		$iw[1]=IsWritable("work/config");
 		$iw[2]=IsWritable("work/log");
 		$iw[3]=IsWritable("work/backup");
-/*
-		// save manual_db
-		if ($manual_db > '')
-		{
-			if (file_exists('./' . $config['files']['dbs_manual'])) @unlink('./' . $config['files']['dbs_manual']);
-			$file_handle=fopen('./' . $config['files']['dbs_manual'],'a');
-			if ($file_handle)
-			{
-				fwrite($file_handle,$manual_db);
-				fclose($file_handle);
-				@chmod('./' . $config['files']['dbs_manual'],0777);
-			}
-		}
-*/
+
 		if ($iw[0] && $iw[1] && $iw[2] && $iw[3])
 		{
-			echo '<script language="javascript">';
+			echo '<script>';
 			echo 'self.location.href=\'install.php?language=' . $language . '&phase=5&connstr=' . $connstr . '\'';
 			echo '</script>';
 		}
@@ -418,102 +394,7 @@ switch ($phase)
 		include ( "language/" . $language . "/lang_install.php" );
 
 		// direkt zum Start des Dumeprs
-		echo '<script language="javascript">self.location.href=\'index.php\';</script>';
-		break;
-	case 9:
-
-		clearstatcache();
-		$iw[0]=IsWritable("work");
-		$iw[1]=IsWritable("work/config");
-		$iw[2]=IsWritable("work/log");
-		$iw[3]=IsWritable("work/backup");
-		echo '<h6>' . $lang['L_FTPMODE'] . '</h6>';
-		echo '<p align="left" style="padding-left:100px; padding-right:100px;">' . $lang['L_SAFEMODEDESC'] . '</p>';
-
-		echo '<form action="install.php?language=' . $language . '&phase=9" method="post"><input type="hidden" name="connstr" value="' . $connstr . '"><table>';
-		echo '<tr><td class="hd2" colspan="2">' . $lang['L_IDOMANUAL'] . '</td></tr>';
-		echo '<tr><td colspan="2">' . $lang['L_DOFROM'] . '<br><div class="small">' . basePath() . '</div></td></tr>';
-		echo '<tr><td><strong>work</strong></td><td>' . ( ( $iw[0] ) ? $img_ok : $img_failed ) . '</td></tr>';
-		echo '<tr><td><strong>work/config</strong></td><td>' . ( ( $iw[1] ) ? $img_ok : $img_failed ) . '</td></tr>';
-		echo '<tr><td><strong>work/log</strong></td><td>' . ( ( $iw[2] ) ? $img_ok : $img_failed ) . '</td></tr>';
-		echo '<tr><td><strong>work/backup</strong></td><td>' . ( ( $iw[3] ) ? $img_ok : $img_failed ) . '</td></tr>';
-		echo '<tr><td colspan="3" align="right"><input type="submit" class="Formbutton" name="dir_check" value=" ' . $lang['L_CHECK_DIRS'] . ' "></td></tr>';
-
-		// Wenn Verzeichnisse erstellt wurden - direkt weitermachen
-		if ($iw[0] && $iw[1] && $iw[2] && $iw[3])
-		{
-			echo '<script language="javascript">';
-			echo 'self.location.href=\'install.php?language=' . $language . '&phase=4&connstr=' . $connstr . '\'';
-			echo '</script>';
-		}
-		echo '</table>';
-
-		break;
-	case 10: //safe_mode FTP
-		$config['ftp_useSSL']=0;
-		clearstatcache();
-		$iw[0]=IsWritable("work");
-		$iw[1]=IsWritable("work/config");
-		$iw[2]=IsWritable("work/log");
-		$iw[3]=IsWritable("work/backup");
-		if (!isset($install_ftp_port) || $install_ftp_port < 1) $install_ftp_port=21;
-		echo '<h6>' . $lang['L_FTPMODE'] . '</h6>';
-		echo '<p align="left" style="padding-left:100px; padding-right:100px;">' . $lang['L_SAFEMODEDESC'] . '</p>';
-
-		echo '<form action="install.php?language=' . $language . '&phase=10" method="post"><input type="hidden" name="connstr" value="' . $connstr . '">
-		<table width="80%"><tr><td width="50%" valign="top"><table>';
-		echo '<tr><td class="hd2" colspan="2">' . $lang['L_IDOMANUAL'] . '</td></tr>';
-		echo '<tr><td colspan="2">' . $lang['L_DOFROM'] . '<br><div class="small">' . basePath() . '</div></td></tr>';
-		echo '<tr><td><strong>work</strong></td><td>' . ( ( $iw[0] ) ? $img_ok : $img_failed ) . '</td></tr>';
-		echo '<tr><td><strong>work/config</strong></td><td>' . ( ( $iw[1] ) ? $img_ok : $img_failed ) . '</td></tr>';
-		echo '<tr><td><strong>work/log</strong></td><td>' . ( ( $iw[2] ) ? $img_ok : $img_failed ) . '</td></tr>';
-		echo '<tr><td><strong>work/backup</strong></td><td>' . ( ( $iw[3] ) ? $img_ok : $img_failed ) . '</td></tr>';
-		echo '<tr><td colspan="3" align="right"><input type="submit" name="dir_check" value=" ' . $lang['L_CHECK_DIRS'] . ' " class="Formbutton"></td></tr>';
-		if ($iw[0] && $iw[1] && $iw[2] && $iw[3]) echo '<tr><td colspan="2">' . $lang['L_DIRS_CREATED'] . '<br><input class="Formbutton" type="Button" value=" ' . $lang['L_INSTALL_CONTINUE'] . ' " onclick="location.href=\'install.php?language=' . $language . '&phase=4&connstr=' . $connstr . '\'"></td></tr>';
-		echo '</table></td><td width="50%" valign="top">';
-		echo '<table><tr><td class="hd2" colspan="2">' . $lang['L_FTPMODE2'] . '</td></tr>';
-		echo '<tr><td>FTP-Server</td><td><input type="text" name="install_ftp_server" value="' . $install_ftp_server . '"></td></tr>';
-		echo '<tr><td>FTP-Port</td><td><input type="text" name="install_ftp_port" value="' . $install_ftp_port . '" size="4"></td></tr>';
-		echo '<tr><td>FTP-User</td><td><input type="text" name="install_ftp_user_name" value="' . $install_ftp_user_name . '"></td></tr>';
-		echo '<tr><td>FTP-' . $lang['L_PASS'] . '</td><td><input type="text" name="install_ftp_user_pass" value="' . $install_ftp_user_pass . '"></td></tr>';
-		echo '<tr><td>' . $lang['L_INFO_SCRIPTDIR'] . '</td><td><input type="text" name="install_ftp_path" value="' . $install_ftp_path . '"></td></tr>';
-		echo '<tr><td colspan="2" align="right">
-		<input type="submit" name="ftp_connect" value="' . $lang['L_CONNECT'] . '" class="Formbutton"></td></tr></table></table></form>';
-		if (isset($ftp_connect))
-		{
-			echo '<table><tr><td class="small">';
-			$tftp=TesteFTP($install_ftp_server,$install_ftp_port,$install_ftp_user_name,$install_ftp_user_pass,$install_ftp_path);
-			echo $tftp;
-			echo '</td><td colspan="2" align="right">&nbsp;';
-			if (substr($tftp,-9) == "</strong>")
-			{
-				echo '<form action="install.php?language=' . $language . '&phase=11" method="post">
-				<input type="hidden" name="connstr" value="' . $connstr . '">';
-				echo '<input type="hidden" name="install_ftp_server" value="' . $install_ftp_server . '">
-				<input type="hidden" name="install_ftp_port" value="' . $install_ftp_port . '">
-				<input type="hidden" name="install_ftp_user_name" value="' . $install_ftp_user_name . '">
-				<input type="hidden" name="install_ftp_user_pass" value="' . $install_ftp_user_pass . '">
-				<input type="hidden" name="install_ftp_path" value="' . $install_ftp_path . '">';
-				echo '<input type="submit" name="submit" value=" ' . $lang['L_CREATEDIRS2'] . ' " class="Formbutton"></form>';
-			}
-			echo '</td></tr></table>';
-		}
-		//echo '</td></tr>';
-
-
-		//echo '</table>';
-
-
-		break;
-
-	case 11: //FTP-Create Dirs
-		echo '<h6>' . $lang['L_FTPMODE'] . '</h6>';
-		if (CreateDirsFTP() == 1)
-		{
-			SetDefault(true);
-			echo DirectoryWarnings();
-			echo '<br>' . $lang['L_INSTALLFINISHED'];
-		}
+		echo '<script>self.location.href=\'index.php\';</script>';
 		break;
 	case 100: //uninstall
 		echo '<h6>' . $lang['L_UI1'] . '</h6>';
@@ -532,7 +413,7 @@ switch ($phase)
 		{
 			// das Verzeichnis wurde korrekt gelöscht
 			echo '<p>' . $lang['L_UI6'] . '</p>';
-			echo $lang['L_UI7'] . "<br>\"" . basePath() . "\"<br> " . $lang['L_MANUELL'] . ".<br><br>";
+			echo $lang['L_UI7'] . "<br>\"" . Realpfad("./") . "\"<br> " . $lang['L_MANUELL'] . ".<br><br>";
 			echo '<a href="../">' . $lang['L_UI8'] . '</a>';
 
 		}

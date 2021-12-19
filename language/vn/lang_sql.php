@@ -159,6 +159,7 @@ $lang['L_SEARCH_OPTIONS_OR']="Mỗi cột phải có 1 từ khóa (OR-search)";
 $lang['L_SEARCH_OPTIONS_CONCAT']="một dòng phải chứa tất cả các từ khóa trừ phi họ có thể trong bất kỳ cột nào (thỉnh thoảng có thể ngoại lệ)";
 $lang['L_SEARCH_OPTIONS_AND']="cột phải chứa tất cả từ khóa (AND-search)";
 $lang['L_SEARCH_IN_TABLE']="Tìm trong Bảng";
+$lang['L_ERROR_NO_FIELDS']="Search error: it could not be determined which fields the table \"%s\" has!";
 $lang['L_SQL_EDIT_TABLESTRUCTURE']="Sửa cấu trúc bảng";
 $lang['L_DEFAULT_CHARSET']="Đặt bảng làm mặc định
 
@@ -190,5 +191,3 @@ $lang['L_KEY_DELETEERROR']="Error deleting index";
 $lang['L_KEY_ADDED']="Index added";
 $lang['L_KEY_ADDERROR']="Error adding index";
 
-
-?>

@@ -84,6 +84,3 @@ Vous devez alors entrer manuellement le nom de votre base de données après la 
 Cliquer sur \"configuration\" \"Affichage des paramêtres de connexion\" et entrer le nom de votre base de données.";
 $lang['L_SAFEMODEDESC']="La configuration de ce serveur étant avec l'option \"safe_mode=on\", les listes suivantes doivent être envoyées manuellement. Utilisez votre logiciel FTP pour effectuer cette opération):";
 $lang['L_ENTER_DB_INFO']="First click the button \"Connect to MySQL\". Only if no database could be detected you need to provide a database name here.";
-
-
-?>

@@ -2,19 +2,19 @@
 if (!defined('MSD_VERSION')) die('No direct access.');
 //alle Tabellen der aktuellen Datenbank ermitteln und Zugriffs-Array aufbauen
 $sql='SHOW TABLES FROM `'.$db.'`';
-$tables=ARRAY();
+$tables= array ();
 $link=MSD_mysql_connect();
 $res=mysqli_query($link, $sql);
-if (!$res===false)
+if ($res!==false)
 {
-	WHILE ($row=mysqli_fetch_array($res, MYSQLI_NUM))
+	while ($row=mysqli_fetch_array($res,MYSQLI_NUM))
 	{
 		$tables[]=$row[0];
 	}
 }
 else
 	die("No Tables in Database!");
-	
+
 // Suchkriterien aus Session holen oder aus POST-Umgebung
 // so bleiben die Suchkriterien auch erhalten wenn man zwischendurch woanders klickt
 if (isset($_POST['suchbegriffe'])) $_SESSION['mysql_search']['suchbegriffe']=$_POST['suchbegriffe'];
@@ -48,7 +48,7 @@ if (isset($_GET['mode'])&&$_GET['mode']=="kill"&&$rk>'')
 
 function mysql_search($db, $tabelle, $suchbegriffe, $suchart, $offset=0, $anzahl_ergebnisse=20, $auszuschliessende_tabellen='')
 {
-	global $tables,$config;
+	global $tables,$config,$lang;
 	$ret=false;
 	$link=MSD_mysql_connect();
 	if (sizeof($tables)>0)
@@ -63,28 +63,28 @@ function mysql_search($db, $tabelle, $suchbegriffe, $suchart, $offset=0, $anzahl
 			{
 				if (trim($suchworte[$i])=='') unset($suchworte[$i]);
 			}
-			
-			$bedingung='';
+
+			$bedingung=array();
 			$where='';
-			$felder='';
-			
+			$felder=array();
+
 			// Felder ermitteln
 			$sql='SHOW COLUMNS FROM `'.$db.'`.`'.$tables[$tabelle].'`';
 			$res=mysqli_query($link, $sql);
-			unset($felder);
-			if (!$res===false)
+			if ($res!==false)
 			{
 				// Felder der Tabelle ermitteln
-				WHILE ($row=mysqli_fetch_object($res))
+				while ($row=mysqli_fetch_object($res))
 				{
 					$felder[]=$row->Field;
 				}
 			}
-			
-			$feldbedingung='';
+
+			$feldbedingung=[];
 			if ($suchart=='CONCAT')
 			{
-				if (is_array($felder))
+
+				if (count($felder) > 0)
 				{
 					//Concat-String bildem
 					$concat=implode('`),LOWER(`',$felder);
@@ -97,24 +97,30 @@ function mysql_search($db, $tabelle, $suchbegriffe, $suchart, $offset=0, $anzahl
 					$where=substr($where,0,-4); // letztes AND entfernen
 					$sql='SELECT * FROM `'.$db.'`.`'.$tables[$tabelle].'` WHERE '.$where.' LIMIT '.$offset.','.$anzahl_ergebnisse;
 				}
+				else
+				{
+					$_SESSION['mysql_search']['suchbegriffe']='';
+					die(sprintf($lang['L_ERROR_NO_FIELDS'], $tabelle));
+				}
 			}
 			else
 			{
 				$pattern='`{FELD}` LIKE \'%{SUCHBEGRIFF}%\'';
-				if (is_array($felder))
+
+				if (count($felder) > 0)
 				{
 					foreach ($felder as $feld)
 					{
 						unset($feldbedingung);
 						foreach ($suchworte as $suchbegriff)
 						{
-							$suchen=ARRAY(
-								
-								'{FELD}', 
+							$suchen= array (
+
+								'{FELD}',
 								'{SUCHBEGRIFF}');
-							$ersetzen=ARRAY(
-								
-								$feld, 
+							$ersetzen= array (
+
+								$feld,
 								$suchbegriff);
 							$feldbedingung[]=str_replace($suchen,$ersetzen,$pattern);
 						}
@@ -122,18 +128,21 @@ function mysql_search($db, $tabelle, $suchbegriffe, $suchart, $offset=0, $anzahl
 					}
 				}
 				else
-					die('<br>Fehler bei Suche: ich konnte nicht ermitteln welche Felder die Tabelle "'.$tabelle.'" hat!');
+				{
+					$_SESSION['mysql_search']['suchbegriffe']='';
+					die(sprintf($lang['L_ERROR_NO_FIELDS'], $tabelle));
+				}
 				$where=implode(' OR ',$bedingung);
 				$sql='SELECT * FROM `'.$db.'`.`'.$tables[$tabelle].'` WHERE ('.$where.') LIMIT '.$offset.','.$anzahl_ergebnisse;
 			}
 		}
 		else
 			$sql='SELECT * FROM `'.$db.'`.`'.$tables[$tabelle].'` LIMIT '.$offset.','.$anzahl_ergebnisse;
-		
+
 		$res=@mysqli_query($link, $sql);
-		if ($res)
+		if ($res!==false)
 		{
-			WHILE ($row=mysqli_fetch_array($res, MYSQLI_ASSOC))
+			while ($row=mysqli_fetch_array($res,MYSQLI_ASSOC))
 			{
 				//Treffer markieren
 				foreach ($row as $key=>$val)
@@ -232,13 +241,13 @@ function markiere_suchtreffer($suchbegriff, $suchstring)
 // Ersetzt die Codes letztlich durch die Fontangabe
 function ersetze_suchtreffer($text)
 {
-	$such=ARRAY(
-		
-		chr(1), 
+	$such= array (
+
+		chr(1),
 		chr(2));
-	$ersetzen=ARRAY(
-		
-		'<span class="treffer">', 
+	$ersetzen= array (
+
+		'<span class="treffer">',
 		'</span>');
 	return str_replace($such,$ersetzen,htmlspecialchars($text));
 }
@@ -281,24 +290,24 @@ if ($anzahl_tabellen>0)
 
 $tpl=new MSDTemplate();
 $tpl->set_filenames(array(
-	
+
 	'show' => './tpl/sqlbrowser/mysql_search.tpl'));
 
 $tpl->assign_vars(array(
-	'DB_NAME_URLENCODED' => urlencode($db), 
-	'LANG_SQLSEARCH' => $lang['L_SQL_SEARCH'], 
-	'LANG_SQL_SEARCHWORDS' => $lang['L_SQL_SEARCHWORDS'], 
-	'SUCHBEGRIFFE' => $suchbegriffe, 
-	'LANG_START_SQLSEARCH' => $lang['L_START_SQL_SEARCH'], 
-	'LANG_RESET_SEARCHWORDS' => $lang['L_RESET_SEARCHWORDS'], 
-	'LANG_SEARCH_OPTIONS' => $lang['L_SEARCH_OPTIONS'], 
-	'AND_SEARCH' => $suchart=='AND' ? ' checked' : '', 
-	'OR_SEARCH' => $suchart=='OR' ? ' checked' : '', 
-	'CONCAT_SEARCH' => $suchart=='CONCAT' ? ' checked' : '', 
-	'TABLE_OPTIONS' => $table_options, 
-	'LANG_SEARCH_OPTIONS_AND' => $lang['L_SEARCH_OPTIONS_AND'], 
-	'LANG_SEARCH_OPTIONS_OR' => $lang['L_SEARCH_OPTIONS_OR'], 
-	'LANG_SEARCH_OPTIONS_CONCAT' => $lang['L_SEARCH_OPTIONS_CONCAT'], 
+	'DB_NAME_URLENCODED' => urlencode($db),
+	'LANG_SQLSEARCH' => $lang['L_SQL_SEARCH'],
+	'LANG_SQL_SEARCHWORDS' => $lang['L_SQL_SEARCHWORDS'],
+	'SUCHBEGRIFFE' => $suchbegriffe,
+	'LANG_START_SQLSEARCH' => $lang['L_START_SQL_SEARCH'],
+	'LANG_RESET_SEARCHWORDS' => $lang['L_RESET_SEARCHWORDS'],
+	'LANG_SEARCH_OPTIONS' => $lang['L_SEARCH_OPTIONS'],
+	'AND_SEARCH' => $suchart=='AND' ? ' checked' : '',
+	'OR_SEARCH' => $suchart=='OR' ? ' checked' : '',
+	'CONCAT_SEARCH' => $suchart=='CONCAT' ? ' checked' : '',
+	'TABLE_OPTIONS' => $table_options,
+	'LANG_SEARCH_OPTIONS_AND' => $lang['L_SEARCH_OPTIONS_AND'],
+	'LANG_SEARCH_OPTIONS_OR' => $lang['L_SEARCH_OPTIONS_OR'],
+	'LANG_SEARCH_OPTIONS_CONCAT' => $lang['L_SEARCH_OPTIONS_CONCAT'],
 	'LANG_SEARCH_IN_TABLE' => $lang['L_SEARCH_IN_TABLE']));
 
 $max_treffer=20;
@@ -309,35 +318,35 @@ if (is_array($treffer)&&isset($treffer[0]))
 	$anzahl_treffer=count($treffer);
 	// Blaettern-Buttons
 	$tpl->assign_block_vars('HITS',array(
-		
-		'LANG_SEARCH_RESULTS' => $search_message, 
-		'LAST_OFFSET' => $offset-$max_treffer, 
-		'BACK_BUTTON_DISABLED' => $offset>0 ? '' : ' disabled', 
-		'NEXT_OFFSET' => $offset+$max_treffer, 
-		'NEXT_BUTTON_DISABLED' => ($anzahl_treffer!=$max_treffer+1) ? ' disabled' : '', 
+
+		'LANG_SEARCH_RESULTS' => $search_message,
+		'LAST_OFFSET' => $offset-$max_treffer,
+		'BACK_BUTTON_DISABLED' => $offset>0 ? '' : ' disabled',
+		'NEXT_OFFSET' => $offset+$max_treffer,
+		'NEXT_BUTTON_DISABLED' => ($anzahl_treffer!=$max_treffer+1) ? ' disabled' : '',
 		'LANG_ACCESS_KEYS' => $lang['L_SEARCH_ACCESS_KEYS']));
-	
+
 	// Ausgabe der Treffertabelle
 	$anzahl_felder=sizeof($treffer[0]);
-	
+
 	// Ausgabe der Tabellenueberschrift/ Feldnamen
 	foreach ($treffer[0] as $key=>$val)
 	{
 		$tpl->assign_block_vars('HITS.TABLEHEAD',array(
-			
+
 			'KEY' => $key));
 	}
-	
+
 	// Ausgabe der Daten
 	$zeige_treffer=sizeof($treffer);
 	if ($zeige_treffer==$max_treffer+1) $zeige_treffer=$max_treffer;
-	
+
 	// built key - does a primary key exist?
 	$fieldinfos=getExtendedFieldinfo($db,$tables[$table_selected]);
-	//v($fieldinfos);	
+	//v($fieldinfos);
 	// auf zusammengesetzte Schlüssel untersuchen
 	$table_keys=isset($fieldinfos['primary_keys']) ? $fieldinfos['primary_keys'] : '';
-	
+
 	for ($a=0; $a<$zeige_treffer; $a++)
 	{
 		$tablename=array_keys($treffer[$a]);
@@ -359,25 +368,25 @@ if (is_array($treffer)&&isset($treffer[0]))
 		{
 			$rk=urlencode(build_where_from_record($treffer[$a])); // no keys
 		}
-		
+
 		$delete_link='sql.php?search=1&mode=kill&db='.urlencode($db).'&tablename='.urlencode($tables[$table_selected]).'&rk='.$rk;
 		$edit_link='sql.php?mode=searchedit&db='.urlencode($db).'&tablename='.urlencode($tables[$table_selected]).'&recordkey='.$rk;
-		
+
 		$tpl->assign_block_vars('HITS.TABLEROW',array(
-			
-			'CLASS' => ($a%2) ? 'dbrow' : 'dbrow1', 
-			'NR' => $a+$offset+1, 
-			'TABLENAME' => $tables[$table_selected], 
-			'LINK_EDIT' => $edit_link, 
-			'ICON_EDIT' => $icon['edit'], 
-			'LINK_DELETE' => $delete_link, 
+
+			'CLASS' => ($a%2) ? 'dbrow' : 'dbrow1',
+			'NR' => $a+$offset+1,
+			'TABLENAME' => $tables[$table_selected],
+			'LINK_EDIT' => $edit_link,
+			'ICON_EDIT' => $icon['edit'],
+			'LINK_DELETE' => $delete_link,
 			'ICON_DELETE' => $icon['delete']));
-		
+
 		foreach ($treffer[$a] as $key=>$val)
 		{
 			if ($val=='') $val="&nbsp;";
 			$tpl->assign_block_vars('HITS.TABLEROW.TABLEDATA',array(
-				
+
 				'VAL' => $val));
 		}
 	}
@@ -386,11 +395,11 @@ else
 {
 	if (!isset($tables[$table_selected])) $tables[$table_selected]='';
 	if ($suchbegriffe=='') $tpl->assign_block_vars('NO_ENTRIES',array(
-		
+
 		'LANG_NO_ENTRIES' => sprintf($lang['L_NO_ENTRIES'],$tables[$table_selected])));
 	else
 		$tpl->assign_block_vars('NO_RESULTS',array(
-			
+
 			'LANG_SEARCH_NO_RESULTS' => sprintf($lang['L_SEARCH_NO_RESULTS'],$suchbegriffe,$tables[$table_selected])));
 }
 

@@ -110,6 +110,3 @@ $lang['L_PAGE_REFRESHS']="Ανανεώσεις σελίδας";
 $lang['L_MINUTE']="Λεπτό";
 $lang['L_SETKEYSFOR']="Ορισμός νέων index για τον πίνακα";
 $lang['L_KEY_CONFIRMDELETE']="Πραγματικά διαγραφή του index;";
-
-
-?>

@@ -14,7 +14,7 @@ echo '<p>&nbsp;</p>';
 switch ($var)
 {
 	case "variables":
-		$res=@mysqli_query($GLOBALS["___mysqli_ston"], "SHOW variables");
+		$res=@mysqli_query($config['dbconnection'], "SHOW variables");
 		if ($res) $numrows=mysqli_num_rows($res);
 		if ($numrows==0)
 		{
@@ -33,7 +33,7 @@ switch ($var)
 		echo '</table>';
 		break;
 	case "status":
-		$res=@mysqli_query($GLOBALS["___mysqli_ston"], "SHOW STATUS");
+		$res=@mysqli_query($config['dbconnection'], "SHOW STATUS");
 		if ($res) $numrows=mysqli_num_rows($res);
 		if ($numrows==0)
 		{
@@ -59,12 +59,12 @@ switch ($var)
 			$wait=(isset($_GET['wait'])) ? $_GET['wait'] : 0;
 			if ($wait==0)
 			{
-				$ret=mysqli_query($GLOBALS["___mysqli_ston"], "KILL ".$_GET['killid']);
+				$ret=mysqli_query($config['dbconnection'], "KILL ".$_GET['killid']);
 				$wait=2;
 			}
 			else
 				$wait+=2;
-			
+
 			if ($wait==0)
 			{
 				echo '<p class="success">'.$lang['L_PROCESSKILL1'].$_GET['killid'].' '.$lang['L_PROCESSKILL2'].'</p>';
@@ -73,11 +73,11 @@ switch ($var)
 			{
 				echo '<p class="success">'.$lang['L_PROCESSKILL3'].$wait.$lang['L_PROCESSKILL4'].$_GET['killid'].' '.$lang['L_PROCESSKILL2'].'</p>';
 			}
-		
+
 		}
-		
+
 		$killid=$wait=0;
-		$res=@mysqli_query($GLOBALS["___mysqli_ston"], "SHOW FULL PROCESSLIST ");
+		$res=@mysqli_query($config['dbconnection'], "SHOW FULL PROCESSLIST ");
 		if ($res) $numrows=mysqli_num_rows($res);
 		if ($numrows==0)
 		{
@@ -106,7 +106,7 @@ switch ($var)
 			<input type="hidden" name="killid" value="'.$killid.'">
 			<input type="hidden" name="action" value="vars">
 			<input type="hidden" name="var" value="prozesse"></form>';
-		echo '<script language="JavaScript" type="text/javascript">window.setTimeout("document.f.submit();","'.$config['processlist_refresh'].'");</script>';
-		
+		echo '<script>window.setTimeout("document.f.submit();","'.$config['processlist_refresh'].'");</script>';
+
 		break;
 }

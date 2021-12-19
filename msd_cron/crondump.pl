@@ -6,9 +6,9 @@
 # additional scripting: Detlev Richter, Jonathan Tietz
 #
 # for support etc. visit http://forum.mysqldumper.de
-# 
+#
 # This file is part of MySQLDumper released under the GNU/GPL 2 license
-# http://www.mysqldumper.net 
+# http://www.mysqldumper.net
 # @package             MySQLDumper
 # @version             $Rev: 1371 $
 # @author             $Author: dsb1971 $
@@ -22,7 +22,7 @@ my $pcd_version='1.24.4';
 ########################################################################################
 # please enter the absolute path of the config-dir
 # when calling the script without parameters the default_configfile (mysqldumper.conf.php) will be loaded
-# e.g. - (zum Beispiel): 
+# e.g. - (zum Beispiel):
 # my $absolute_path_of_configdir="/home/www/doc/8176/mysqldumper.de/www/mysqldumper/work/config/";
 
 my $absolute_path_of_configdir="";
@@ -47,17 +47,17 @@ use Getopt::Long;
 ########################################################################################
 use vars qw(
 $pcd_version $dbhost $dbname $dbuser $dbpass $dbport $dbsocket
-$cron_dbindex @cron_db_array @ftp_server $dbpraefix @cron_dbpraefix_array 
+$cron_dbindex @cron_db_array @ftp_server $dbpraefix @cron_dbpraefix_array
 $compression  $backup_path $logdatei $completelogdatei $command_beforedump $command_afterdump
 $cron_printout $cronmail $cronmail_dump $cronmailto $cronmailto_cc $cronmailfrom
 $cronftp $mp $multipart_groesse $email_maxsize
 $auto_delete $max_backup_files $perlspeed $optimize_tables_beforedump $result
-@key_value $pair $key $value $conffile @confname $logcompression $log_maxsize $complete_log 
+@key_value $pair $key $value $conffile @confname $logcompression $log_maxsize $complete_log
 $starttime $Sekunden $Minuten $Stunden $Monatstag $Monat $Jahr $Wochentag $Jahrestag $Sommerzeit
 $rct $tabelle  @tables @tablerecords $dt $sql_create @ergebnis @ar $sql_daten $inhalt
 $insert $totalrecords $error_message $cfh $oldbar $print_out $msg $dt $ftp $dateistamm $dateiendung
 $mpdatei $i $BodyNormal $BodyMultipart $BodyToBig $BodyNoAttach $BodyAttachOnly $Body $DoAttach $cmt $part $fpath $fname
-$fmtime $timenow $daydiff $datei $inh $gz $search $fdbname @str $item %dbanz $anz %db_dat 
+$fmtime $timenow $daydiff $datei $inh $gz $search $fdbname @str $item %dbanz $anz %db_dat
 $fieldlist $first_insert $my_comment $sendmail_call $config_read_from
 $cron_smtp $cron_smtp_port $cron_use_sendmail
 @ftp_transfer @ftp_timeout @ftp_user @ftp_pass @ftp_dir @ftp_server @ftp_port @ftp_mode @ftp_useSSL
@@ -198,7 +198,7 @@ if($absolute_path_of_configdir eq "" || ! -d $absolute_path_of_configdir)
 }
 
 $conffile=trim($conffile);
-if($conffile eq "") 
+if($conffile eq "")
 {
     $conffile=$default_configfile; # no Parameter for configfile given -> use standardfile "mysqldumper.conf.php"
     $config_read_from="standard configuration";
@@ -275,7 +275,7 @@ write_log("Using configuration $conffile\n");
 #now do the dump
 
 #more than one db
-if($cron_dbindex > -1) 
+if($cron_dbindex > -1)
 {
     $dbname=$cron_db_array[$cron_dbindex];
     $dbpraefix=$cron_dbpraefix_array[$cron_dbindex];
@@ -284,11 +284,11 @@ if($cron_dbindex > -1)
     ExecuteCommand(1,$command_beforedump);
     DoDump();
     ExecuteCommand(2,$command_afterdump);
-}  
-else 
+}
+else
 {
     $db_anz=@cron_db_array;
-    for(my $ii = 0; $ii < $db_anz; $ii++) 
+    for(my $ii = 0; $ii < $db_anz; $ii++)
     {
         if ($mp>0) { $mp=1; } # Part-Reset if using Multipart (for next database)
         $dbname=$cron_db_array[$ii];
@@ -305,9 +305,9 @@ else
     }
 }
 
-if($auto_delete>0) 
+if($auto_delete>0)
 {
-    if($max_backup_files>0) 
+    if($max_backup_files>0)
     {
         PrintOut("<br><b>Starting autodelete function: </b><br>Keep the latest <font color=\"#0000FF\">$max_backup_files</font> backup files for each database and delete older ones.");
         find(\&AutoDeleteCount, $backup_path);
@@ -333,11 +333,11 @@ sub DoDump {
     # Verbindung mit MySQL herstellen, $dbh ist das Database Handle
     if (trim($dbsocket) eq "")
     {
-        $dbh = DBI->connect("DBI:mysql:$dbname:$dbhost:$dbport","$dbuser","$dbpass") || die "Database connection not made: $DBI::errstr"; 
+        $dbh = DBI->connect("DBI:mysql:$dbname:$dbhost:$dbport","$dbuser","$dbpass") || die "Database connection not made: $DBI::errstr";
     }
     else
     {
-        $dbh = DBI->connect("DBI:mysql:$dbname:$dbhost:$dbport;mysql_socket=$dbsocket","$dbuser","$dbpass") || die "Database connection not made: $DBI::errstr"; 
+        $dbh = DBI->connect("DBI:mysql:$dbname:$dbhost:$dbport;mysql_socket=$dbsocket","$dbuser","$dbpass") || die "Database connection not made: $DBI::errstr";
     }
     # herausfinden welche Mysql-Version verwendet wird
     $sth = $dbh->prepare("SELECT VERSION()");
@@ -353,7 +353,7 @@ sub DoDump {
         # get standard encoding of MySQl-Server
         $sth = $dbh->prepare("SHOW VARIABLES LIKE 'character_set_connection'");
         $sth->execute;
-        @ar=$sth->fetchrow; 
+        @ar=$sth->fetchrow;
         $character_set=$ar[1];
     }
     else
@@ -362,11 +362,11 @@ sub DoDump {
         # get standard encoding of MySQl-Server
         $sth = $dbh->prepare("SHOW VARIABLES LIKE 'character_set'");
         $sth->execute;
-        @ar=$sth->fetchrow; 
+        @ar=$sth->fetchrow;
         if (defined($ar[1])) { $character_set=$ar[1]; }
     }
     PrintOut("Characterset of connection and backup file set to <strong>".$character_set."</strong>.");
-    
+
     #Statuszeile erstellen
     my $t=0;
     my $r=0;
@@ -377,27 +377,27 @@ sub DoDump {
     my $engine='';
     my %db_tables_views;
     my $query="SHOW TABLE STATUS FROM `$dbname`";
-    if ($dbpraefix ne "") 
-    { 
-        $query.=" LIKE '$dbpraefix%'"; 
-        PrintOut("Searching for tables inside database <strong>`$dbname`</strong> with prefix <strong>'$dbpraefix'</strong>."); 
-    } 
+    if ($dbpraefix ne "")
+    {
+        $query.=" LIKE '$dbpraefix%'";
+        PrintOut("Searching for tables inside database <strong>`$dbname`</strong> with prefix <strong>'$dbpraefix'</strong>.");
+    }
     else
     {
-        PrintOut("Searching for tables inside database <strong>`$dbname`</strong>."); 
+        PrintOut("Searching for tables inside database <strong>`$dbname`</strong>.");
     }
     $sth = $dbh->prepare($query);
     $sth->execute || err_trap("Error executing: ".$query." !  MySQL-Error: ".$DBI::errstr);
-    while ( $value=$sth->fetchrow_hashref()) 
+    while ( $value=$sth->fetchrow_hashref())
     {
         $value->{skip_data}=0; #defaut -> backup data of table
         # decide if we need to skip the data while dumping (VIEWs and MEMORY)
-        
-        # check for old MySQL3-Syntax Type=xxx 
+
+        # check for old MySQL3-Syntax Type=xxx
         if (defined $value->{Type})
         {
             # port old index type to index engine, so we can use the index Engine in the rest of the script
-            $value->{Engine}=$value->{Type}; 
+            $value->{Engine}=$value->{Type};
             $engine=uc($value->{Type});
             if ($engine eq "MEMORY")
             {
@@ -405,7 +405,7 @@ sub DoDump {
             }
         }
 
-        # check for >MySQL3 Engine=xxx 
+        # check for >MySQL3 Engine=xxx
         if (defined $value->{Engine})
         {
             $engine=uc($value->{Engine});
@@ -415,11 +415,11 @@ sub DoDump {
             }
         }
 
-        # check for Views - if it is a view the comment starts with "VIEW" 
-        if (defined $value->{Comment} && uc(substr($value->{Comment},0,4)) eq 'VIEW') 
+        # check for Views - if it is a view the comment starts with "VIEW"
+        if (defined $value->{Comment} && uc(substr($value->{Comment},0,4)) eq 'VIEW')
         {
             $value->{skip_data}=1;
-            $value->{Engine}='VIEW'; 
+            $value->{Engine}='VIEW';
             $value->{Update_time}='';
             $db_tables_views{$value->{Name}}=$value;
          }
@@ -439,46 +439,62 @@ sub DoDump {
     # add VIEW at the end as they need all tables to be created before
     @tablenames = (@tablenames,sort keys(%db_tables_views));
     %db_tables = (%db_tables,%db_tables_views);
-    
+
     $tablename='';
     if (@tablenames<1)
     {
         PrintOut("There are no tables inside database <b>".$dbname."</b>! It doesn't make sense to backup an empty database. Skipping this one.");
         return;
     }
-    if($optimize_tables_beforedump==1) 
+    if($optimize_tables_beforedump==1)
     {
         optimise_tables();
     }
-    
+
     $st_e.="-- TABLE-INFO\n";
-    foreach $tablename (@tablenames) 
+    foreach $tablename (@tablenames)
     {
         my $dump_table=1;
         if ($dbpraefix ne "")
         {
-            if (substr($tablename,0,length($dbpraefix)) ne $dbpraefix) 
+            if (substr($tablename,0,length($dbpraefix)) ne $dbpraefix)
             {
                 # exclude table from backup because it doesn't fit to praefix
                 $dump_table=0;
             }
         }
-                        
+
         if ($dump_table==1)
         {
-            $r+=$db_tables{$tablename}{Rows}; #calculate nr of records
+
+			#www.betanet-web.ch - 30.04.2019
+			#Erweitert mit SQL Abfrage für Ausgabe Anzahl der Einträge in der Tabelle (analog PHP)
+			$sql_create = "SELECT COUNT(*) FROM `$tablename`";
+			$sth = $dbh->prepare($sql_create);
+            if (!$sth)
+			{
+				err_trap("<font color=\"red\">Fatal error sending Query '".$sql_create."'! MySQL-Error: ".$DBI::errstr);
+			}
+
+			$sth->execute || err_trap("Couldn't execute ".$sql_create);
+			$rct = $sth->fetchrow;
+			$sth->finish;
+
+			$r+=$rct;
+			#Ende der Erweiterung
+
             push(@tables,$db_tables{$tablename}{Name}); # add tablename to backuped tables
             $t++;
             if (!defined $db_tables{$tablename}{Update_time})
             {
                 $db_tables{$tablename}{Update_time}=0;
             }
-            
+
             $st_e.=$mysql_commentstring."TABLE\|$db_tables{$tablename}{Name}\|$db_tables{$tablename}{Rows}\|".($db_tables{$tablename}{Data_length}+$db_tables{$tablename}{Index_length})."\|$db_tables{$tablename}{Update_time}|$db_tables{$tablename}{Engine}\n";
         }
     }
     $st_e.="-- EOF TABLE-INFO";
-    
+
     PrintOut("Found ".(@tables)." tables with $r records.");
 
     #AUFBAU der Statuszeile:
@@ -492,7 +508,7 @@ sub DoDump {
     $status_end.=":$command_beforedump:$command_afterdump:$character_set:EXTINFO$st_e\n".$mysql_commentstring."Dump created on $CTIME_String by PERL Cron-Script\n".$mysql_commentstring."Dump by MySQLDumper (http://www.mysqldumper.net/)\n\n";
 
 
-    if($mp>0) 
+    if($mp>0)
     {
         $sql_text=$status_start."MP_$mp".$status_end;
     }
@@ -501,12 +517,12 @@ sub DoDump {
         $sql_text=$status_start.$status_end;
     }
     NewFilename();
-    
+
     $totalrecords=0;
-    foreach $tablename (@tables) 
+    foreach $tablename (@tables)
     {
-        # first get CREATE TABLE Statement 
-        if($dbpraefix eq "" || ($dbpraefix ne "" && substr($tablename,0,length($dbpraefix)) eq $dbpraefix)) 
+        # first get CREATE TABLE Statement
+        if($dbpraefix eq "" || ($dbpraefix ne "" && substr($tablename,0,length($dbpraefix)) eq $dbpraefix))
         {
             PrintOut("Dumping table `<strong>$tablename</strong>` <em>(Type ".$db_tables{$tablename}{Engine}.")</em>:");
             $a="\n\n$mysql_commentstring\n$mysql_commentstring"."Table structure for table `$tablename`\n$mysql_commentstring\n";
@@ -532,11 +548,11 @@ sub DoDump {
                 err_trap("Fatal error! Couldn't read CREATE-Statement of table `$tabelle`! This backup might be incomplete! Check your database for errors."."' MySQL-Error: ".$DBI::errstr,1);
                 $skip=1;
             }
-            else 
+            else
             {
                 $sql_text.=$a;
             }
-            
+
             if ($db_tables{$tablename}{skip_data} == 0)
             {
                 $sql_text.="\n$mysql_commentstring\n$mysql_commentstring"."Dumping data for table `$tablename`\n$mysql_commentstring\n";
@@ -554,25 +570,40 @@ sub DoDump {
                 {
                     err_trap("<font color=\"red\">Fatal error sending Query '".$sql_create."'! MySQL-Error: ".$DBI::errstr);
                 }
-                
+
                 $sth->execute || err_trap("Couldn't execute ".$sql_create);
                 while ( @ar=$sth->fetchrow) {
                     $fieldlist.="`".$ar[0]."`,";
                 }
                 $sth->finish;
-                
+
                 # remove trailing ',' and add ')'
                 $fieldlist=substr($fieldlist,0,length($fieldlist)-1).")";
 
                 # how many rows
-                $rct=$db_tables{$tablename}{Rows};
 
-                for (my $ttt=0;$ttt<$rct;$ttt+=$perlspeed) 
+				#www.betanet-web.ch - 30.04.2019
+				#Erweitert mit SQL Abfrage für Ausgabe Anzahl der Einträge in der Tabelle (analog PHP)
+				$sql_create = "SELECT COUNT(*) FROM `$tablename`";
+				$sth = $dbh->prepare($sql_create);
+                if (!$sth)
+                {
+                    err_trap("<font color=\"red\">Fatal error sending Query '".$sql_create."'! MySQL-Error: ".$DBI::errstr);
+                }
+
+				$sth->execute || err_trap("Couldn't execute ".$sql_create);
+				$rct = $sth->fetchrow;
+				$sth->finish;
+
+				#Ende der Erweiterung
+
+
+                for (my $ttt=0;$ttt<$rct;$ttt+=$perlspeed)
                 {
                     # default beginning for INSERT-String
                     $insert = "INSERT INTO `$tablename` $fieldlist VALUES (";
                     $first_insert=0;
-                    
+
                     # get rows (parts)
                     $sql_daten="SELECT * FROM `$tablename` LIMIT ".$ttt.",".$perlspeed.";";
                     $sth = $dbh->prepare($sql_daten);
@@ -581,10 +612,10 @@ sub DoDump {
                         err_trap("<font color=\"red\">Fatal error sending Query '".$sql_create."'! MySQL-Error: ".$DBI::errstr);
                     }
                     $sth->execute || err_trap("Couldn't execute \"".$sql_daten."\" - MySQL-Error: ".$DBI::errstr);
-                    while ( @ar=$sth->fetchrow) 
+                    while ( @ar=$sth->fetchrow)
                     {
                         #Start the insert
-                        if($first_insert==0) 
+                        if($first_insert==0)
                         {
                             $a="\n$insert";
                         }
@@ -592,14 +623,14 @@ sub DoDump {
                         {
                             $a="\n(";
                         }
-                        
+
                         # quote all values
                         foreach $inhalt(@ar) { $a.= $dbh->quote($inhalt).","; }
-                        
+
                         # remove trailing ',' and add end-sql
                         $a=substr($a,0, length($a)-1).");";
                         $sql_text.= $a;
-                        if($memory_limit>0 && length($sql_text)>$memory_limit) 
+                        if($memory_limit>0 && length($sql_text)>$memory_limit)
                         {
                             WriteToFile($sql_text);
                             $sql_text="";
@@ -624,7 +655,7 @@ sub DoDump {
             {
                 PrintOut("\n<br>Dumping structure of <strong>`$tablename`</strong> <em>(Type ".$db_tables{$tablename}{Engine}." ) (size of backupfile: ".byte_output($filesize).")</em>");
             }
-            
+
             if($mp>0 && $filesize>$multipart_groesse) {NewFilename();}
         }
     }
@@ -652,13 +683,13 @@ sub DoDump {
 #print error message and optional exit
 sub err_trap {
     my $error_message = shift(@_);
-    
+
     #continue instead of exit
     my $continue = shift(@_);
-    
+
     #don't write to logfile, if we did not read config before
     my $nolog = shift(@_);
-    
+
     PrintOut("<font color=\"red\">Perl Cronscript ERROR: <b>$error_message</b></font><br>\n");
     write_log("<font color=\"red\">Perl Cronscript ERROR: <b>$error_message</b></font><br>\n") if !defined $nolog;
     if (!defined $continue || $continue ==0)
@@ -672,7 +703,7 @@ sub err_trap {
 sub PrintHeader {
     my $cgi = new CGI;
     my $perlversion = GetPerlVersion();
-    
+
     if ($html_output==1)
     {
         print $cgi->header(-type => 'text/html; charset=utf-8', -cache_control => 'no-cache, no-store, must-revalidate');
@@ -693,13 +724,13 @@ sub PrintOut {
 
     if (defined $print_out && length(trim($print_out))>0)
     {
-        if($complete_log==1) 
+        if($complete_log==1)
         {
             my $logsize=0;
             ($Sekunden, $Minuten, $Stunden, $Monatstag, $Monat, $Jahr, $Wochentag, $Jahrestag, $Sommerzeit) = localtime(time);
             $Jahr+=1900; $Monat+=1;$Jahrestag+=1;
             $dt=sprintf("%02d",$Monatstag).".".sprintf("%02d",$Monat).".".sprintf("%02d",$Jahr)." ".sprintf("%02d",$Stunden).":".sprintf("%02d",$Minuten).":".sprintf("%02d",$Sekunden);
-            if (-e $completelogdatei) 
+            if (-e $completelogdatei)
             {
                 $logsize=(stat($completelogdatei))[7];
                 unlink($completelogdatei) if($logsize + length($print_out)>$log_maxsize && $log_maxsize>0);
@@ -710,8 +741,8 @@ sub PrintOut {
             $output =~ s/\r//gi;
             $output =~ s/<br>//gi;
             $output=trim($output);
-            
-            if ( ($logcompression==0) || ($mod_gz==0)) 
+
+            if ( ($logcompression==0) || ($mod_gz==0))
             {
                 open(DATEI,">>$completelogdatei") || err_trap('can\'t open mysqldump_perl.complete.log ('.$completelogdatei.').');
                 print DATEI "$dt $output\n" || err_trap('can\'t write to mysqldump_perl.complete.log ('.$completelogdatei.').');
@@ -726,31 +757,31 @@ sub PrintOut {
                 chmod(0777,$completelogdatei);
             }
         }
-        if($cron_printout==1) 
+        if($cron_printout==1)
         {
             #save current autoflush-setting
             local ($oldbar) = $|;
-            
+
             #save current output filehandle and change it to STDOUT
             $cfh = select (STDOUT);
 
             #set autoflush on
             $| = 1;
-            
+
             #remove html-tags
-            if($html_output==0) 
+            if($html_output==0)
             {
                 $print_out =~ s/<(.*?)>//gi;
             }
-            
+
             print $print_out;
-            
+
             #TODO don't print <br> with the last printout (-> wrong html-syntax)
             if ($html_output==1){ print "<br>\n"; } else { print "\n"; };
-            
+
             #restore old autoflush-setting
             $| = $oldbar;
-            
+
             #set default output back to old filehandle
             select ($cfh);
         }
@@ -765,19 +796,19 @@ sub write_log {
     $dt=sprintf("%02d.%02d.%02d %02d:%02d:%02d",$Monatstag,$Monat,$Jahr,$Stunden,$Minuten,$Sekunden);
 
     my $logsize=0;
-    if (-e $logdatei) 
+    if (-e $logdatei)
     {
         $logsize=(stat($logdatei))[7];
         unlink($logdatei) if($logsize+200>$log_maxsize && $log_maxsize>0);
     }
 
-    if ( ($logcompression==0) || ($mod_gz==0)) 
+    if ( ($logcompression==0) || ($mod_gz==0))
     {
         open(DATEI,">>$logdatei") || err_trap("Can't open file ($logdatei).");
         print DATEI "$dt $msg" || err_trap("Can't write to file ($logdatei).");
         close(DATEI)|| err_trap("can't close file ($logdatei).");
         chmod(0777,$logdatei);
-    } 
+    }
     else
     {
         $gz = gzopen($logdatei, "ab") || err_trap("Can't open $logdatei.");
@@ -807,8 +838,8 @@ sub send_ftp {
             $ftp->login($ftp_user[$i], $ftp_pass[$i]) or err_trap("FTP-ERROR: Couldn't login\n",1);
             $ftp->binary();
             $ftp->cwd($ftp_dir[$i]) or err_trap("FTP-ERROR: Couldn't change directory: ".$ftp_dir[$i],1);
-            
-            if($mp==0) 
+
+            if($mp==0)
             {
                 PrintOut("FTP: transferring `$backupfile`");
                 $ret=$ftp->put($sql_file);
@@ -821,19 +852,19 @@ sub send_ftp {
                     write_log("FTP: transferred `$backupfile` to $ftp_server[$i] into dir $ftp_dir[$i] successfully\n");
                     PrintOut(" to $ftp_server[$i] into dir $ftp_dir[$i] was successful.\n");
                 }
-            } 
-            else 
+            }
+            else
             {
                 $dateistamm=substr($backupfile,0,index($backupfile,"part_"))."part_";
                 $dateiendung=($compression==1)?".sql.gz":".sql";
                 $mpdatei="";
-                for ($x=1;$x<$mp;$x++) 
+                for ($x=1;$x<$mp;$x++)
                 {
                     $mpdatei=$dateistamm.$x.$dateiendung;
                     PrintOut("FTP: transferring multipart $mpdatei");
-                    
+
                     $ret=$ftp->put($backup_path.$mpdatei);
-                    if (!$ret) 
+                    if (!$ret)
                     {
                         err_trap("Couldn't put $backup_path.$mpdatei to ".$ftp_server[$i]." into dir ".$ftp_dir[$i]."\n",1);
                     }
@@ -863,31 +894,31 @@ sub send_mail {
     my $ret=0;
     if($mp==0)
     {    #no multipart
-        if(($email_maxsize>0 && $filesize>$email_maxsize) || $cronmail_dump==0) 
+        if(($email_maxsize>0 && $filesize>$email_maxsize) || $cronmail_dump==0)
         {
             #attache files
-            if($cronmail_dump==0) 
+            if($cronmail_dump==0)
             {    #The backup has not been attached
                 $Body=$BodyNoAttach.$backupfile." (".byte_output($filesize).")";
-            } 
-            else 
+            }
+            else
             {    #The backup is bigger than the allowed max-limit
                 $Body=$BodyToBig.$backupfile." (".byte_output($filesize).")";
             }
             $DoAttach=0;
-        } 
-        else 
+        }
+        else
         {    #Find attached your backup
             $Body=$BodyNormal." File ".$backupfile." (".byte_output($filesize).")";
         }
-    } 
-    else 
+    }
+    else
     {    #multipart
         $Body=$BodyMultipart;
         $dateistamm=substr($backupfile,0,index($backupfile,"part_"))."part_";
         $dateiendung=($compression==1)?".sql.gz":".sql";
         $mpdatei="";
-        for ($i=1;$i<$mp;$i++) 
+        for ($i=1;$i<$mp;$i++)
         {
             $mpdatei=$dateistamm.$i.$dateiendung;
             push(@mparray,"$mpdatei|$i");
@@ -898,12 +929,12 @@ sub send_mail {
     $Body.="\n\n<br><br>Best regards,<br><br>MySQLDumper<br>If you have any questions, feel free and visit the support board at:<br><a href=\"http://forum.mysqldumper.de\">http://forum.mysqldumper.de</a>";
 
     if ($cron_use_sendmail==1)
-    {    
+    {
         MIME::Lite->send("sendmail", $sendmail_call) || err_trap("Error setting sendmail call!",1);
     }
     else
     {
-        MIME::Lite->send('smtp', $cron_smtp, Timeout=>60) || err_trap("Error setting smtp call !",1);    
+        MIME::Lite->send('smtp', $cron_smtp, Timeout=>60) || err_trap("Error setting smtp call !",1);
     }
 
     $msg = MIME::Lite->new(
@@ -915,13 +946,13 @@ sub send_mail {
         Data    => "<body>\n".$Body."</body>\n"
     );
 
-    if($DoAttach==1 && $mp==0) 
+    if($DoAttach==1 && $mp==0)
     {    #attach files, no multipart
         $msg->attach(
             Type     => "BINARY",
             Path     => "$sql_file",
             Encoding => "base64",
-            Filename => "$backupfile" 
+            Filename => "$backupfile"
         );
         $ret=$msg->send;
         if (!$ret)
@@ -935,10 +966,10 @@ sub send_mail {
         }
         return $ret;
     }
-    
-    if($DoAttach==1 && $mp>0 && $cronmail_dump>0) 
+
+    if($DoAttach==1 && $mp>0 && $cronmail_dump>0)
     {    #attach files, multipart
-        foreach $datei(@mparray) 
+        foreach $datei(@mparray)
         {
             @str=split(/\|/,$datei);
             $msg = MIME::Lite->new(
@@ -954,7 +985,7 @@ sub send_mail {
                 Type     => "BINARY",
                 Path     => $backup_path.$str[0],
                 Encoding => "base64",
-                Filename => $str[0] 
+                Filename => $str[0]
             );
             $ret=$msg->send;
             if (!$ret)
@@ -985,12 +1016,12 @@ sub send_mail {
 
 sub NewFilename {
     $part="";
-    if($mp>0) 
+    if($mp>0)
     {
         $part="_part_$mp";
         $mp++;
     }
-    if($compression==0) 
+    if($compression==0)
     {
         $sql_file=$backup_path.$dbname."_".$time_stamp.$part.".sql";
         $backupfile=$dbname."_".$time_stamp.$part.".sql";
@@ -1000,22 +1031,22 @@ sub NewFilename {
         $sql_file=$backup_path.$dbname."_".$time_stamp.$part.".sql.gz";
         $backupfile=$dbname."_".$time_stamp.$part.".sql.gz";
     }
-    if($mp==0) 
+    if($mp==0)
     {
         PrintOut("\n<br>Starting to dump data into file <strong>`$backupfile`</strong>");
         write_log("Dumping data into file <strong>`$backupfile`</strong> \n");
     }
-    if($mp==2) 
+    if($mp==2)
     {
         PrintOut("\n<br>Starting to dump data into multipart-file <strong>`$backupfile`</strong>");
         write_log("Start Perl Multipart-Dump with file `$backupfile` \n");
     }
-    if($mp>2) 
+    if($mp>2)
     {
         PrintOut("\n<br>Continuing Multipart-Dump with file <strong>`$backupfile`</strong>");
         write_log("Continuing Multipart-Dump with file `$backupfile` \n");
     }
-    if($mp>0) 
+    if($mp>0)
     {
         $sql_text=$status_start."MP_".($mp-1).$status_end;
     }
@@ -1025,7 +1056,7 @@ sub NewFilename {
     }
     $sql_text.="/*!40101 SET NAMES '".$character_set."' */;\n";
     $sql_text.="SET FOREIGN_KEY_CHECKS=0;\n";
-    
+
     WriteToFile($sql_text,1);
     chmod(0777,$sql_file);
     $sql_text="";
@@ -1038,7 +1069,7 @@ sub WriteToFile {
     $inh=shift;
     my $points=shift;
     if (!defined($points)) { $points=2; }
-    
+
     if(length($inh)>0) {
         if($compression==0){
             open(DATEI,">>$sql_file");
@@ -1051,7 +1082,7 @@ sub WriteToFile {
         }
         if ($points>1)
         {
-            print "."; 
+            print ".";
         }
         $filesize= (stat($sql_file))[7];
         $punktzaehler++;
@@ -1077,7 +1108,7 @@ sub AutoDeleteCount {
         {
             if (open(DATEI,"<$fpath"))
             {
-                $line=<DATEI>;            
+                $line=<DATEI>;
                 close(DATEI);
             }
             else
@@ -1131,24 +1162,24 @@ sub DoAutoDeleteCount {
     my %dbanz;
     my $anz=@filearr;
     # sort filearr descending -> so the latest backups are at top
-    # multipartfiles sorting is also descending -> part3, part2, part1 
+    # multipartfiles sorting is also descending -> part3, part2, part1
     @filearr=sort{"$b" cmp "$a"}(@filearr);
     @multipartfiles=();
     if ($anz>0)
     {
-        foreach $item (@filearr) 
+        foreach $item (@filearr)
         {
             @str=split(/\|/,$item);
             # str[0]=filename, str[1]=databasename, str[2]=multipart number
-                    
+
             #init db-counter if this index doesn't exist yet
-            if (defined $str[1] && !defined $dbanz{$str[1]}) 
-            { 
+            if (defined $str[1] && !defined $dbanz{$str[1]})
+            {
                 $dbanz{$str[1]}=0;
                 @multipartfiles=();
-            }        
+            }
             #PrintOut($max_backup_files.': '.$dbanz{$str[1]}.' -> '.$str[0].' - '.$str[1].' - '.$str[2]);
-                
+
             #no multipart file -> update db counter
             if(defined $str[1] && !defined $str[2])
             {
@@ -1168,7 +1199,7 @@ sub DoAutoDeleteCount {
                 {
                     push(@multipartfiles,$str[0]);
                 }
-                
+
                 # if it is a multipart file and it is part_1 -> update db counter
                 # multiparts with higher numbers already passed the loop, so we can use
                 # part1 to increase the db-counter
@@ -1191,16 +1222,16 @@ sub DoAutoDeleteCount {
     }
 }
 
-sub DeleteFiles 
+sub DeleteFiles
 {
     my $res=0;
-    if(@trash_files==0) 
+    if(@trash_files==0)
     {
         PrintOut("<font color=red><b>No file to delete.</b></font>");
     }
-    else 
+    else
     {
-        foreach $datei(@trash_files) 
+        foreach $datei(@trash_files)
         {
             my $file_to_delete = $backup_path.$datei;
             $res=unlink($file_to_delete);
@@ -1218,7 +1249,7 @@ sub DeleteFiles
     }
 }
 
-sub ExecuteCommand 
+sub ExecuteCommand
 {
     my $cmt = shift(@_);
     my $command = shift(@_);
@@ -1235,11 +1266,11 @@ sub ExecuteCommand
         $errText="Error while executing Query after Dump";
         $succText="executing Query after Dump was successful";
     }
-    
-    if(defined $commandDump && length($commandDump)>0) 
+
+    if(defined $commandDump && length($commandDump)>0)
     {
-        if(substr($commandDump,0,7) ne "system:") 
-        {    
+        if(substr($commandDump,0,7) ne "system:")
+        {
             # prepare command
             $commandDump = replaceQueryStringSimple($commandDump);
             if (trim($dbsocket) eq "")
@@ -1248,20 +1279,20 @@ sub ExecuteCommand
             }
             else
             {
-                $dbh = DBI->connect("DBI:mysql:$dbname:$dbhost:$dbport;mysql_socket=$dbsocket","$dbuser","$dbpass") || die "Database connection not made: $DBI::errstr"; 
+                $dbh = DBI->connect("DBI:mysql:$dbname:$dbhost:$dbport;mysql_socket=$dbsocket","$dbuser","$dbpass") || die "Database connection not made: $DBI::errstr";
             }
 
-            if(index($commandDump,";")>0) 
+            if(index($commandDump,";")>0)
             {
                 # more than 1 query
                 @cad=split(/;/,$commandDump);
             }
-            else 
+            else
             {
                 @cad=$commandDump;
             }
 
-            for($i=0;$i<@cad;$i++) 
+            for($i=0;$i<@cad;$i++)
             {
                 if($cad[$i] ne '')
                 {
@@ -1270,20 +1301,20 @@ sub ExecuteCommand
                     $cad[$i] =~ s/\$\$MSD\$\$/\;/g;
                     $sth = $dbh->prepare($cad[$i]);
                     $sth->execute or $err=$sth->errstr();
-                    if ($err ne '') 
+                    if ($err ne '')
                     {
-                        write_log("<span style=\"color:red;\">Executing Query '$cad[$i]' caused an error! MySQL returns: '$err'</span>\n"); 
-                        PrintOut("<span style=\"color:red;\">Executing Query '$cad[$i]' caused an error! MySQL returns: '$err'</span>\n"); 
+                        write_log("<span style=\"color:red;\">Executing Query '$cad[$i]' caused an error! MySQL returns: '$err'</span>\n");
+                        PrintOut("<span style=\"color:red;\">Executing Query '$cad[$i]' caused an error! MySQL returns: '$err'</span>\n");
                     }
-                    else 
+                    else
                     {
-                        write_log("<span style=\"color:green;font-size:11px;\">Successfully executed Query: $cad[$i]</span>\n"); 
-                        PrintOut("<span style=\"color:green;font-size:11px;\">Successfully executed Query: $cad[$i]</span>\n"); 
+                        write_log("<span style=\"color:green;font-size:11px;\">Successfully executed Query: $cad[$i]</span>\n");
+                        PrintOut("<span style=\"color:green;font-size:11px;\">Successfully executed Query: $cad[$i]</span>\n");
                     }
                     $sth->finish;
                 }
             }
-        } 
+        }
         else
         {
             #Systembefehl
@@ -1295,10 +1326,10 @@ sub ExecuteCommand
     }
 }
 
-sub closeScript 
+sub closeScript
 {
     my ($Start, $Jetzt, $Totalzeit);
-    $Start = $^T; $Jetzt = (time); 
+    $Start = $^T; $Jetzt = (time);
     $Totalzeit=$Jetzt - $Start;
     ($Sekunden, $Minuten, $Stunden, $Monatstag, $Monat, $Jahr, $Wochentag, $Jahrestag, $Sommerzeit) = localtime(time);
     $Jahr+=1900;$Monat+=1;$Jahrestag+=1;
@@ -1312,19 +1343,19 @@ sub closeScript
 }
 
 sub trim
-{ 
-        my $string = shift; 
-        if (defined($string)) 
-        { 
-                $string =~ s/^\s+//; 
-                $string =~ s/\s+$//; 
-        } 
-        else 
-        { 
-                $string=''; 
-        } 
-        return $string; 
-} 
+{
+        my $string = shift;
+        if (defined($string))
+        {
+                $string =~ s/^\s+//;
+                $string =~ s/\s+$//;
+        }
+        else
+        {
+                $string='';
+        }
+        return $string;
+}
 
 sub byte_output
 {
@@ -1350,7 +1381,7 @@ sub optimise_tables
         if ( $engine eq "MYISAM" or $engine eq "BDB" or $engine eq "INNODB")
         {
             my $sth_to = $dbh->prepare("OPTIMIZE TABLE `$tablename`");
-            $ret=$sth_to->execute; 
+            $ret=$sth_to->execute;
             if ($ret)
             {
                 PrintOut("<span style=\"color:green;font-size:11px;\">Table ".($opttbl+1)." `$tablename` optimized successfully.</span>");
@@ -1368,7 +1399,7 @@ sub optimise_tables
 # replace in querystring all ';' in VALUES with '$$MSD$$'
 sub replaceQueryStringSimple{
     my $string = shift(@_);
-    
+
     if ($string =~ m#(.*)\'(.*)\;(.*)\'(.*)#){
         # if found search for more ';'
         return replaceQueryStringSimple($1.'\''.$2.'$$MSD$$'.$3.'\''.$4);;

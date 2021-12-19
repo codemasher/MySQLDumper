@@ -22,6 +22,12 @@ $lang['L_HELP_FTPPORT']="Port på FTP-Serveren, standard: 21";
 $lang['L_HELP_FTPUSER']="indtast brugernavn for FTP";
 $lang['L_HELP_FTPPASS']="indtast kodeord for FTP";
 $lang['L_HELP_FTPDIR']="hvor er upload-folderen? indtast sti!";
+$lang['L_HELP_SFTPTRANSFER']="hvis aktiveret sendes filen via SFTP.";
+$lang['L_HELP_SFTPSERVER']="Adresse på SFTP-Serveren";
+$lang['L_HELP_SFTPPORT']="Port på SFTP-Serveren, standard: 22";
+$lang['L_HELP_SFTPUSER']="indtast brugernavn for SFTP";
+$lang['L_HELP_SFTPPASS']="indtast kodeord for SFTP";
+$lang['L_HELP_SFTPDIR']="hvor er upload-folderen? indtast sti!";
 $lang['L_HELP_SPEED']="Minimum og maksimum hastighed, standard er 50 til 5000 (for høje eller lave hastigheder kan forårsage timeouts!)";
 $lang['L_SPEED']="Hastighedskontrol";
 $lang['L_HELP_CRONEXECPATH']="Placering af Perl scripts.
@@ -31,6 +37,3 @@ $lang['L_CRON_EXECPATH']="Sti til Perl scripts";
 $lang['L_HELP_CRONCOMPLETELOG']="Når aktiveret, skrives det fuldstændige output til complete_log-filen.
 Dette er uafhængigt af tekstudskrifter";
 $lang['L_HELP_FTP_MODE']="Hvis du oplever problemer med FTP-overførsel, brug passiv tilstand.";
-
-
-?>

@@ -1,4 +1,4 @@
-<script language="javascript" type="text/javascript">
+<script>
 function switch_area(textarea)
 {
 	var t=document.getElementById('area_'+textarea);
@@ -21,13 +21,13 @@ function switch_area(textarea)
 		<td nowrap="nowrap">
 			&nbsp;
 			<!-- BEGIN IS_NULLABLE -->
-				<input type="checkbox" name="null_{ROW.FIELD_ID}" id="null_{ROW.FIELD_ID}" 
+				<input type="checkbox" name="null_{ROW.FIELD_ID}" id="null_{ROW.FIELD_ID}"
 					onchange="switch_area('{ROW.FIELD_ID}')"{ROW.IS_NULLABLE.NULL_CHECKED}>
 				&nbsp;
 				<label for="null_{ROW.FIELD_ID}">NULL</label>
 			<!-- END IS_NULLABLE -->
 		</td>
-		<td>			
+		<td>
 			<!-- BEGIN IS_TEXTINPUT -->
 				<input type="text" style="width:100%" name="{ROW.FIELD_ID}" value="{ROW.FIELD_VALUE}">
 			<!-- END IS_TEXTINPUT -->
@@ -38,7 +38,7 @@ function switch_area(textarea)
 		</td>
 	</tr>
 	<!-- END ROW -->
-	
+
 	<tr class="dbrow1">
 		<td colspan="3">
 			<br>

@@ -71,9 +71,9 @@ $lang['L_INFO_NOSTATUS']="kein Status verfügbar";
 $lang['L_INFO_NOPROCESSES']="keine laufenden Prozesse";
 $lang['L_FM_FREESPACE']="Freier Speicher auf Server";
 $lang['L_LOAD_DATABASE']="Datenbanken neu laden";
-$lang['L_HOME']="Home";
+$lang['L_HOME']="Startseite";
 $lang['L_CONFIG']="Konfiguration";
-$lang['L_DUMP']="Backup";
+$lang['L_DUMP']="Sicherung";
 $lang['L_RESTORE']="Wiederherstellung";
 $lang['L_FILE_MANAGE']="Verwaltung";
 $lang['L_LOG']="Log";
@@ -107,6 +107,3 @@ $lang['L_PAGE_REFRESHS']="Seitenaufrufe";
 $lang['L_MINUTE']="Minute";
 $lang['L_SETKEYSFOR']="Setzen neuer Indizes für die Tabelle";
 $lang['L_KEY_CONFIRMDELETE']="Index wirklich löschen?";
-
-
-?>

@@ -246,15 +246,25 @@ $mysql_SQLhasRecords=array(
 						'DESC'
 );
 
-function MSD_mysql_connect($encoding='utf8', $keycheck_off=false, $actual_table='')
+function MSD_mysql_connect($encoding='utf8mb4', $keycheck_off=false, $actual_table='')
 {
 	global $config,$databases;
     if (isset($config['dbconnection']) && is_resource($config['dbconnection'])) {
         return $config['dbconnection'];
     }
-	$port=( isset($config['dbport']) && !empty($config['dbport']) ) ? $config['dbport'] : ini_get("mysqli.default_port");
-	$socket=( isset($config['dbsocket']) && !empty($config['dbsocket']) ) ? $config['dbsocket'] : ini_get("mysqli.default_socket");
-	$config['dbconnection']=@($GLOBALS["___mysqli_ston"] = mysqli_connect($config['dbhost'], $config['dbuser'], $config['dbpass'], "", $port, $socket))  or die(SQLError("Error establishing a database connection!", ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false))));
+
+    $port = ( isset($config['dbport']) && !empty($config['dbport']) ) ? ':' . $config['dbport'] : '';
+    $socket = ( isset($config['dbsocket']) && !empty($config['dbsocket']) ) ? ':' . $config['dbsocket'] : '';
+
+	// Forcing error reporting mode to OFF, which is no longer the default
+	// starting with PHP 8.1
+	mysqli_report(MYSQLI_REPORT_OFF);
+
+	$config['dbconnection'] = @mysqli_connect($config['dbhost'] . $port . $socket, $config['dbuser'], $config['dbpass']);
+
+	if (!$config['dbconnection']) {
+		die(SQLError("Error establishing a database connection!", mysqli_connect_error()));
+	}
 	if (!defined('MSD_MYSQL_VERSION')) GetMySQLVersion();
 
 	if (!isset($config['mysql_standard_character_set']) || $config['mysql_standard_character_set'] == '') get_sql_encodings();
@@ -276,7 +286,10 @@ function MSD_mysql_connect($encoding='utf8', $keycheck_off=false, $actual_table=
 
 function GetMySQLVersion()
 {
-	$res=MSD_query("select version()");
+	global $config;
+	if (!isset($config['dbconnection'])) MSD_mysql_connect();
+
+	$res=MSD_query("SELECT VERSION()");
 	$row=mysqli_fetch_array($res);
 	$version=$row[0];
 	if (!defined('MSD_MYSQL_VERSION')) define('MSD_MYSQL_VERSION',$version);
@@ -291,13 +304,30 @@ function GetMySQLVersion()
 function MSD_query($query, $error_output=true)
 {
 	global $config;
+	// print_mem();
 	if (!isset($config['dbconnection'])) MSD_mysql_connect();
-	//echo "<br>Query: ".htmlspecialchars($query);
+	// echo "<br>Query: ".htmlspecialchars($query) . '<br>';
 	$res=mysqli_query($config['dbconnection'], $query);
-	if (false === $res && $error_output) SQLError($query,((is_object($config['dbconnection'])) ? mysqli_error($config['dbconnection']) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
+	// print_mem();
+	if (false === $res && $error_output) SQLError($query,mysqli_error($config['dbconnection']));
 	return $res;
 
 }
+
+
+function print_mem()
+{
+   /* Currently used memory */
+   $mem_usage = memory_get_usage();
+
+   /* Peak memory usage */
+   $mem_peak = memory_get_peak_usage();
+
+   echo 'The script is now using: <strong>' . round($mem_usage / 1024) . ' KB</strong> of memory.<br>';
+   echo 'Peak usage: <strong>' . round($mem_peak / 1024) . ' KB</strong> of memory.<br><br>';
+}
+
+
 
 function SQLError($sql, $error, $return_output=false)
 {
@@ -383,7 +413,7 @@ function getDBInfos()
 	for ($ii=0; $ii < count($databases['multi']); $ii++)
 	{
 		$dump['dbindex']=$flipped[$databases['multi'][$ii]];
-		$tabellen=mysqli_query($config['dbconnection'], 'SHOW TABLE STATUS FROM `' . $databases['Name'][$dump['dbindex']] . '`') or die('getDBInfos: ' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
+		$tabellen=mysqli_query($config['dbconnection'], 'SHOW TABLE STATUS FROM `' . $databases['Name'][$dump['dbindex']] . '`') or die('getDBInfos: ' . mysqli_error($config['dbconnection']));
 		$num_tables=mysqli_num_rows($tabellen);
 		// Array mit den gewünschten Tabellen zusammenstellen... wenn Präfix angegeben, werden die anderen einfach nicht übernommen
 		if ($num_tables > 0)
@@ -401,13 +431,13 @@ function getDBInfos()
 				{
 					$dump['skip_data'][]=$databases['Name'][$dump['dbindex']] . '|' . $row['Name'];
 				}
-                    if ($config['optimize_tables_beforedump'] == 1 && $dump['table_offset'] == -1
+                    if ((isset($config['optimize_tables_beforedump']) && ($config['optimize_tables_beforedump'] == 1)) && $dump['table_offset'] == -1
                         && $databases['Name'][$dump['dbindex']]!='information_schema') {
-                        mysqli_select_db($GLOBALS["___mysqli_ston"], $databases['Name'][$dump['dbindex']]);
+                        mysqli_select_db($config['dbconnection'], $databases['Name'][$dump['dbindex']]);
                         $opt = 'OPTIMIZE TABLE `' . $row['Name'] . '`';
-                        $res = mysqli_query($GLOBALS["___mysqli_ston"], 'OPTIMIZE TABLE `' . $row['Name'] . '`');
+                        $res = mysqli_query($config['dbconnection'], 'OPTIMIZE TABLE `' . $row['Name'] . '`');
                         if ($res === false) {
-                            die("Error in ".$opt." -> ".((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
+                            die("Error in ".$opt." -> ".mysqli_error($config['dbconnection']));
                         }
                     }
 
@@ -436,10 +466,10 @@ function getDBInfos()
 
 					// Get nr of records -> need to do it this way because of incorrect returns when using InnoDBs
 					$sql_2="SELECT count(*) as `count_records` FROM `" . $databases['Name'][$dump['dbindex']] . "`.`" . $row['Name'] . "`";
-					$res2=@mysqli_query($GLOBALS["___mysqli_ston"], $sql_2);
+					$res2=@mysqli_query($config['dbconnection'], $sql_2);
 					if ($res2 === false)
 					{
-						$read_error='(' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) . ') ' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false));
+						$read_error = mysqli_error($config['dbconnection']);
 						SQLError($read_error,$sql_2);
 						WriteLog($read_error);
 						if ($config['stop_with_error'] > 0)
@@ -485,4 +515,4 @@ function getDBIndex($db, $table)
 	$index=array_keys($dump['tables'],$db . '|' . $table);
 	return $index[0];
 }
-?>
+

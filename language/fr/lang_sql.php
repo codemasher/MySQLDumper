@@ -162,6 +162,7 @@ $lang['L_SEARCH_OPTIONS_OR']="une colonne doit contenir au moins un critère de 
 $lang['L_SEARCH_OPTIONS_CONCAT']="une ligne doit contenir tous les critères de recherche, mais ceux-ci peuvent toutefois être indiqués dans n'importe quelle colonne (Peut prendre du temps de calcul !)";
 $lang['L_SEARCH_OPTIONS_AND']="une colonne doit contenir tous les critères de recherche (ET-Recherche)";
 $lang['L_SEARCH_IN_TABLE']="Rechercher dans la table";
+$lang['L_ERROR_NO_FIELDS']="Search error: it could not be determined which fields the table \"%s\" has!";
 $lang['L_SQL_EDIT_TABLESTRUCTURE']="Modifier la structure des tables";
 $lang['L_DEFAULT_CHARSET']="Jeux de caractères par défaut";
 $lang['L_TITLE_KEY_PRIMARY']="Clé primaire";
@@ -190,5 +191,3 @@ $lang['L_KEY_DELETEERROR']="Error deleting index";
 $lang['L_KEY_ADDED']="Index added";
 $lang['L_KEY_ADDERROR']="Error adding index";
 
-
-?>

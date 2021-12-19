@@ -22,6 +22,12 @@ $lang['L_HELP_FTPPORT']="Porta do servidor de FTP, padrão: 21";
 $lang['L_HELP_FTPUSER']="digite o nome do usuário para o FTP";
 $lang['L_HELP_FTPPASS']="digite a senha para o FTP";
 $lang['L_HELP_FTPDIR']="onde está o diretório para upload? Digite o caminho!";
+$lang['L_HELP_SFTPTRANSFER']="se ativado o arquivo será encaminhado via SFTP.";
+$lang['L_HELP_SFTPSERVER']="Endereço do servidor de SFTP";
+$lang['L_HELP_SFTPPORT']="Porta do servidor de SFTP, padrão: 22";
+$lang['L_HELP_SFTPUSER']="digite o nome do usuário para o SFTP";
+$lang['L_HELP_SFTPPASS']="digite a senha para o SFTP";
+$lang['L_HELP_SFTPDIR']="onde está o diretório para upload? Digite o caminho!";
 $lang['L_HELP_SPEED']="Velocidade mínima e máxima. O padrão é: 50 à 5000";
 $lang['L_SPEED']="Controle de velocidade";
 $lang['L_HELP_CRONEXECPATH']="Lugar dos scripts Perl.
@@ -31,6 +37,3 @@ $lang['L_CRON_EXECPATH']="Caminho dos scripts Perl";
 $lang['L_HELP_CRONCOMPLETELOG']="Quando ativo o resultado completo será escrito em um arquivo_logcompleto.
 Isto é independente de imprimir o texto";
 $lang['L_HELP_FTP_MODE']="Quando você observar problemas usando a tranferência em FTP, ative o modo passivo.";
-
-
-?>

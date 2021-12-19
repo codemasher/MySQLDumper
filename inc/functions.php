@@ -8,19 +8,18 @@ if (!function_exists('str_ireplace')) // borrowed from http://www.dscripts.net
 
     function str_ireplace($find, $replace, $string)
     {
-        if (!is_array($find)) {
-            $find = array(
+		if (!is_array($find)) $find=array(
 
                 $find
             );
-        }
-        if (!is_array($replace)) {
-            if (!is_array($find)) {
-                $replace = array(
+		if (!is_array($replace))
+		{
+			if (!is_array($find)) $replace=array(
 
                     $replace
                 );
-            } else {
+			else
+			{
                 // this will duplicate the string into an array the size of $find
                 $c       = count($find);
                 $rString = $replace;
@@ -80,22 +79,19 @@ function DeleteFilesM($dir, $pattern = "*.*")
         ),
         preg_quote($pattern)
     );
-    if (substr($dir, -1) != "/") {
-        $dir .= "/";
-    }
-    if (is_dir($dir)) {
-        $d = opendir($dir);
-        while ($file = readdir($d)) {
-            if (is_file($dir . $file) && preg_match("/^" . $pattern . "$/", $file)) {
-                if (unlink($dir . $file)) {
-                    $deleted[$file] = true;
-                } else {
-                    $deleted[$file] = false;
+	if (substr($dir,-1) != "/") $dir.="/";
+	if (is_dir($dir))
+	{
+		$d=dir($dir);
+		while ($file=$d->read())
+		{
+			if (is_file($dir . $file) && preg_match("/^" . $pattern . "$/",$file))
+			{
+				if (unlink($dir . $file)) $deleted[$file]=true;
+				else $deleted[$file]=false;
                 }
             }
-        }
-        closedir($d);
-
+		$d->close();
         return $deleted;
     }
 }
@@ -173,7 +169,8 @@ function SetDefault($load_default = false)
     $a = 0;
     for ($i = 0; $i < count($found_dbs); $i++) {
         $found_db = $found_dbs[$i];
-        $use      = @mysqli_select_db($GLOBALS["___mysqli_ston"], $found_db);
+		// Testverbindung - Tabelle erstellen, nachschauen, ob es geklappt hat und dann wieder löschen
+        $use      = @mysqli_select_db($config['dbconnection'], $found_db);
         if ($use) {
             if (isset($old_db) && $found_db == $old_db) {
                 $databases['db_selected_index'] = $a;
@@ -239,10 +236,13 @@ function WriteParams($as = 0, $restore_values = false)
     FillMultiDBArrays();
 
     //Parameter zusammensetzen
-    $config['multipart_groesse']
-           = $config['multipartgroesse1'] * (($config['multipartgroesse2'] == 1) ? 1024 : 1024 * 1024);
+	$config['multipartgroesse1'] ??= 1;
+	$config['multipartgroesse2'] ??= 1;
+    $config['multipart_groesse'] = $config['multipartgroesse1'] * (($config['multipartgroesse2'] == 1) ? 1024 : 1024 * 1024);
     $param = $pars_all = '<?php ' . $nl;
-    if (!isset($config['email_maxsize'])) {
+	$config['email_maxsize1'] ??= 1;
+	$config['email_maxsize2'] ??= 1;
+	if (!isset($config['email_maxsize'])) {
         $config['email_maxsize'] = $config['email_maxsize1'] * (($config['email_maxsize2'] == 1) ? 1024 : 1024 * 1024);
     }
     if (!isset($config['cron_execution_path'])) {
@@ -252,6 +252,7 @@ function WriteParams($as = 0, $restore_values = false)
         $config['paths']['root'] = addslashes(basePath());
     }
     $config['files']['parameter'] = $config['paths']['config'] . $config['config_file'] . '.php';
+	$config['theme'] ??= 'msd';
     $config['files']['iconpath']  = './css/' . $config['theme'] . '/icons/';
 
     foreach ($config as $var => $val) {
@@ -259,38 +260,32 @@ function WriteParams($as = 0, $restore_values = false)
             if (is_array($val)) {
                 $pars_all .= '$config[\'' . $var . '\']=array();' . $nl;
                 foreach ($val as $var2 => $val2) {
-                    if ($config['magic_quotes_gpc'] == 1) {
-                        $val2 = stripslashes($val2);
-                    }
                     $pars_all .= '$config[\'' . $var . '\'][' . ((is_int($var2)) ? $var2 : "'" . $var2 . "'") . '] = \''
                         . my_addslashes($val2) . "';$nl";
                 }
-            } else {
-                if ($config['magic_quotes_gpc'] == 1) {
-                    $val = stripslashes($val);
-                }
+            }
+			else
+			{
                 if (!in_array($var, $config_dontsave)) {
-                    $pars_all .= '$config[\'' . $var . '\'] = \'' . my_addslashes($val) . "';$nl";
+					$pars_all .= '$config[\'' . $var . '\'] = \'' . my_addslashes($val) . "';$nl";
                 }
             }
         }
     }
-    foreach ($databases as $var => $val) {
+    foreach ($databases as $var => $val)
+	{
         if (is_array($val)) {
             $pars_all .= '$databases[\'' . $var . '\']=array();' . $nl;
-            foreach ($val as $var2 => $val2) {
-                if ($config['magic_quotes_gpc'] == 1 || $as == 1) {
-                    $pars_all
-                        .= '$databases[\'' . $var . '\'][' . ((is_int($var2)) ? $var2 : "'" . $var2 . "'") . '] = \''
-                        . my_addslashes(stripslashes($val2)) . "';$nl";
+            foreach ($val as $var2 => $val2)
+			{
+                if ($as == 1) {
+                    $pars_all .= '$databases[\'' . $var . '\'][' . ((is_int($var2)) ? $var2 : "'" . $var2 . "'") . '] = \''. my_addslashes(stripslashes($val2)) . "';$nl";
                 } else {
-                    $pars_all
-                        .= '$databases[\'' . $var . '\'][' . ((is_int($var2)) ? $var2 : "'" . $var2 . "'") . '] = \''
-                        . my_addslashes($val2) . "';$nl";
+                    $pars_all .= '$databases[\'' . $var . '\'][' . ((is_int($var2)) ? $var2 : "'" . $var2 . "'") . '] = \''. my_addslashes($val2) . "';$nl";
                 }
             }
         } else {
-            if ($config['magic_quotes_gpc'] == 0 || $as == 1) {
+            if ($as == 1) {
                 $pars_all .= '$databases[\'' . $var . '\'] = \'' . addslashes($val) . "';$nl";
             } else {
                 $pars_all .= '$databases[\'' . $var . '\'] = \'' . $val . "';$nl";
@@ -323,14 +318,14 @@ function WriteParams($as = 0, $restore_values = false)
 
 function escape_specialchars($text)
 {
-    $suchen   = ARRAY(
+	$suchen= array (
 
         '@',
         '$',
         '\\\\',
         '"'
     );
-    $ersetzen = ARRAY(
+	$ersetzen= array (
 
         '\@',
         '\$',
@@ -413,17 +408,11 @@ function WriteCronScript($restore_values = false)
 	// from newDbNames
     foreach ($databases['Name'] as $k=>$v) {
         if (in_array($v, $dontBackupDatabases)) {
-            unset($newDbNames[$k]);
-        }
-    }
-	// and from cron (cron_db_array has different length to newDbNames: at least mysql and information_schema are missing)
-    foreach ($cron_db_array as $k=>$v) {
-        if (in_array($v, $dontBackupDatabases)) {
             unset($cron_db_array[$k],
                 $cron_dbpraefix_array[$k],
                 $cron_command_before_dump[$k],
-                $cron_command_after_dump[$k]
-			);
+                   $cron_command_after_dump[$k],
+                   $newDbNames[$k]);
         }
     }
 
@@ -467,15 +456,45 @@ function WriteCronScript($restore_values = false)
             foreach ($i as $key => $val) {
                 $int_array[$key] = intval($val);
             }
-        } else {
-            $config[$i] = intval($config[$i]);
         }
+		else
+			$config[$i] = isset($config[$i]) ? intval($config[$i]) : 0;
     }
     if ($config['dbport'] == 0) {
         $config['dbport'] = 3306;
     }
 
-    $cronscript = "<?php\n#Vars - written at " . date("Y-m-d") . $nl;
+	$config['cron_sendmail'] ??= '';
+	$config['cron_printout'] ??= '';
+	$config['send_mail'] ??= '';
+	$config['send_mail_dump'] ??= '';
+	$config['email_recipient'] ??= '';
+	$config['email_recipient_cc'] ??= '';
+	$config['email_sender'] ??= '';
+	$config['cron_smtp'] ??= '';
+	$config['ftp_server'] ??= '';
+	$config['ftp_port'] ??= '';
+	$config['ftp_mode'] ??= '';
+	$config['ftp_user'] ??= '';
+	$config['ftp_pass'] ??= '';
+	$config['ftp_dir'] ??= '';
+	$config['ftp_timeout'] ??= '';
+	$config['ftp_useSSL'] ??= '';
+	$config['ftp_transfer'] ??= '';
+	$config['sftp_server'] ??= '';
+	$config['sftp_port'] ??= '';
+	$config['sftp_user'] ??= '';
+	$config['sftp_pass'] ??= '';
+	$config['sftp_dir'] ??= '';
+	$config['sftp_path_to_private_key'] ??= null;
+	$config['sftp_secret_passphrase_for_private_key'] ??= null;
+	$config['sftp_fingerprint'] ??= null;
+	$config['sftp_timeout'] ??= '';
+	$config['sftp_transfer'] ??= '';
+	$config['cron_comment'] ??= '';
+
+
+	$cronscript = "<?php\n#Vars - written at " . date("Y-m-d") . $nl;
     $cronscript .= '$dbhost="' . $config['dbhost'] . '";' . $nl;
     $cronscript .= '$dbname="' . $cron_dbname . '";' . $nl;
     $cronscript .= '$dbuser="' . escape_specialchars($config['dbuser']) . '";' . $nl;
@@ -524,7 +543,7 @@ function WriteCronScript($restore_values = false)
     $cronscript .= '$log_maxsize=' . $config['log_maxsize'] . ';' . $nl;
     $cronscript .= '$complete_log=' . $config['cron_completelog'] . ';' . $nl;
     $cronscript .= '$my_comment="' . escape_specialchars(stripslashes($config['cron_comment'])) . '";' . $nl;
-    $cronscript .= "?>";
+	$cronscript.='';
 
     // Save config
     $ret   = true;
@@ -541,14 +560,17 @@ function WriteCronScript($restore_values = false)
             $ret = false;
         }
         @chmod("$sfile", 0777);
-    } else {
+    }
+	else{
         $ret = false;
     }
 
     // if standard config was deleted -> restore it with the actual values
-    if (!file_exists($config['paths']['config'] . "mysqldumper.conf.php")) {
+    if (!file_exists($config['paths']['config'] . "mysqldumper.conf.php"))
+	{
         $sfile = $config['paths']['config'] . 'mysqldumper.conf.php';
-        if ($fp = fopen($sfile, "wb")) {
+        if ($fp = fopen($sfile, "wb"))
+		{
             if (!fwrite($fp, $cronscript)) {
                 $ret = false;
             }
@@ -556,7 +578,8 @@ function WriteCronScript($restore_values = false)
                 $ret = false;
             }
             @chmod("$sfile", 0777);
-        } else {
+        }
+		else {
             $ret = false;
         }
     }
@@ -671,7 +694,7 @@ function CreateDirsFTP()
 function ftp_mkdirs($config, $dirname)
 {
     $path = '';
-    $dir = explode("/", $dirname);
+	$dir=preg_split("/\//",$dirname);
     for ($i = 0; $i < count($dir) - 1; $i++) {
         $path .= $dir[$i] . "/";
         @ftp_mkdir($config['dbconnection'], $path);
@@ -690,6 +713,18 @@ function IsWritable($dir)
     }
 
     return $writable;
+}
+
+function IsAccessProtected()
+{
+	$rc = false;
+	$url = sprintf('%s://%s%s', $_SERVER['REQUEST_SCHEME'], $_SERVER['HTTP_HOST'], dirname($_SERVER['PHP_SELF']));
+	$headers = @get_headers($url);
+	if (is_array($headers) && count($headers) > 0)
+	{
+		$rc = (preg_match('/\s+(?:401|403)\s+/', $headers[0])) ? 1 : 0;
+	}
+	return $rc;
 }
 
 function SearchDatabases($printout, $db = '')
@@ -792,10 +827,12 @@ function db_escape($string)
     global $config;
     if (function_exists('mysqli_real_escape_string')) {
         $string = mysqli_real_escape_string( $config['dbconnection'], $string);
-    } else {
-        $string = addslashes($string);
     }
-
+	elseif (function_exists('mysqli_escape_string'))
+	{
+		$string=mysqli_escape_string($config['dbconnection'], $string);
+	}
+	else $string=addslashes($string);
     return $string;
 }
 

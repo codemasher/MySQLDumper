@@ -77,4 +77,3 @@ $lang['L_CHOOSE_CHARSET']="MySQLDumper لا يمكن الكشف عن الترم�
 <br>حظا موفقا. ;)";
 $lang['L_DOWNLOAD_FILE']="Download file";
 $lang['L_BACKUP_NOT_POSSIBLE'] = "A backup of the system database `%s` is not possible!";
-?>

@@ -72,4 +72,3 @@ $lang['L_FM_CHOOSE_ENCODING']="Choisissez le type d'encodage de la sauvegarde";
 $lang['L_CHOOSE_CHARSET']="MySQLDumper n'a pas pu détecter automatiquement le type d'encodage de la sauvegarde <br>Vous devez choisir le jeux de caractères qui a été utilisé pour la sauvegarde<br> Si vous découvrez des problèmes avec quelques caractères suite à la restauration, vous pouvez répéter l'opération en choisissant un autre jeux de caractères.<br>Bonne chance ;-)";
 $lang['L_DOWNLOAD_FILE']="Download file";
 $lang['L_BACKUP_NOT_POSSIBLE'] = "A backup of the system database `%s` is not possible!";
-?>

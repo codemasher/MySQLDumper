@@ -1,4 +1,4 @@
-<script language="javascript" type="text/javascript">
+<script>
 function switch_area(textarea)
 {
 	var t=document.getElementById('area_'+textarea);
@@ -26,7 +26,7 @@ function switch_area(textarea)
 				<label for="null_{ROW.FIELD_ID}">NULL</label>
 			<!-- END IS_NULLABLE -->
 		</td>
-		<td>			
+		<td>
 			<!-- BEGIN IS_TEXTINPUT -->
 				<input type="text" style="width:100%" name="{ROW.FIELD_ID}" value="">
 			<!-- END IS_TEXTINPUT -->
@@ -37,7 +37,7 @@ function switch_area(textarea)
 		</td>
 	</tr>
 	<!-- END ROW -->
-	
+
 	<tr class="dbrow1">
 		<td colspan="3">
 			<br>

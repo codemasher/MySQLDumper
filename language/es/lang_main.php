@@ -26,15 +26,22 @@ $lang['L_PROCESSKILL4']=" seg. para eliminar el proceso";
 $lang['L_HTACC_CREATE']="Crear protección de directorio";
 $lang['L_ENCRYPTION_TYPE']="Tipo de encriptación";
 $lang['L_HTACC_CRYPT']="Crypt )Linux y sistemas Unix)";
+$lang['L_HTACC_BCRYPT']="bcrypt - (Apache 2.4+, all systems)";
 $lang['L_HTACC_MD5']="MD5 (Linux y sistemas Unix)";
+$lang['L_HTACC_SHA1']="SHA1 (todos los sistemas)";
 $lang['L_HTACC_NO_ENCRYPTION']="sin encriptación (Windows)";
 $lang['L_HTACCESS8']="Ya existe actualmente una protección del directorio. ¡Si crea una nueva, la antigua será sobreescrita!";
 $lang['L_HTACC_NO_USERNAME']="Debe darle un nombre!";
 $lang['L_PASSWORDS_UNEQUAL']="¡Los passwords no son idénticos o están vacíos! ";
-$lang['L_HTACC_CONFIRM_DELETE']="¿Desea crear ahora la protección del directorio?";
+$lang['L_HTACC_CONFIRM_CREATE']="¿Desea crear ahora la protección del directorio?";
+$lang['L_HTACC_CONFIRM_DELETE']="Are you sure you want to remove directory protection?";
 $lang['L_HTACC_CREATED']="La protección del directorio ha sido creada.";
 $lang['L_HTACC_CONTENT']="Contenido del archivo";
 $lang['L_HTACC_CREATE_ERROR']="Se ha producido un error al crear la protección del directorio!<br>Por favor, coloque en él el siguiente archivo, con el contenido especificado";
+$lang['L_HTACC_CHECK_ERROR']="It could not be checked whether the program is protected!<br>The simulated external access could not be carried out.";
+$lang['L_HTACC_NOT_NEEDED']="The program is protected by higher-level authorizations; local directory protection is not required.";
+$lang['L_HTACC_COMPLETE']="The program is protected, the directory protection is complete.";
+$lang['L_HTACC_INCOMPLETE']="The program is not protected, the directory protection is incomplete!";
 $lang['L_HTACC_PROPOSED']="¡Altamente recomendado";
 $lang['L_HTACC_EDIT']="editar .htaccess";
 $lang['L_HTACCESS18']="crear .htaccess en ";
@@ -64,7 +71,6 @@ $lang['L_CANT_CREATE_DIR']="No se puede crear el directorio '%s'.
 Cree este directorio manualmente utilizando un programa de FTP.";
 $lang['L_TABLE_TYPE']="Tipo";
 $lang['L_CHECK']="comprobar";
-$lang['L_HTACC_SHA1']="SHA1 (todos los sistemas)";
 $lang['L_OS']="Operating system";
 $lang['L_MSD_VERSION']="MySQLDumper-Versión";
 $lang['L_MYSQL_VERSION']="MySQL-Versión";
@@ -73,6 +79,3 @@ $lang['L_MAX_EXECUTION_TIME']="El máximo de ejecución";
 $lang['L_PHP_EXTENSIONS']="Extensiones de PHP";
 $lang['L_MEMORY']="Memoria";
 $lang['L_FILE_MISSING']="no se encuentra el fichero";
-
-
-?>

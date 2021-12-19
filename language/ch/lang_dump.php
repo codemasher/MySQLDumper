@@ -1,5 +1,6 @@
 <?php
 $lang['L_DUMP_HEADLINE']="bi am backup mache..";
+$lang['L_DUMP_INFO']="Please wait! The database tables are optimized before the backup.";
 $lang['L_GZIP_COMPRESSION']="GZip-Kompression";
 $lang['L_SAVING_TABLE']="Spichere Tabälle";
 $lang['L_OF']="vo";
@@ -40,10 +41,9 @@ $lang['L_FTPCONNERROR3']="FTP-Upload isch fählerhaft gsi!";
 $lang['L_FTPCONNECTED1']="Verbunde mit";
 $lang['L_FTPCONNECTED2']="uf";
 $lang['L_FTPCONNECTED3']="gschribe";
+$lang['L_FILESENDSFTP']="verschicke grad File via SFTP... heb bitte e chli Geduld.";
+$lang['L_SFTPCONNERROR']="SFTP-Verbindig nöd hergstellt! Verbindig mit";
 $lang['L_NR_TABLES_SELECTED']="- mit %s gewählte Tabälle";
 $lang['L_NR_TABLES_OPTIMIZED']="<span class=\"small\">%s Tabälle sind optimiert worde.</span>";
 $lang['L_DUMP_ERRORS']="<p class=\"error\">%s Fähler ufträte: <a href=\"log.php?r=3\">aaluege</a></p>";
 $lang['L_FATAL_ERROR_DUMP']="Fatale Fähler: d CREATE-Aawiisig vo de Tabelle '%s' i de Datenbank '%s' hät nöd chöne gläse werde!";
-
-
-?>

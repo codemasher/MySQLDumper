@@ -84,6 +84,3 @@ You must enter your database name manually after the installation is finished.
 Click on \"configuration\" \"Connection Parameter - display\" and enter the database name there.";
 $lang['L_SAFEMODEDESC']="Because PHP is running in safe_mode you need to create the following directories manually using your FTP-Programm:";
 $lang['L_ENTER_DB_INFO']="First click the button \"Connect to MySQL\". Only if no database could be detected you need to provide a database name here.";
-
-
-?>

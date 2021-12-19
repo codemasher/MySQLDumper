@@ -1,16 +1,22 @@
 <?php
-$msd_path = basePath();
-if (!defined('MSD_PATH')) {
-    define('MSD_PATH', $msd_path);
-}
-if (file_exists(MSD_PATH . 'inc/runtime.php')) {
-    include(MSD_PATH . 'inc/runtime.php');
-} else {
+#ini_set('display_errors', 0);
+
+$mod_path=realpath(dirname(__FILE__) . '/../') . '/';
+if (!defined('MSD_PATH')) define('MSD_PATH',$mod_path);
+if (file_exists(MSD_PATH.'inc/runtime.php')) include (MSD_PATH.'inc/runtime.php');
+else
     die('Couldn\'t read runtime.php!');
-}
-if (!defined('MSD_VERSION')) {
-    die('No direct access.');
-}
+
+if (!defined('MSD_VERSION')) die('No direct access.');
+
+
+use League\Flysystem\Filesystem;
+use League\Flysystem\PhpseclibV2\SftpConnectionProvider;
+use League\Flysystem\PhpseclibV2\SftpAdapter;
+use League\Flysystem\UnixVisibility\PortableVisibilityConverter;
+
+require_once './vendor/autoload.php';
+
 
 // places all Page Parameters in hidden-fields (needed fpr backup and restore in PHP)
 function get_page_parameter($parameter, $ziel = 'dump')
@@ -22,7 +28,8 @@ function get_page_parameter($parameter, $ziel = 'dump')
                 $page_parameter .= '<input type="hidden" name="' . $key . '[' . $key2 . ']' . '" value="' . $val2 . '">'
                     . "\n";
             }
-        } else {
+        }
+		else {
             $page_parameter .= '<input type="hidden" name="' . $key . '" value="' . $val . '">' . "\n";
         }
     }
@@ -45,7 +52,7 @@ function mu_sort($array, $key_sort)
     for ($i = 0; $i < count($keys); $i++) {
         if (!in_array($keys[$i], $key_sorta)) {
             $nkeys[$n] = $keys[$i];
-            $n += "1";
+            $n += 1;
         }
     }
     for ($u = 0; $u < count($array); $u++) {
@@ -116,10 +123,10 @@ function DBDetailInfo($index)
     $databases['Detailinfo']['tables'] = $databases['Detailinfo']['records'] = $databases['Detailinfo']['size'] = 0;
     MSD_mysql_connect();
     if (isset($databases['Name'][$index])) {
-        mysqli_select_db($GLOBALS["___mysqli_ston"], $databases['Name'][$index]);
+        mysqli_select_db($config['dbconnection'], $databases['Name'][$index]);
         $databases['Detailinfo']['Name'] = $databases['Name'][$index];
         $res                             = @mysqli_query(
-            $GLOBALS["___mysqli_ston"],
+	        $config['dbconnection'],
             'SHOW TABLE STATUS FROM `' . $databases['Name'][$index] . '`'
         );
         if ($res) {
@@ -163,7 +170,7 @@ function MD_FreeDiskSpace()
 
 function WriteDynamicText($txt, $object)
 {
-    return '<script language="JavaScript">WP("' . addslashes($txt) . ',' . $object . '");</script>';
+    return '<script>WP("' . addslashes($txt) . ',' . $object . '");</script>';
 }
 
 function byte_output($bytes, $precision = 2, $names = Array())
@@ -266,8 +273,9 @@ function WriteLog($aktion)
     global $config, $lang;
     $log = date('d.m.Y H:i:s') . ' ' . htmlspecialchars($aktion) . "\n";
 
-    $logfile = ($config['logcompression'] == 1) ? $config['files']['log'] . '.gz' : $config['files']['log'];
-    if (@filesize($logfile) + strlen($log) > $config['log_maxsize']) {
+    $logfile = (isset($config['logcompression']) && $config['logcompression'] == 1) ? $config['files']['log'] . '.gz' : $config['files']['log'];
+	$config['log_maxsize'] ??= 0;
+	if (@filesize($logfile) + strlen($log) > $config['log_maxsize']) {
         @unlink($logfile);
     }
 
@@ -451,13 +459,10 @@ function EmptyDB($dbn)
 {
     global $config;
     $t_sql = array();
-    @mysqli_query($GLOBALS["___mysqli_ston"], 'SET FOREIGN_KEY_CHECKS=0');
-    $res = mysqli_query($config['dbconnection'], 'SHOW TABLE STATUS FROM `' . $dbn . '`') or die('EmptyDB: '
-        . ((is_object($GLOBALS["___mysqli_ston"]))
-            ? mysqli_error($GLOBALS["___mysqli_ston"])
-            : (($___mysqli_res
-                = mysqli_connect_error()) ? $___mysqli_res : false)));
-    WHILE ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
+    @mysqli_query($config['dbconnection'], 'SET FOREIGN_KEY_CHECKS=0');
+	$res=mysqli_query($config['dbconnection'], 'SHOW TABLE STATUS FROM `'.$dbn.'`') or die('EmptyDB: '.mysqli_error($config['dbconnection']));
+	while ($row=mysqli_fetch_array($res,MYSQLI_ASSOC))
+	{
         if (substr(strtoupper($row['Comment']), 0, 4) == 'VIEW') {
             $t_sql[] = 'DROP VIEW `' . $dbn . '`.`' . $row['Name'] . '`';
         } else {
@@ -466,20 +471,17 @@ function EmptyDB($dbn)
     }
     if (sizeof($t_sql) > 0) {
         for ($i = 0; $i < count($t_sql); $i++) {
-            $res = mysqli_query($GLOBALS["___mysqli_ston"], $t_sql[$i]) or die('EmptyDB-Error: ' . ((is_object(
-                    $GLOBALS["___mysqli_ston"]
-                )) ? mysqli_error($GLOBALS["___mysqli_ston"])
-                    : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
+			$res=mysqli_query($config['dbconnection'], $t_sql[$i]) or die('EmptyDB-Error: '.mysqli_error($config['dbconnection']));
         }
     }
-    @mysqli_query($GLOBALS["___mysqli_ston"], 'SET FOREIGN_KEY_CHECKS=1');
+	@mysqli_query($config['dbconnection'], 'SET FOREIGN_KEY_CHECKS=1');
 }
 
 function AutoDelete()
 {
     global $del_files, $config, $lang, $out;
     $out = '';
-    if ($config['max_backup_files'] > 0) {
+    if (isset($config['max_backup_files']) && ($config['max_backup_files']>0)) {
         //Files einlesen
         $dh        = opendir($config['paths']['backup']);
         $dbbackups = array();
@@ -746,6 +748,174 @@ function TesteFTP($i)
     return $s;
 }
 
+function TesteSFTP($i)
+{
+	global $lang,$config;
+
+	if ($config['sftp_timeout'][$i]==''||$config['sftp_timeout'][$i]==0) $config['sftp_timeout'][$i]=30;
+	if ($config['sftp_port'][$i]==''||$config['sftp_port'][$i]==0) $config['sftp_port'][$i]=22;
+	if ($config['sftp_path_to_private_key'][$i]==''||$config['sftp_path_to_private_key'][$i]==0) $config['sftp_path_to_private_key'][$i]=null;
+	if ($config['sftp_secret_passphrase_for_private_key'][$i]==''||$config['sftp_secret_passphrase_for_private_key'][$i]==0) $config['sftp_secret_passphrase_for_private_key'][$i]=null;
+	if ($config['sftp_fingerprint'][$i]==''||$config['sftp_fingerprint'][$i]==0) $config['sftp_fingerprint'][$i]=null;
+
+	$s='';
+	$pass=-1;
+
+	if (!extension_loaded("ftp"))
+	{
+		$s='<br><span class="error">'.$lang['L_NOSFTPPOSSIBLE'].'</span>';
+	}
+	else
+		$pass=0;
+
+	if ($pass==0)
+	{
+		if ($config['sftp_server'][$i]==''||$config['sftp_user'][$i]=='')
+		{
+			$s='<br><span class="error">'.$lang['L_WRONGCONNECTIONPARS'].'</span>';
+		}
+		else
+			$pass=1;
+	}
+
+	if ($pass==1)
+	{
+		$s=$lang['L_CONNECT_TO'].' `'.$config['sftp_server'][$i].'` Port '.$config['sftp_port'][$i];
+
+		// https://flysystem.thephpleague.com/v2/docs/adapter/sftp/
+		$filesystem = new Filesystem(new SftpAdapter(
+			                             new SftpConnectionProvider(
+				                             $config['sftp_server'][$i], // host (required)
+				                             $config['sftp_user'][$i], // username (required)
+				                             $config['sftp_pass'][$i], // password (optional, default: null) set to null if privateKey is used
+				                             $config['sftp_path_to_private_key'][$i], // '/path/to/my/private_key', private key (optional, default: null) can be used instead of password, set to null if password is set
+				                             $config['sftp_secret_passphrase_for_private_key'][$i], // 'my-super-secret-passphrase-for-the-private-key', passphrase (optional, default: null), set to null if privateKey is not used or has no passphrase
+				                             $config['sftp_port'][$i], // port (optional, default: 22)
+				                             false, // use agent (optional, default: false)
+				                             intval($config['sftp_timeout'][$i]), // timeout (optional, default: 10)
+				                             4, // max tries (optional, default: 4)
+				                             $config['sftp_fingerprint'][$i], // 'fingerprint-string', host fingerprint (optional, default: null),
+				                             null // connectivity checker (must be an implementation of 'League\Flysystem\PhpseclibV2\ConnectivityChecker' to check if a connection can be established (optional, omit if you don't need some special handling for setting reliable connections)
+			                             ),
+			                             $config['sftp_dir'][$i], // root path (required)
+			                             PortableVisibilityConverter::fromArray([
+				                                                                    'file' => [
+					                                                                    'public' => 0640,
+					                                                                    'private' => 0604,
+				                                                                    ],
+				                                                                    'dir' => [
+					                                                                    'public' => 0740,
+					                                                                    'private' => 7604,
+				                                                                    ],
+			                                                                    ])
+		                             ));
+
+
+		$path = 'path_' . time() . '.txt';
+
+		try {
+			$filesystem->write($path, 'contents');
+		} catch (Exception $e) {
+			// handle the error
+			echo 'Exception: ',  $e->getMessage(), "\n";
+			$s.='<br><span class="error">'.$lang['L_CONN_NOT_POSSIBLE'].'</span>';
+			$pass=2;
+		}
+
+		// echo $path;
+
+		try {
+			$filesystem->delete($path);
+		} catch (Exception $e) {
+			// handle the error
+			echo 'Exception: ',  $e->getMessage(), "\n";
+			$s.='<br><span class="error">'.$lang['L_CHANGEDIRERROR'].'</span>';
+			$pass=2;
+		}
+
+		if ($pass==1)
+		{
+			$s.=' <span class="success">'.$lang['L_OK'].'</span>';
+			$s.='<br><strong>Login ok</strong><br>'.$lang['L_CHANGEDIR'].' `'.$config['sftp_dir'][$i].'` ';
+			$s.='<br><strong>'.$lang['L_SFTP_OK'].'</strong>';
+		}
+	}
+
+	return $s;
+}
+
+
+function SendViaSFTP($i,$source_file,$conn_msg=1)
+{
+	global $config,$out,$lang;
+	flush();
+	if ($conn_msg==1) $out.='<span class="success">'.$lang['L_FILESENDSFTP']."(".$config['sftp_server'][$i]." - ".$config['sftp_user'][$i].")</span><br>";
+
+	if ($config['sftp_timeout'][$i]==''||$config['sftp_timeout'][$i]==0) $config['sftp_timeout'][$i]=30;
+	if ($config['sftp_port'][$i]==''||$config['sftp_port'][$i]==0) $config['sftp_port'][$i]=22;
+	if ($config['sftp_path_to_private_key'][$i]==''||$config['sftp_path_to_private_key'][$i]==0) $config['sftp_path_to_private_key'][$i]=null;
+	if ($config['sftp_secret_passphrase_for_private_key'][$i]==''||$config['sftp_secret_passphrase_for_private_key'][$i]==0) $config['sftp_secret_passphrase_for_private_key'][$i]=null;
+	if ($config['sftp_fingerprint'][$i]==''||$config['sftp_fingerprint'][$i]==0) $config['sftp_fingerprint'][$i]=null;
+
+	// https://flysystem.thephpleague.com/v2/docs/adapter/sftp/
+	$filesystem = new Filesystem(new SftpAdapter(
+		                             new SftpConnectionProvider(
+			                             $config['sftp_server'][$i], // host (required)
+			                             $config['sftp_user'][$i], // username (required)
+			                             $config['sftp_pass'][$i], // password (optional, default: null) set to null if privateKey is used
+			                             $config['sftp_path_to_private_key'][$i], // '/path/to/my/private_key', private key (optional, default: null) can be used instead of password, set to null if password is set
+			                             $config['sftp_secret_passphrase_for_private_key'][$i], // 'my-super-secret-passphrase-for-the-private-key', passphrase (optional, default: null), set to null if privateKey is not used or has no passphrase
+			                             $config['sftp_port'][$i], // port (optional, default: 22)
+			                             false, // use agent (optional, default: false)
+			                             intval($config['sftp_timeout'][$i]), // timeout (optional, default: 10)
+			                             4, // max tries (optional, default: 4)
+			                             $config['sftp_fingerprint'][$i], // 'fingerprint-string', host fingerprint (optional, default: null),
+			                             null // connectivity checker (must be an implementation of 'League\Flysystem\PhpseclibV2\ConnectivityChecker' to check if a connection can be established (optional, omit if you don't need some special handling for setting reliable connections)
+		                             ),
+		                             $config['sftp_dir'][$i], // root path (required)
+		                             PortableVisibilityConverter::fromArray([
+			                                                                    'file' => [
+				                                                                    'public' => 0640,
+				                                                                    'private' => 0604,
+			                                                                    ],
+			                                                                    'dir' => [
+				                                                                    'public' => 0740,
+				                                                                    'private' => 7604,
+			                                                                    ],
+		                                                                    ])
+	                             ));
+
+	// Upload der Datei
+	$path=$source_file;
+	$source=$config['paths']['backup'].$source_file;
+
+	$pass=1;
+
+	try {
+		$filesystem->write($path, $source);
+	} catch (Exception $e) {
+		// handle the error
+		echo 'Exception: ',  $e->getMessage(), "\n";
+		$s.='<br><span class="error">'.$lang['L_CONN_NOT_POSSIBLE'].'</span>';
+		$pass=3;
+	}
+
+
+	// Upload-Status überprüfen
+	if ($pass==3)
+	{
+		$out.='<span class="error">'.$lang['L_FTPCONNERROR3']."<br>($source -> $path)</span><br>";
+	}
+	else
+	{
+		$out.='<span class="success">'.$lang['L_FILE'].' <a href="'.$config['paths']['backup'].$source_file.'" class="smallblack">'.$source_file.'</a>'.$lang['L_FTPCONNECTED2'].$config['sftp_server'][$i].$lang['L_FTPCONNECTED3'].'</span><br>';
+		WriteLog("'$source_file' sent via sFTP.");
+	}
+
+}
+
+
+
 /**
  * Get current MSD home path
  *
@@ -760,6 +930,19 @@ function basePath()
 
     return $path;
 }
+
+function Realpfad($p)
+{
+	global $config;
+	$dir=dirname(__FILE__);
+	$dir=str_replace('inc','',$dir);
+	$dir=str_replace('\\','/',$dir);
+	$dir=str_replace('//','/',$dir);
+	if (substr($dir,-1)!='/') $dir.='/';
+	return $dir;
+}
+
+
 
 // liest die Dateiliste aller vorhanden Konfigurationsfiles
 function get_config_filelist()
@@ -877,7 +1060,7 @@ function headline($title, $mainframe = 1)
 {
     global $config, $lang;
     $s = '';
-    if ($config['interface_server_caption'] == 1) {
+ 	if ( (isset($config['interface_server_caption'])) && ($config['interface_server_caption']==1) ){
         if ($config['interface_server_caption_position'] == $mainframe) {
             $s .= '<div id="server' . $mainframe . '">' . $lang['L_SERVER'] . ': <a class="server" href="'
                 . getServerProtocol() . $_SERVER['SERVER_NAME'] . '" target="_blank" title="' . $_SERVER['SERVER_NAME']
@@ -918,15 +1101,17 @@ function MSDHeader($kind = 0)
     header('Content-Type: text/html; charset=UTF-8');
 
     //kind 0=main 1=menu
-    $r = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'
-        . "\n<html>\n<head>\n";
-    $r .= '<META HTTP-EQUIV="Pragma" CONTENT="no-cache">' . "\n";
-    $r .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' . "\n";
-
-    $r .= '<title>MySqlDumper</title>' . "\n";
-    $r .= '<link rel="stylesheet" type="text/css" href="css/' . $config['theme'] . '/style.css">' . "\n";
-    $r .= '<script language="JavaScript" src="js/script.js" type="text/javascript"></script>' . "\n";
-    $r .= "</head>\n<body" . (($kind == 1) ? ' class="menu-frame"' : ' class="content"') . '>';
+	$r='<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="robots" content="noindex,nofollow" />
+	<title>MySQLDumper</title>
+	<link rel="stylesheet" type="text/css" href="css/' . $config['theme'] . '/style.css">
+	<script src="./js/script.js"></script>
+</head>
+<body' . (($kind == 1) ? ' class="menu-frame"' : ' class="content"') . '>
+';
 
     return $r;
 }
@@ -1208,7 +1393,7 @@ function get_config_filenames()
             $configs[] = substr($filename, 0, -4);
         }
     }
-
+	asort($configs);
     return $configs;
 }
 
@@ -1251,71 +1436,31 @@ function get_sql_encodings()
     $config['mysql_standard_character_set']  = '';
     $config['mysql_possible_character_sets'] = array();
 
-    if (!defined('MSD_MYSQL_VERSION')) {
-        GetMySQLVersion();
-    }
-    $v                                   = explode('.', MSD_MYSQL_VERSION);
-    $config['mysql_can_change_encoding'] = false;
-    if (($v[0] <= 4 && $v[1] < 1) || $v[0] <= 3) {
-        // MySQL < 4.1
-        $config['mysql_can_change_encoding'] = false;
-        $sqlt                                = 'SHOW VARIABLES LIKE \'character_set%\'';
-        $res = MSD_query($sqlt) or die(SQLError(
-            $sqlt,
-            ((is_object($GLOBALS["___mysqli_ston"]))
-                ? mysqli_error($GLOBALS["___mysqli_ston"])
-                : (($___mysqli_res
-                    = mysqli_connect_error()) ? $___mysqli_res : false))
-        ));
-        if ($res) {
-            WHILE ($row = mysqli_fetch_row($res)) {
-                if ($row[0] == 'character_set') {
-                    $config['mysql_standard_character_set'] = $row[1];
-                    if ($v[0] == 3) {
-                        $config['mysql_possible_character_sets'][0] = $row[1];
-                    }
-                }
-
-                if ($row[0] == 'character_sets' && $v[0] > 3) {
-                    $config['mysql_possible_character_sets'] = explode(' ', $row[1]);
-                    sort($config['mysql_possible_character_sets']);
-                }
-            }
-        }
-    } else {
         // MySQL-Version >= 4.1
         $config['mysql_can_change_encoding'] = true;
         $sqlt                                = 'SHOW CHARACTER SET';
-        $res = MSD_query($sqlt) or die(SQLError(
-            $sqlt,
-            ((is_object($GLOBALS["___mysqli_ston"]))
-                ? mysqli_error($GLOBALS["___mysqli_ston"])
-                : (($___mysqli_res
-                    = mysqli_connect_error()) ? $___mysqli_res : false))
-        ));
+	$res=MSD_query($sqlt) or die(SQLError($sqlt,mysqli_error($config['dbconnection'])));
 
-        if ($res) {
-            WHILE ($row = mysqli_fetch_row($res)) {
+	if ($res)
+	{
+		while ($row=mysqli_fetch_row($res))
+		{
                 $config['mysql_possible_character_sets'][] = $row[0] . ' - ' . $row[1];
             }
             sort($config['mysql_possible_character_sets']);
         }
 
         $sqlt = 'SHOW VARIABLES LIKE \'character_set_connection\'';
-        $res = MSD_query($sqlt) or die(SQLError(
-            $sqlt,
-            ((is_object($GLOBALS["___mysqli_ston"]))
-                ? mysqli_error($GLOBALS["___mysqli_ston"])
-                : (($___mysqli_res
-                    = mysqli_connect_error()) ? $___mysqli_res : false))
-        ));
+	$res=MSD_query($sqlt) or die(SQLError($sqlt,mysqli_error($config['dbconnection'])));
 
-        if ($res) {
-            WHILE ($row = mysqli_fetch_row($res)) {
+	if ($res)
+	{
+		while ($row=mysqli_fetch_row($res))
+		{
                 $config['mysql_standard_character_set'] = $row[1];
             }
         }
-    }
+
 }
 
 /**
@@ -1345,79 +1490,3 @@ function trim_deep($value)
 
     return $value;
 }
-
-/**
- * load external source from given URL and save content locally
- *
- * loads content from an external URL and saves it locally in $path with the name $local_file
- * return false on failure or true on success
- *
- * @param $url
- * @param $file
- * @param local_file
- * @param $path
- *
- * @return boolean
- */
-function fetchFileFromURL($url, $file, $local_path = './data/', $local_file)
-{
-    $data = fetchFileDataFromURL($url . $file);
-    if ($data) {
-        $d   = fopen($local_path . $local_file, "wb");
-        $ret = fwrite($d, $data);
-        fclose($d);
-
-        return $ret;
-    }
-
-    return false;
-}
-
-/**
- * Loads data from an external source via HTTP-socket
- *
- * Loads data from an external source $url given as URL
- * and returns the content as a binary string or an empty string on failure
- *
- * @param $url
- *
- * @return string file data
- */
-function fetchFileDataFromURL($url)
-{
-    $url_parsed = parse_url($url);
-    $in         = '';
-
-    $host = $url_parsed['host'];
-    $port = isset($url_parsed['port']) ? intval($url_parsed['port']) : 80;
-    if ($port == 0) {
-        $port = 80;
-    }
-    $path = $url_parsed['path'];
-    if (isset($url_parsed['query']) && $url_parsed['query'] != '') {
-        $path .= '?' . $url_parsed['query'];
-    }
-
-    $fp = fsockopen($host, $port, $errno, $errstr, 3);
-    if ($fp) {
-        $out = "GET $path HTTP/1.1\r\nHost: $host\r\n";
-        $out .= "Connection: close\r\n\r\n";
-        fwrite($fp, $out);
-        $body = false;
-        while (!feof($fp)) {
-            $s = fgets($fp, 1024);
-            if ($body) {
-                $in .= $s;
-            }
-            if ($s == "\r\n") {
-                $body = true;
-            }
-        }
-
-        fclose($fp);
-    }
-
-    return $in;
-}
-
-?>

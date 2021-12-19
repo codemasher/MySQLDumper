@@ -76,4 +76,3 @@ $lang['L_CHOOSE_CHARSET']="MySQLDumper đã không thể phát hiện ra sự m�
 <br>Chúc may mắn. ;)";
 $lang['L_DOWNLOAD_FILE']="Download file";
 $lang['L_BACKUP_NOT_POSSIBLE'] = "A backup of the system database `%s` is not possible!";
-?>

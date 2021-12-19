@@ -256,7 +256,7 @@ function FileList($multi=0)
 		ksort($db_summary_size);
 
 		$i=0;
-		while (list ($key,$val)=each($db_summary_anzahl))
+		foreach($db_summary_anzahl as $key => $val)
 		{
 			$cl=($i++%2) ? "dbrow":"dbrow1";
 			$keyaus=($key=="~unknown") ? '<em>'.$lang['L_NO_MSD_BACKUPFILE'].'</em>':$key;
@@ -349,7 +349,7 @@ function Converter($filesource,$filedestination,$cp)
 	$n=0;
 	$eof=($cps==1) ? gzeof($f):feof($f);
 	$splitable=false; // can the file be splitted? Try to avoid splitting before a command is completed
-	WHILE (!$eof)
+	while (!$eof)
 	{
 		$eof=($cps==1) ? gzeof($f):feof($f);
 		$zeile=($cps==1) ? gzgets($f,5144000):fgets($f,5144000);
@@ -382,7 +382,7 @@ function Converter($filesource,$filedestination,$cp)
 				case 'create tab':
 					{
 						$mode='create';
-						WHILE (substr(rtrim($zeile),-1)!=';')
+						while (substr(rtrim($zeile),-1)!=';')
 						{
 							$zeile.=fgets($f,8192);
 						}
@@ -488,4 +488,3 @@ function get_pseudo_statusline($part,$filedestination)
 	return $ret;
 }
 
-?>

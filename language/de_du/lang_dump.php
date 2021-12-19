@@ -1,5 +1,6 @@
 <?php
 $lang['L_DUMP_HEADLINE']="erzeuge Backup...";
+$lang['L_DUMP_INFO']="Bitte warten! Die Datenbanktabellen werden vor dem Backup optimiert.";
 $lang['L_GZIP_COMPRESSION']="GZip-Kompression";
 $lang['L_SAVING_TABLE']="Speichere Tabelle ";
 $lang['L_OF']="von";
@@ -47,9 +48,9 @@ $lang['L_FTPCONNERROR3']="FTP-Upload war fehlerhaft! ";
 $lang['L_FTPCONNECTED1']="Verbunden mit ";
 $lang['L_FTPCONNECTED2']=" auf ";
 $lang['L_FTPCONNECTED3']=" geschrieben";
+$lang['L_FILESENDSFTP']="versende File via SFTP... bitte habe etwas Geduld. ";
+$lang['L_SFTPCONNERROR']="SFTP-Verbindung nicht hergestellt! Verbindung mit ";
 $lang['L_NR_TABLES_SELECTED']="- mit %s gewählten Tabellen";
 $lang['L_NR_TABLES_OPTIMIZED']="<span class=\"small\">%s Tabellen wurden optimiert.</span>";
 $lang['L_DUMP_ERRORS']="<p class=\"error\">%s Fehler aufgetreten: <a href=\"log.php?r=3\">anzeigen</a></p>";
 $lang['L_FATAL_ERROR_DUMP']="Schwerwiegender Fehler: die CREATE-Anweisung der Tabelle '%s' in der Datenbank '%s' konnte nicht gelesen werden!";
-
-?>

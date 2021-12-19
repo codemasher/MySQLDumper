@@ -14,11 +14,11 @@ for ($i=0; $i<count($databases['Name']); $i++)
 	}
 	if (isset($_POST['kill'.$i]))
 	{
-		$res=mysqli_query($GLOBALS["___mysqli_ston"], 'DROP DATABASE `'.$databases['Name'][$i].'`') or die(((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
+		$res=mysqli_query($config['dbconnection'], 'DROP DATABASE `'.$databases['Name'][$i].'`') or die(mysqli_error($config['dbconnection']));
 		$dba='<p class="green">'.$lang['L_DB'].' '.$databases['Name'][$i].' '.$lang['L_INFO_DELETED'].'</p>';
 		SetDefault();
 		include ($config['files']['parameter']);
-		echo '<script language="JavaScript">parent.MySQL_Dumper_menu.location.href="menu.php?action=dbrefresh";</script>';
+		echo '<script>parent.MySQL_Dumper_menu.location.href="menu.php?action=dbrefresh";</script>';
 		break;
 	}
 	if (isset($_POST['optimize'.$i]))
@@ -26,13 +26,13 @@ for ($i=0; $i<count($databases['Name']); $i++)
 	    mysqli_select_db($config['dbconnection'], $databases['Name'][$i]);
         $res=mysqli_query($config['dbconnection'], 'SHOW TABLES FROM `'.$databases['Name'][$i].'`');
 		$tabellen='';
-		WHILE ($row=mysqli_fetch_row($res))
+		while ($row=mysqli_fetch_row($res))
 			$tabellen.='`'.$row[0].'`,';
 		$tabellen=substr($tabellen,0,(strlen($tabellen)-1));
 		if ($tabellen>"")
 		{
 			$query="OPTIMIZE TABLE ".$tabellen;
-			$res=mysqli_query($GLOBALS["___mysqli_ston"], $query) or die(((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false))."");
+			$res=mysqli_query($config['dbconnection'], $query) or die(mysqli_error($config['dbconnection'])."");
 		}
 		$_GET['dbid']=$i;
 		$dba='<p class="green">'.$lang['L_DB'].' <b>'.$databases['Name'][$i].'</b> '.$lang['L_INFO_OPTIMIZED'].'.</p>';
@@ -101,8 +101,8 @@ if (isset($_GET['dbid']))
 	$dbid=$_GET['dbid'];
 
 	$numrows=0;
-	$res=@mysqli_query($GLOBALS["___mysqli_ston"], "SHOW TABLE STATUS FROM `".$databases['Name'][$dbid]."`");
-	mysqli_select_db($GLOBALS["___mysqli_ston"], $databases['Name'][$dbid]);
+	$res=@mysqli_query($config['dbconnection'], "SHOW TABLE STATUS FROM `".$databases['Name'][$dbid]."`");
+	mysqli_select_db($config['dbconnection'], $databases['Name'][$dbid]);
 	if ($res) $numrows=mysqli_num_rows($res);
 	$tpl->assign_vars(array(
 		'DB_NAME' => $databases['Name'][$dbid],
@@ -117,13 +117,13 @@ if (isset($_GET['dbid']))
 	if ($numrows>0)
 	{
 		$last_update="2000-01-01 00:00:00";
-		$sum_records=$sum_data_length='';
+		$sum_records=$sum_data_length=0;
 		for ($i=0; $i<$numrows; $i++)
 		{
 			$row=mysqli_fetch_array($res, MYSQLI_ASSOC);
 			// Get nr of records -> need to do it this way because of incorrect returns when using InnoDBs
 			$sql_2="SELECT count(*) as `count_records` FROM `".$databases['Name'][$dbid]."`.`".$row['Name']."`";
-			$res2=@mysqli_query($GLOBALS["___mysqli_ston"], $sql_2);
+			$res2=@mysqli_query($config['dbconnection'], $sql_2);
 			if ($res2===false)
 			{
 				$row['Rows']=0;
@@ -163,13 +163,13 @@ if (isset($_GET['dbid']))
 
 				if ($checkit==$row['Name']||$repair==1)
 				{
-					$tmp_res=mysqli_query($GLOBALS["___mysqli_ston"], "REPAIR TABLE `".$row['Name']."`");
+					$tmp_res=mysqli_query($config['dbconnection'], "REPAIR TABLE `".$row['Name']."`");
 				}
 
 				if (($checkit==$row['Name']||$checkit=='ALL'))
 				{
 					// table needs to be checked
-					$tmp_res=mysqli_query($GLOBALS["___mysqli_ston"], 'CHECK TABLE `'.$row['Name'].'`');
+					$tmp_res=mysqli_query($config['dbconnection'], 'CHECK TABLE `'.$row['Name'].'`');
 					if ($tmp_res)
 					{
 						$tmp_row=mysqli_fetch_row($tmp_res);
@@ -186,10 +186,10 @@ if (isset($_GET['dbid']))
                 if ($enableKeys==$row['Name'] || $enableKeys=="ALL")
                 {
                     $sSql= "ALTER TABLE `".$databases['Name'][$dbid]."`.`".$row['Name']."` ENABLE KEYS";
-                    $tmp_res=mysqli_query($GLOBALS["___mysqli_ston"], $sSql);
+                    $tmp_res=mysqli_query($config['dbconnection'], $sSql);
                 }
-                $res3=mysqli_query($GLOBALS["___mysqli_ston"], 'SHOW INDEX FROM `'.$databases['Name'][$dbid]."`.`".$row['Name']."`");
-                WHILE ($row3 = mysqli_fetch_array($res3,  MYSQLI_ASSOC))
+                $res3=mysqli_query($config['dbconnection'], 'SHOW INDEX FROM `'.$databases['Name'][$dbid]."`.`".$row['Name']."`");
+                while ($row3 = mysqli_fetch_array($res3, MYSQLI_ASSOC))
                 {
                     if ($row3['Comment']=="disabled") {
                         $keys_disabled = true;

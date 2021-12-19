@@ -1,89 +1,28 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
-	<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta charset="utf-8" />
+	<meta name="robots" content="noindex,nofollow" />
 	<title>MySqlDumper</title>
 	<link rel="stylesheet" type="text/css" href="css/{THEME}/style.css">
-	<script language = "javascript" type = "text/javascript" src = "js/prototype/prototype.js"></script>
-	<script language = "javascript" type = "text/javascript" src = "js/scriptaculous/lib/scriptaculous.js?load=effects"></script>
-	<script language = "javascript" type = "text/javascript">
-	/* taken from http://ajaxorized.com/examples/scriptaculous/pastrength/ */
-		var updateStrength = function(pw) {
-			var strength = getStrength(pw);
-			var width = (100/32)*strength;
-			new Effect.Morph('psStrength', {style:'width:'+width+'px', duration:'0.4'}); 
-		}
-			
-		var getStrength = function(passwd) {
-			intScore = 0;
-			if (passwd.match(/[a-z]/)) // [verified] at least one lower case letter
-					{
-					intScore = (intScore+1)
-					} if (passwd.match(/[A-Z]/)) // [verified] at least one upper case letter
-					{
-					intScore = (intScore+5)
-					} // NUMBERS
-						if (passwd.match(/\d+/)) // [verified] at least one number
-						{
-						intScore = (intScore+5)
-						} if (passwd.match(/(\d.*\d.*\d)/)) // [verified] at least three numbers
-						{
-						intScore = (intScore+5)
-						} // SPECIAL CHAR
-						if (passwd.match(/[!,@#$%^&*?_~]/)) // [verified] at least one special character
-						{
-						intScore = (intScore+5)
-						} if (passwd.match(/([!,@#$%^&*?_~].*[!,@#$%^&*?_~])/)) // [verified] at least two special characters
-						{
-						intScore = (intScore+5)
-						} // COMBOS
-						if (passwd.match(/[a-z]/) && passwd.match(/[A-Z]/)) // [verified] both upper and lower case
-						{
-						intScore = (intScore+2)
-						} if (passwd.match(/\d/) && passwd.match(/\D/)) // [verified] both letters and numbers
-						{
-						intScore = (intScore+2)
-						} // [Verified] Upper Letters, Lower Letters, numbers and special characters
-						if (passwd.match(/[a-z]/) && passwd.match(/[A-Z]/) && passwd.match(/\d/) && passwd.match(/[!,@#$%^&*?_~]/))
-						{
-						intScore = (intScore+2)
-						}
-						return intScore;
-			}
-			function checkPasswords()
+	<script>
+		function checkPasswords()
 			{
 				if (document.getElementById('userpass1').value!=document.getElementById('userpass2').value)
 				{
 					alert('{PASSWORDS_UNEQUAL}');
 					return false;
 				}
-				else return confirm('{HTACC_CONFIRM_DELETE}');
-			}	
+				else return confirm('{HTACC_CONFIRM_CREATE}');
+			}
 		</script>
 		<style type="text/css">
 			#myinput {
-				border:1px solid #000000;	
-				float:left;			
+				border:1px solid #000000;
+				float:left;
 			}
-			
-			#psContainer {
-				height:18px;
-				width:100px;
-				border:none;
-				float:left;	
-				margin:0;
-				background-color:#DDDDDD;
-				cursor: default;
-			}
-			
-			#psStrength {
-				background-image:url('js/strength.jpg');
-				height:18px;
-				width:0px;
-				cursor: default;
-			}
-		</style>	
+
+		</style>
 </head>
 <body class="content" onload="if (document.forms[0]) document.forms[0].username.focus();">
 {HEADLINE}
@@ -101,20 +40,13 @@
 <tr>
 	<td>{L_PASSWORD}:</td>
 	<td>
-		<input type="text" name="userpass1" id="userpass1" value="{USERPASS2}" size="50" class="Formtext" 
-		onkeyup="updateStrength(this.value)">
+		<input type="password" name="userpass1" id="userpass1" value="{USERPASS2}" size="50" class="Formtext">
 	</td>
 </tr>
 <tr>
 	<td>{L_PASSWORD_REPEAT}:</td>
 	<td>
-		<input type="text" name="userpass2" id="userpass2" value="{USERPASS2}" size="50" class="Formtext">
-	</td>
-</tr>
-<tr>
-	<td>{L_PASSWORD_STRENGTH}:</td>
-	<td>
-		<div id="psContainer" class="Formtext" style="cursor:default;"><div id = "psStrength"></div></div>
+		<input type="password" name="userpass2" id="userpass2" value="{USERPASS2}" size="50" class="Formtext">
 	</td>
 </tr>
 <tr>
@@ -123,10 +55,10 @@
 	<table>
 		<tr>
 			<td>
-				<input class="radio" type="radio" name="type" id="type0" value="0"{INPUT.TYPE0_CHECKED}>
+					<input class="radio" type="radio" name="type" id="type4" value="4"{INPUT.TYPE4_CHECKED}>
 			</td>
 			<td>
-				<label for="type0">{L_HTACC_CRYPT}</label>
+					<label for="type4">{L_HTACC_BCRYPT}</label>
 			</td>
 		</tr>
 		<tr>
@@ -144,6 +76,14 @@
 			<td>
 				<label for="type3">{L_HTACC_SHA1}</label>
 			</td>
+			</tr>
+			<tr>
+				<td>
+					<input class="radio" type="radio" name="type" id="type0" value="0"{INPUT.TYPE0_CHECKED}>
+				</td>
+				<td>
+					<label for="type0">{L_HTACC_CRYPT}</label>
+				</td>
 		</tr>
 		<tr>
 			<td>
@@ -169,10 +109,10 @@
 
 <!-- BEGIN CREATE_SUCCESS -->
 	<strong>{L_HTACC_CONTENT} .htaccess:</strong><br><br>
-	{CREATE_SUCCESS.HTACCESS}
+	<pre>{CREATE_SUCCESS.HTACCESS}</pre>
 
 	<br><br><strong>{L_HTACC_CONTENT} .htpasswd:</strong><br><br>
-	{CREATE_SUCCESS.HTPASSWD}
+	<pre>{CREATE_SUCCESS.HTPASSWD}</pre>
 	<br><br>
 	<a href="main.php" class="Formbutton">{L_HOME}</a>
 <!-- END CREATE_SUCCESS -->
@@ -185,7 +125,7 @@
 
 	<br><strong>{L_HTACC_CONTENT} .htpasswd:</strong><br><br>
 	<textarea cols="80" rows="2">{CREATE_ERROR.HTPASSWD}</textarea>
-	
+
 	<br><br>
 	<a href="main.php" class="Formbutton">{L_HOME}</a>
 <!-- END CREATE_ERROR -->

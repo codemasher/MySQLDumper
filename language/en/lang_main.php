@@ -25,17 +25,24 @@ $lang['L_PROCESSKILL3']="The script tries since  ";
 $lang['L_PROCESSKILL4']=" sec. to kill the process ";
 $lang['L_HTACC_CREATE']="Create directory protection";
 $lang['L_ENCRYPTION_TYPE']="Kind of encrypting";
-$lang['L_HTACC_CRYPT']="Crypt 8 Chars max (Linux and Unix-Systems)";
-$lang['L_HTACC_MD5']="MD5 (Linux and Unix-Systems)";
-$lang['L_HTACC_NO_ENCRYPTION']="plain text, no cryption (Windows)";
+$lang['L_HTACC_BCRYPT']="bcrypt - (Apache 2.4+, all systems)";
+$lang['L_HTACC_MD5']="MD5(APR) - (all systems)";
+$lang['L_HTACC_SHA1']="SHA1 - (all systems)";
+$lang['L_HTACC_CRYPT']="CRYPT - 8 characters maximum (Linux)";
+$lang['L_HTACC_NO_ENCRYPTION']="PLAIN TEXT - unencrypted (Windows)";
 $lang['L_HTACCESS8']="It already exists an directory protection. If you create a new one, the older one will be overwritten !";
 $lang['L_HTACC_NO_USERNAME']="You have to enter a name!";
 $lang['L_PASSWORDS_UNEQUAL']="The Passwords are not identical or empty !";
-$lang['L_HTACC_CONFIRM_DELETE']="Should the directory protection be written now ?";
+$lang['L_HTACC_CONFIRM_CREATE']="Should the directory protection be written now?";
+$lang['L_HTACC_CONFIRM_DELETE']="Are you sure you want to remove directory protection?";
 $lang['L_HTACC_CREATED']="The directory protection was created.";
 $lang['L_HTACC_CONTENT']="Contents of file";
 $lang['L_HTACC_CREATE_ERROR']="There was an error while creating the directory protection !<br>Please create the 2 files manually with the following content";
-$lang['L_HTACC_PROPOSED']="Urgently recommended";
+$lang['L_HTACC_CHECK_ERROR']="It could not be checked whether the program is protected!<br>The simulated external access could not be carried out.";
+$lang['L_HTACC_NOT_NEEDED']="The program is protected by higher-level authorizations; local directory protection is not required.";
+$lang['L_HTACC_COMPLETE']="The program is protected, the directory protection is complete.";
+$lang['L_HTACC_INCOMPLETE']="The program is not protected, the directory protection is incomplete!";
+$lang['L_HTACC_PROPOSED']="The program is not protected, directory protection is strongly recommended!";
 $lang['L_HTACC_EDIT']="Edit .htaccess";
 $lang['L_HTACCESS18']="Create .htaccess in ";
 $lang['L_HTACCESS19']="Reload ";
@@ -64,7 +71,6 @@ $lang['L_CANT_CREATE_DIR']="Couldn' t create dir '%s'.
 Please create it using your FTP program.";
 $lang['L_TABLE_TYPE']="Type";
 $lang['L_CHECK']="check";
-$lang['L_HTACC_SHA1']="SHA1 (all Systems)";
 $lang['L_OS']="Operating system";
 $lang['L_MSD_VERSION']="MySQLDumper-Version";
 $lang['L_MYSQL_VERSION']="MySQL-Version";
@@ -73,6 +79,3 @@ $lang['L_MAX_EXECUTION_TIME']="Max execution time";
 $lang['L_PHP_EXTENSIONS']="PHP-Extensions";
 $lang['L_MEMORY']="Memory";
 $lang['L_FILE_MISSING']="couldn't find file";
-
-
-?>

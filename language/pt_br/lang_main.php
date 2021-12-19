@@ -26,15 +26,22 @@ $lang['L_PROCESSKILL4']=" sec. abortar o processo ";
 $lang['L_HTACC_CREATE']="Criar proteção do diretório";
 $lang['L_ENCRYPTION_TYPE']="Tipo de encriptação";
 $lang['L_HTACC_CRYPT']="Crypt (Linux e Sistemas Unix)";
+$lang['L_HTACC_BCRYPT']="bcrypt - (Apache 2.4+, all systems)";
 $lang['L_HTACC_MD5']="MD5 (Linux e Sistemas Unix)";
+$lang['L_HTACC_SHA1']="SHA1 - (all systems)";
 $lang['L_HTACC_NO_ENCRYPTION']="texto plano, sem encriptação (Windows)";
 $lang['L_HTACCESS8']="Já existe uma proteção do diretório. Se você criar novas, as antigas serão sobrescritas !";
 $lang['L_HTACC_NO_USERNAME']="Você tem que digitar um nome!";
 $lang['L_PASSWORDS_UNEQUAL']="As senhas não são idênticas ou são nulas !";
-$lang['L_HTACC_CONFIRM_DELETE']="Deve a proteção do diretório ser gravada agora ?";
+$lang['L_HTACC_CONFIRM_CREATE']="Deve a proteção do diretório ser gravada agora ?";
+$lang['L_HTACC_CONFIRM_DELETE']="Are you sure you want to remove directory protection?";
 $lang['L_HTACC_CREATED']="A proteção do diretório foi criada.";
 $lang['L_HTACC_CONTENT']="Conteúdo do arquivo";
 $lang['L_HTACC_CREATE_ERROR']="Houve um erro durante a criação da proteção do diretório !<br>Favor criar os 2 arquivos manualmente com o seguinte conteúdo";
+$lang['L_HTACC_CHECK_ERROR']="It could not be checked whether the program is protected!<br>The simulated external access could not be carried out.";
+$lang['L_HTACC_NOT_NEEDED']="The program is protected by higher-level authorizations; local directory protection is not required.";
+$lang['L_HTACC_COMPLETE']="The program is protected, the directory protection is complete.";
+$lang['L_HTACC_INCOMPLETE']="The program is not protected, the directory protection is incomplete!";
 $lang['L_HTACC_PROPOSED']="Urgentemente recomendado";
 $lang['L_HTACC_EDIT']="Editar o .htaccess";
 $lang['L_HTACCESS18']="Criar o .htaccess em ";
@@ -64,7 +71,6 @@ $lang['L_CANT_CREATE_DIR']="Não foi possível criar o diretório '%s'.
 Por favor utilize seu programa de FTP.";
 $lang['L_TABLE_TYPE']="Type";
 $lang['L_CHECK']="check";
-$lang['L_HTACC_SHA1']="SHA1 (all Systems)";
 $lang['L_OS']="Operating system";
 $lang['L_MSD_VERSION']="MySQLDumper-Version";
 $lang['L_MYSQL_VERSION']="MySQL-Version";
@@ -73,6 +79,3 @@ $lang['L_MAX_EXECUTION_TIME']="Max execution time";
 $lang['L_PHP_EXTENSIONS']="PHP-Extensions";
 $lang['L_MEMORY']="Memory";
 $lang['L_FILE_MISSING']="não pude encontrar o arquivo";
-
-
-?>

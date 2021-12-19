@@ -1,5 +1,6 @@
 <?php
 $lang['L_DUMP_HEADLINE']="créer copie de sauvegarde...";
+$lang['L_DUMP_INFO']="Please wait! The database tables are optimized before the backup.";
 $lang['L_GZIP_COMPRESSION']="La compression GZip";
 $lang['L_SAVING_TABLE']="Sauvegarder les tables ";
 $lang['L_OF']="de";
@@ -47,10 +48,9 @@ $lang['L_FTPCONNERROR3']="Téléchargement vers le serveur FTP est erroné! ";
 $lang['L_FTPCONNECTED1']="Connecté avec ";
 $lang['L_FTPCONNECTED2']=" sur ";
 $lang['L_FTPCONNECTED3']=" a été écrit";
+$lang['L_FILESENDSFTP']="Les fichiers sont envoyés par SFTP... Veuillez patienter. ";
+$lang['L_SFTPCONNERROR']="Aucune connexion SFTP n'a pu être établie! Connecter avec ";
 $lang['L_NR_TABLES_SELECTED']="- avec %s des tables sélectionnées";
 $lang['L_NR_TABLES_OPTIMIZED']="<span class=\"small\">%s tables ont été optimisées.</span>";
 $lang['L_DUMP_ERRORS']="<p class=\"error\">%s erreurs rencontrées: <a href=\"log.php?r=3\">verdere</a></p>";
 $lang['L_FATAL_ERROR_DUMP']="Erreur fatale: Le rapport de création de la table '%s' de la base de données '%s' ne peut pas être lu !";
-
-
-?>

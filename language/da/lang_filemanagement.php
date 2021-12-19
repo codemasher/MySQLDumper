@@ -76,4 +76,3 @@ $lang['L_CHOOSE_CHARSET']="MySQLDumper couldn't detect the encoding of the backu
 <br>Good luck. ;)";
 $lang['L_DOWNLOAD_FILE']="Download file";
 $lang['L_BACKUP_NOT_POSSIBLE'] = "A backup of the system database `%s` is not possible!";
-?>

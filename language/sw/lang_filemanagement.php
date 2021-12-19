@@ -72,4 +72,3 @@ $lang['L_FM_CHOOSE_ENCODING']="Välj backupfilens kodering";
 $lang['L_CHOOSE_CHARSET']="Tyvärr kunde ej fastställas automatiskt med vilken teckensats denna backupfil har skapats.<br>Du måste ange koderingen manuellt.<br>Därefter ställer MySQLDumper in förbindelseparametrarna till MySQL-servern till den valda teckensatsen och startar återställningen.<br>Om datan återges med fel specialtecken efter återställningen så bör du upprepa återställningen med en annan inställning för teckensatsen.<br>Lycka till.";
 $lang['L_DOWNLOAD_FILE']="Ladda hem filen";
 $lang['L_BACKUP_NOT_POSSIBLE'] = "A backup of the system database `%s` is not possible!";
-?>

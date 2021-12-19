@@ -1,5 +1,6 @@
 <?php
 $lang['L_DUMP_HEADLINE']="انشاء نسخة احتياطية ...";
+$lang['L_DUMP_INFO']="Please wait! The database tables are optimized before the backup.";
 $lang['L_GZIP_COMPRESSION']="GZip ضغط ";
 $lang['L_SAVING_TABLE']="حفظ الجدول ";
 $lang['L_OF']="مغلق";
@@ -48,6 +49,8 @@ $lang['L_FTPCONNERROR3']="FTP الارسال فشل! ";
 $lang['L_FTPCONNECTED1']="الربط مع ";
 $lang['L_FTPCONNECTED2']=" مفتوح ";
 $lang['L_FTPCONNECTED3']=" تمت عملية النقل بنجاح";
+$lang['L_FILESENDSFTP']="ارسال الملف عن طريق  via FTP... رجاء كن صبورا. ";
+$lang['L_SFTPCONNERROR']=" لم يتم تأسيسه FTP اتصال مع ! الاتصال مع ";
 $lang['L_NR_TABLES_SELECTED']="- مع %s اختر الجداول";
 $lang['L_NR_TABLES_OPTIMIZED']="<span class=\"small\">%s تم اصلاح وتحسين الجداول.</span>";
 $lang['L_DUMP_ERRORS']="<p class=\"error\">%s حدثت اخطاء: <a href=\"log.php?r=3\">عرض</a></p>
@@ -56,6 +59,3 @@ $lang['L_DUMP_ERRORS']="<p class=\"error\">%s حدثت اخطاء: <a href=\"log
 ";
 $lang['L_FATAL_ERROR_DUMP']="خطأ فادح: انشاء - بيانات من الجدول '%s' في قاعدة البيانات '%s' لا يمكن القراءة!<br>
 قم بفحص المشاكل في هذا الجدول.";
-
-
-?>

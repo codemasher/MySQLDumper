@@ -13,7 +13,7 @@ switch ($sysaction)
 	case 1: //FLUSH PRIVILEGES
 		$msg="&gt; operating FLUSH PRIVILEGES<br>";
 		$res=@mysqli_query($config['dbconnection'], "FLUSH PRIVILEGES");
-		$meldung=((is_object($config['dbconnection'])) ? mysqli_error($config['dbconnection']) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false));
+		$meldung=mysqli_error($config['dbconnection']);
 		if ($meldung!="")
 		{
 			$msg.='&gt; MySQL-Error: '.$meldung;
@@ -26,7 +26,7 @@ switch ($sysaction)
 	case 2: //FLUSH STATUS
 		$msg="&gt; operating FLUSH STATUS<br>";
 		$res=@mysqli_query($config['dbconnection'], "FLUSH STATUS");
-		$meldung=((is_object($config['dbconnection'])) ? mysqli_error($config['dbconnection']) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false));
+		$meldung=mysqli_error($config['dbconnection']);
 		if ($meldung!="")
 		{
 			$msg.='&gt; MySQL-Error: '.$meldung;
@@ -39,7 +39,7 @@ switch ($sysaction)
 	case 3: //FLUSH HOSTS
 		$msg="&gt; operating FLUSH HOSTS<br>";
 		$res=@mysqli_query($config['dbconnection'], "FLUSH HOSTS");
-		$meldung=((is_object($config['dbconnection'])) ? mysqli_error($config['dbconnection']) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false));
+		$meldung=mysqli_error($config['dbconnection']);
 		if ($meldung!="")
 		{
 			$msg.='&gt; MySQL-Error: '.$meldung;
@@ -53,7 +53,7 @@ switch ($sysaction)
 	case 4: //SHOW MASTER LOGS
 		$msg="> operating SHOW MASTER LOGS<br>";
 		$res=@mysqli_query($config['dbconnection'], "SHOW MASTER LOGS");
-		$meldung=((is_object($config['dbconnection'])) ? mysqli_error($config['dbconnection']) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false));
+		$meldung=mysqli_error($config['dbconnection']);
 		if ($meldung!="")
 		{
 			$msg.='&gt; MySQL-Error: '.$meldung;
@@ -79,7 +79,7 @@ switch ($sysaction)
 	case 5: //RESET MASTER
 		$msg="&gt; operating RESET MASTER<br>";
 		$res=@mysqli_query($config['dbconnection'], "RESET MASTER");
-		$meldung=((is_object($config['dbconnection'])) ? mysqli_error($config['dbconnection']) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false));
+		$meldung=mysqli_error($config['dbconnection']);
 		if ($meldung!="")
 		{
 			$msg.='&gt; MySQL-Error: '.$meldung;

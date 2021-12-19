@@ -78,6 +78,3 @@ $lang['L_PASS']="Lösenord";
 $lang['L_NO_DB_FOUND_INFO']="Förbindelsen till databasen kunde upprättas.<br>Dina inloggningsinformationer är giltiga har accepterats av MySQL-servern.<br>Tyvärr kunde MySQLDumper inte hitta några databaser.<br>Automatisk detektering spärras av vissa webbhotell.<br>Du måste ange databasen efter installationen, menypunkt \"Konfigurering\" \"Visa förbindelseparametrar\".<br>Genomför detta steg omedelbart efter installationen.";
 $lang['L_SAFEMODEDESC']="Eftersom PHP utförs med optionen \"safe_mode=on\" på denna server måste följande mappar skapas manuellt med ett FTP-program:";
 $lang['L_ENTER_DB_INFO']="Klicka först på knappen \"förbind med mysql\". Endast om denna förbindelse ej fungerar behöver du mata in data här.";
-
-
-?>

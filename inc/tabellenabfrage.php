@@ -21,19 +21,19 @@ if ($tblr == 'Backup')
 	$button_name='dump_tbl';
 	//Info aus der Datenbank lesen
 	MSD_mysql_connect();
-	$res=mysqli_query($GLOBALS["___mysqli_ston"], 'SHOW TABLE STATUS FROM `' . $databases['db_actual'] . '`');
+	$res=mysqli_query($config['dbconnection'], 'SHOW TABLE STATUS FROM `' . $databases['db_actual'] . '`');
 	$numrows=mysqli_num_rows($res);
 	$tbl_zeile='';
 	for ($i=0; $i < $numrows; $i++)
 	{
 		$row=mysqli_fetch_array($res, MYSQLI_ASSOC);
-		//v($row);	
+		//v($row);
 		// Get nr of records -> need to do it this way because of incorrect returns when using InnoDBs
 		$sql_2="SELECT count(*) as `count_records` FROM `" . $databases['db_actual'] . "`.`" . $row['Name'] . "`";
-		$res2=@mysqli_query($GLOBALS["___mysqli_ston"], $sql_2);
+		$res2=@mysqli_query($config['dbconnection'], $sql_2);
 		if ($res2 === false)
 		{
-			$read_error='(' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_errno($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_errno()) ? $___mysqli_res : false)) . ') ' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false));
+			$read_error = mysqli_error($config['dbconnection']);
 			$row['Rows']='<span class="error">' . $lang['L_ERROR'] . ': ' . $read_error . '</span>';
 		}
 		else
@@ -41,7 +41,7 @@ if ($tblr == 'Backup')
 			$row2=@mysqli_fetch_array($res2);
 			$row['Rows']=$row2['count_records'];
 		}
-		
+
 		$klasse=( $i % 2 ) ? 1 : '';
 		$table_size=$row['Data_length'] + $row['Index_length'];
 		$table_type=$row['Engine'];
@@ -51,14 +51,14 @@ if ($tblr == 'Backup')
 			$table_size='-';
 		}
 		$tpl->assign_block_vars('ROW',array(
-											
-											'CLASS' => 'dbrow' . $klasse, 
-											'ID' => $i, 
-											'NR' => $i + 1, 
-											'TABLENAME' => $row['Name'], 
-											'TABLETYPE' => $table_type, 
-											'RECORDS' => $table_type == 'View' ? '<i>' . $row['Rows'] . '</i>' : '<strong>' . $row['Rows'] . '</strong>', 
-											'SIZE' => is_int($table_size) ? byte_output($table_size) : $table_size, 
+
+											'CLASS' => 'dbrow' . $klasse,
+											'ID' => $i,
+											'NR' => $i + 1,
+											'TABLENAME' => $row['Name'],
+											'TABLETYPE' => $table_type,
+											'RECORDS' => $table_type == 'View' ? '<i>' . $row['Rows'] . '</i>' : '<strong>' . $row['Rows'] . '</strong>',
+											'SIZE' => is_int($table_size) ? byte_output($table_size) : $table_size,
 											'LAST_UPDATE' => $row['Update_time']
 		));
 	}
@@ -66,7 +66,7 @@ if ($tblr == 'Backup')
 else
 {
 	$tpl->set_filenames(array(
-							
+
 							'show' => './tpl/restore_select_tables.tpl'
 	));
 	//Restore - Header aus Backupfile lesen
@@ -86,7 +86,7 @@ else
 	}
 	//Header auslesen
 	$sline=ReadStatusline($statusline);
-	
+
 	$anzahl_tabellen=$sline['tables'];
 	$anzahl_eintraege=$sline['records'];
 	$tbl_zeile='';
@@ -103,10 +103,10 @@ else
 		//Tabellenfinos lesen
 		gzseek($fp,$offset);
 		$eof=false;
-		WHILE (!$eof)
+		while (!$eof)
 		{
 			$line=$gz ? gzgets($fp,40960) : fgets($fp,40960);
-			
+
 			if (substr($line,0,9) == '-- TABLE|')
 			{
 				$d=explode('|',$line);
@@ -124,14 +124,14 @@ else
 		{
 			$klasse=( $i % 2 ) ? 1 : '';
 			$tpl->assign_block_vars('ROW',array(
-												
-												'CLASS' => 'dbrow' . $klasse, 
-												'ID' => $i, 
-												'NR' => $i + 1, 
-												'TABLENAME' => $tabledata[$i]['name'], 
-												'RECORDS' => $tabledata[$i]['records'], 
-												'SIZE' => byte_output($tabledata[$i]['size']), 
-												'LAST_UPDATE' => $tabledata[$i]['update'], 
+
+												'CLASS' => 'dbrow' . $klasse,
+												'ID' => $i,
+												'NR' => $i + 1,
+												'TABLENAME' => $tabledata[$i]['name'],
+												'RECORDS' => $tabledata[$i]['records'],
+												'SIZE' => byte_output($tabledata[$i]['size']),
+												'LAST_UPDATE' => $tabledata[$i]['update'],
 												'TABLETYPE' => $tabledata[$i]['engine']
 			));
 		}
@@ -145,28 +145,27 @@ if (!isset($dk)) $dk='';
 $confirm_restore=$lang['L_FM_ALERTRESTORE1'] . ' `' . $databases['db_actual'] . '`  ' . $lang['L_FM_ALERTRESTORE2'] . ' ' . $filename . ' ' . $lang['L_FM_ALERTRESTORE3'];
 
 $tpl->assign_vars(array(
-						
-						'PAGETITLE' => $tblr . ' -' . $lang['L_TABLESELECTION'], 
-						'L_NAME' => $lang['L_NAME'], 
-						'L_DATABASE' => $lang['L_DB'], 
-						'DATABASE' => $databases['db_actual'], 
-						'L_LAST_UPDATE' => $lang['L_LASTBUFROM'], 
-						'SEL_DUMP_ENCODING' => $sel_dump_encoding, 
-						'FILENAME' => $filename, 
-						'DUMP_COMMENT' => $dk, 
-						'BUTTON_NAME' => $button_name, 
-						'L_START_BACKUP' => $lang['L_STARTDUMP'], 
-						'L_START_RESTORE' => $lang['L_FM_RESTORE'], 
-						'L_ROWS' => $lang['L_INFO_RECORDS'], 
-						'L_SIZE' => $lang['L_INFO_SIZE'], 
-						'L_TABLE_TYPE' => $lang['L_TABLE_TYPE'], 
-						'L_SELECT_ALL' => $lang['L_SELECTALL'], 
-						'L_DESELECT_ALL' => $lang['L_DESELECTALL'], 
-						'L_RESTORE' => $lang['L_RESTORE'], 
-						'L_NO_MSD_BACKUP' => $lang['L_NOT_SUPPORTED'], 
+
+						'PAGETITLE' => $tblr . ' -' . $lang['L_TABLESELECTION'],
+						'L_NAME' => $lang['L_NAME'],
+						'L_DATABASE' => $lang['L_DB'],
+						'DATABASE' => $databases['db_actual'],
+						'L_LAST_UPDATE' => $lang['L_LASTBUFROM'],
+						'SEL_DUMP_ENCODING' => $sel_dump_encoding,
+						'FILENAME' => $filename,
+						'DUMP_COMMENT' => $dk,
+						'BUTTON_NAME' => $button_name,
+						'L_START_BACKUP' => $lang['L_STARTDUMP'],
+						'L_START_RESTORE' => $lang['L_FM_RESTORE'],
+						'L_ROWS' => $lang['L_INFO_RECORDS'],
+						'L_SIZE' => $lang['L_INFO_SIZE'],
+						'L_TABLE_TYPE' => $lang['L_TABLE_TYPE'],
+						'L_SELECT_ALL' => $lang['L_SELECTALL'],
+						'L_DESELECT_ALL' => $lang['L_DESELECTALL'],
+						'L_RESTORE' => $lang['L_RESTORE'],
+						'L_NO_MSD_BACKUP' => $lang['L_NOT_SUPPORTED'],
 						'L_CONFIRM_RESTORE' => $confirm_restore
 ));
 
 $tpl->pparse('show');
 ob_end_flush();
-?>

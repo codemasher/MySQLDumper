@@ -84,6 +84,3 @@ Kurulum tamamlandıktan sonra lütfen Ayar Merkezi sayfasına gidin ve Bağlant�
 Veritabanı ile bağlantı kurulabilmesi için gereken bilgileri oraya girmeniz gerekiyor.";
 $lang['L_SAFEMODEDESC']="Bu sunucudaki PHP ayarlarında \"safe_mode=on\" tespit edilmiştır, bazı klasörleri elden oluşturmanız gerekiyor (mesela FTP Client programı ile)";
 $lang['L_ENTER_DB_INFO']="First click the button \"Connect to MySQL\". Only if no database could be detected you need to provide a database name here.";
-
-
-?>

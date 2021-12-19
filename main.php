@@ -25,8 +25,8 @@ $tpl=new MSDTemplate();
 $tpl->set_filenames(array(
 	'show' => 'tpl/home/headnavi.tpl'));
 $tpl->assign_vars(array(
-	'HEADER' => MSDHeader(), 
-	'HEADLINE' => headline('Home')));
+	'HEADER' => MSDHeader(),
+	'HEADLINE' => headline($lang['L_HOME'])));
 $tpl->pparse('show');
 
 MSD_mysql_connect();

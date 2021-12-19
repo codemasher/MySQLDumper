@@ -25,17 +25,24 @@ $lang['L_PROCESSKILL3']="Es wird seit ";
 $lang['L_PROCESSKILL4']=" Sekunde(n) versucht, Prozess ";
 $lang['L_HTACC_CREATE']="Verzeichnisschutz erstellen";
 $lang['L_ENCRYPTION_TYPE']="Verschlüsselungsart";
-$lang['L_HTACC_CRYPT']="Crypt maximal 8 Zeichen (Linux und Unix-Systeme)";
-$lang['L_HTACC_MD5']="MD5 (Linux und Unix-Systeme)";
-$lang['L_HTACC_NO_ENCRYPTION']="unverschlüsselt (Windows)";
+$lang['L_HTACC_BCRYPT']="bcrypt - (Apache 2.4+, alle Systeme)";
+$lang['L_HTACC_MD5']="MD5(APR) - (alle Systeme)";
+$lang['L_HTACC_SHA1']="SHA1 - (alle Systeme)";
+$lang['L_HTACC_CRYPT']="CRYPT - maximal 8 Zeichen (Linux)";
+$lang['L_HTACC_NO_ENCRYPTION']="PLAIN TEXT - unverschlüsselt (Windows)";
 $lang['L_HTACCESS8']="Es besteht bereits ein Verzeichnisschutz. Wenn Sie einen neuen erstellen, wird der alte überschrieben!";
 $lang['L_HTACC_NO_USERNAME']="Sie müssen einen Namen eingeben!";
 $lang['L_PASSWORDS_UNEQUAL']="Die Passwörter sind nicht identisch oder leer!";
-$lang['L_HTACC_CONFIRM_DELETE']="Soll der Verzeichnisschutz jetzt erstellt werden?";
+$lang['L_HTACC_CONFIRM_CREATE']="Soll der Verzeichnisschutz jetzt erstellt werden?";
+$lang['L_HTACC_CONFIRM_DELETE']="Soll der Verzeichnisschutz wirklich entfernt werden?";
 $lang['L_HTACC_CREATED']="Der Verzeichnisschutz wurde erstellt.";
 $lang['L_HTACC_CONTENT']="Inhalt der Datei";
 $lang['L_HTACC_CREATE_ERROR']="Es ist ein Fehler bei der Erstellung des Verzeichnisschutzes aufgetreten!<br>Bitte erzeugen Sie die Dateien manuell mit folgendem Inhalt";
-$lang['L_HTACC_PROPOSED']="Dringend empfohlen";
+$lang['L_HTACC_CHECK_ERROR']="Es konnte nicht überprüft werden, ob das Programm geschützt ist!<br>Der simulierte externe Zugriff konnte nicht ausgeführt werden.";
+$lang['L_HTACC_NOT_NEEDED']="Das Programm ist durch übergeordnete Berechtigungen geschützt; ein lokaler Verzeichnisschutz ist nicht erforderlich.";
+$lang['L_HTACC_COMPLETE']="Das Programm ist geschützt, der Verzeichnisschutz ist vollständig.";
+$lang['L_HTACC_INCOMPLETE']="Das Programm ist nicht geschützt, der Verzeichnisschutz ist unvollständig!";
+$lang['L_HTACC_PROPOSED']="Das Programm ist nicht geschützt, ein Verzeichnisschutz wird dringend empfohlen!";
 $lang['L_HTACC_EDIT']=".htaccess editieren";
 $lang['L_HTACCESS18']=".htaccess erstellen in ";
 $lang['L_HTACCESS19']="Neu laden ";
@@ -50,7 +57,7 @@ $lang['L_HTACCESS27']="Redirect";
 $lang['L_HTACCESS28']="Error-Log";
 $lang['L_HTACCESS29']="weitere Beispiele und Dokumentation";
 $lang['L_HTACCESS30']="Provider";
-$lang['L_HTACCESS31']="allgemein";
+$lang['L_HTACCESS31']="Allgemein";
 $lang['L_HTACCESS32']="Achtung! Die .htaccess hat eine direkte Auswirkung auf den Browser.<br>Bei falscher Anwendung sind die Seiten nicht mehr erreichbar.";
 $lang['L_PHPBUG']="Bug in zlib! Keine Kompression möglich!";
 $lang['L_DISABLEDFUNCTIONS']="Abgeschaltete Funktionen";
@@ -60,11 +67,8 @@ $lang['L_WRONG_RIGHTS']="Die Datei oder das Verzeichnis '%s' ist für mich nicht
 Entweder hat sie den falschen Besitzer (Owner) oder die falschen Rechte (Chmod).<br> 
 Bitte setzen Sie die richtigen Attribute mit Ihrem FTP-Programm. <br>
 Die Datei oder das Verzeichnis benötigt die Rechte %s.<br>";
-$lang['L_CANT_CREATE_DIR']="Ich konntes das Verzeichnis '%s' nicht erstellen.
-Bitte erstellen Sie es mit Ihrem FTP-Programm.
-
-
-";
+$lang['L_CANT_CREATE_DIR']="Ich konnte das Verzeichnis '%s' nicht erstellen.
+Bitte erstellen Sie es mit Ihrem FTP-Programm.";
 $lang['L_TABLE_TYPE']="Typ";
 $lang['L_CHECK']="prüfen";
 $lang['L_HTACC_SHA1']="SHA1 (alle Systeme)";
@@ -76,6 +80,3 @@ $lang['L_MAX_EXECUTION_TIME']="Maximale Ausführungszeit";
 $lang['L_PHP_EXTENSIONS']="PHP-Erweiterungen";
 $lang['L_MEMORY']="Speicher";
 $lang['L_FILE_MISSING']="konnte Datei nicht finden";
-
-
-?>

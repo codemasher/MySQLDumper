@@ -1,5 +1,6 @@
 <?php
 $lang['L_DUMP_HEADLINE']="Create backup...";
+$lang['L_DUMP_INFO']="Please wait! The database tables are optimized before the backup.";
 $lang['L_GZIP_COMPRESSION']="GZip Compression";
 $lang['L_SAVING_TABLE']="Saving table ";
 $lang['L_OF']="of";
@@ -48,10 +49,9 @@ $lang['L_FTPCONNERROR3']="FTP Upload failed! ";
 $lang['L_FTPCONNECTED1']="Connected with ";
 $lang['L_FTPCONNECTED2']=" on ";
 $lang['L_FTPCONNECTED3']=" transfer successful";
+$lang['L_FILESENDSFTP']="send file via SFTP... please be patient. ";
+$lang['L_SFTPCONNERROR']="SFTP connection not established! Connection with ";
 $lang['L_NR_TABLES_SELECTED']="- with %s selected tables";
 $lang['L_NR_TABLES_OPTIMIZED']="<span class=\"small\">%s tables have been optimized.</span>";
 $lang['L_DUMP_ERRORS']="<p class=\"error\">%s errors occured: <a href=\"log.php?r=3\">view</a></p>";
 $lang['L_FATAL_ERROR_DUMP']="Fatal error: the CREATE-Statement of table '%s' in database '%s' couldn't be read!";
-
-
-?>

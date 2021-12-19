@@ -35,15 +35,16 @@ if (!$download)
 {
 	echo MSDHeader();
 	ReadSQL();
-	echo '<script language="JavaScript" type="text/javascript">
+	echo '<script>
 		var auswahl = "document.getElementsByName(\"f_export_tables[]\")[0]";
 		var msg1="'.$lang['L_SQL_NOTABLESSELECTED'].'";
 		</script>';
 }
 //Variabeln
-$mysql_help_ref='http://dev.mysql.com/doc/';
-$mysql_errorhelp_ref='http://dev.mysql.com/doc/mysql/en/error-handling.html';
+$mysql_help_ref='https://dev.mysql.com/doc/';
+$mysql_errorhelp_ref='https://dev.mysql.com/doc/mysql/en/error-handling.html';
 $no_order=false;
+$config['interface_table_compact'] = isset($config['interface_table_compact']) ? $config['interface_table_compact'] : 1;
 $tdcompact=(isset($_GET['tdc'])) ? $_GET['tdc'] : $config['interface_table_compact'];
 $db=(!isset($_GET['db'])) ? $databases['db_actual'] : $_GET['db'];
 $dbid=(!isset($_GET['dbid'])) ? $databases['db_selected_index'] : $_GET['dbid'];
@@ -77,7 +78,7 @@ if (isset($_POST['execsql']))
 	{
 		$sql['sql_statement']=$_POST['tablecombo'];
 		$tablename=ExtractTablenameFromSQL($sql['sql_statement']);
-	
+
 	}
 	if (isset($_POST['sqltextarea'])&&$_POST['sqltextarea']>'') $tablename=ExtractTablenameFromSQL($_POST['sqltextarea']);
 	if ($tablename=='') $tablename=ExtractTablenameFromSQL($sql['sql_statement']);
@@ -105,11 +106,11 @@ if ($sql_to_display_data==1)
 {
 	//nur ein SQL-Statement
 	$limitende=($limitstart+$config['sql_limit']);
-	
+
 	//Darf editiert werden?
 	$no_edit=(strtoupper(substr($sql['sql_statement'],0,6))!="SELECT"||$showtables==1||preg_match('@^((-- |#)[^\n]*\n|/\*.*?\*/)*(UNION|JOIN)@im',$sql['sql_statement']));
 	if ($no_edit) $no_order=true;
-	
+
 	//Darf sortiert werden?
 	$op=strpos(strtoupper($sql['sql_statement'])," ORDER ");
 	if ($op>0)
@@ -198,12 +199,12 @@ if ($search==0&&!$download)
 	echo $aus;
 	$aus='';
 	include ('./inc/sqlbrowser/sqlbox.php');
-	
+
 	if ($mode>''&&$context==0)
 	{
 		if (isset($recordkey)&&$recordkey>'') $rk=urldecode($recordkey);
 		if (isset($_GET['tablename'])) $tablename=$_GET['tablename'];
-		
+
 		if ($mode=='kill'||$mode=='kill_view')
 		{
 			if ($showtables==0)
@@ -223,7 +224,7 @@ if ($search==0&&!$download)
 		}
 		if ($mode=="empty")
 		{
-			
+
 			if ($showtables!=0)
 			{
 				$sqlk="TRUNCATE `$rk`";
@@ -242,8 +243,8 @@ if ($search==0&&!$download)
 				$aus.='<p class="success">'.sprintf($lang['L_SQL_TABLEEMPTIEDKEYS'],$rk).'</p>';
 			}
 		}
-		
-		$javascript_switch='<script language="javascript" type="text/javascript">
+
+		$javascript_switch='<script>
 function switch_area(textarea)
 {
 	var t=document.getElementById(\'area_\'+textarea);
@@ -252,7 +253,7 @@ function switch_area(textarea)
 	else { t.className="";t.disabled=false;  }
 }
 </script>';
-		
+
 		if ($mode=='edit'||$mode=='searchedit') include ('./inc/sqlbrowser/sql_record_update_inputmask.php');
 		if ($mode=='new') include ('./inc/sqlbrowser/sql_record_insert_inputmask.php');
 	}
@@ -266,7 +267,7 @@ if ($search==1) include ('./inc/sqlbrowser/mysql_search.php');
 if (!$download)
 {
 	?>
-<script language="JavaScript" type="text/javascript">
+<script>
 function BrowseInput(el)
 {
 	var txt=document.getElementsByName('imexta')[0].value;
@@ -277,7 +278,7 @@ function BrowseInput(el)
 }
 </script>
 <?php
-	
+
 	echo '<br><br><br>';
 	echo MSDFooter();
 	ob_end_flush();
@@ -286,7 +287,7 @@ function BrowseInput(el)
 function FormHiddenParams()
 {
 	global $db,$dbid,$tablename,$context,$limitstart,$order,$orderdir;
-	
+
 	$s='<input type="hidden" name="db" value="'.$db.'">';
 	$s.='<input type="hidden" name="dbid" value="'.$dbid.'">';
 	$s.='<input type="hidden" name="tablename" value="'.$tablename.'">';

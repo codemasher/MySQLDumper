@@ -21,6 +21,12 @@ $lang['L_HELP_FTPPORT']="Port of the FTP-Server, standard: 21";
 $lang['L_HELP_FTPUSER']="enter username for FTP";
 $lang['L_HELP_FTPPASS']="enter password for FTP";
 $lang['L_HELP_FTPDIR']="where is the upload-dir? enter path!";
+$lang['L_HELP_SFTPTRANSFER']="if activated, file will be sent via SFTP.";
+$lang['L_HELP_SFTPSERVER']="Address of the SFTP-Server";
+$lang['L_HELP_SFTPPORT']="Port of the SFTP-Server, standard: 22";
+$lang['L_HELP_SFTPUSER']="enter username for SFTP";
+$lang['L_HELP_SFTPPASS']="enter password for SFTP";
+$lang['L_HELP_SFTPDIR']="where is the upload-dir? enter path!";
 $lang['L_HELP_SPEED']="Minimum and maximum speed, default is 50 to 5000";
 $lang['L_SPEED']="Speed control";
 $lang['L_HELP_CRONEXECPATH']="The place of the Perl scripts.\nStarting Point is the HTTP-Address (like Addresses in the Browser)\nAllowed are absolute or relative entries.";
@@ -28,6 +34,3 @@ $lang['L_CRON_EXECPATH']="Path of Perl scripts";
 $lang['L_HELP_CRONCOMPLETELOG']="When activated the complete output is written in the complete_log-file.
 This is independent from text printing";
 $lang['L_HELP_FTP_MODE']="When problems occur while transfering via FTP, try to use the passive mode. ";
-
-
-?>

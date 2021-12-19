@@ -14,8 +14,6 @@ if (isset($_GET['filename']))
 		{
 			foreach ($val as $key2=>$val2)
 			{
-				if ($config['magic_quotes_gpc']) $restore[stripslashes($key)][stripslashes($key2)]=stripslashes($val2);
-				else
 					$restore[$key][$key2]=$val2;
 			}
 		}
@@ -78,7 +76,7 @@ $pageheader=MSDheader().headline($lang['L_RESTORE']);
 $aus1=$page_parameter='';
 $RestoreFertig=$eingetragen=$dauer=$filegroesse=0;
 MSD_mysql_connect($restore['dump_encoding'],true,$restore['actual_table']);
-@mysqli_select_db($GLOBALS["___mysqli_ston"], $databases['db_actual']) or die($lang['L_DB_SELECT_ERROR'].$databases['db_actual'].$lang['L_DB_SELECT_ERROR2']);
+@mysqli_select_db($config['dbconnection'], $databases['db_actual']) or die($lang['L_DB_SELECT_ERROR'].$databases['db_actual'].$lang['L_DB_SELECT_ERROR2']);
 
 // open backup file
 $restore['filehandle']=($restore['compressed']==1) ? gzopen($config['paths']['backup'].$restore['filename'],'r') : fopen($config['paths']['backup'].$restore['filename'],'r');
@@ -91,26 +89,26 @@ if ($restore['filehandle'])
 		$restore['part']=0;
 		$statusline=($restore['compressed']==1) ? gzgets($restore['filehandle']) : fgets($restore['filehandle']);
 		$sline=ReadStatusline($statusline,true);
-		
+
 		$restore['anzahl_tabellen']=$sline['tables'];
 		$restore['anzahl_eintraege']=$sline['records'];
 		if ($sline['part']!='MP_0') $restore['part']=1; //substr($sline['part'],3);
 		if ($config['empty_db_before_restore']==1) EmptyDB($databases['db_actual']);
 		$restore['tablelock']=0;
 		$restore['erweiterte_inserts']=0;
-		
+
 		if ($sline['tables']=='-1') ($restore['compressed']) ? gzseek($restore['filehandle'],0) : fseek($restore['filehandle'],0);
 		if ($restore['part']>0) WriteLog('Start Multipart-Restore \''.$restore['filename'].'\'');
 		else
 			WriteLog('Start Restore \''.$restore['filename'].'\'');
-	
+
 	}
 	else
 	{
 		if ($restore['compressed']==0) $filegroesse=filesize($config['paths']['backup'].$restore['filename']);
 		// Dateizeiger an die richtige Stelle setzen
 		($restore['compressed']) ? gzseek($restore['filehandle'],$restore['offset']) : fseek($restore['filehandle'],$restore['offset']);
-		
+
 		// Jetzt basteln wir uns mal unsere Befehle zusammen...
 		$a=0;
 		$dauer=0;
@@ -119,17 +117,21 @@ if ($restore['filehandle'])
 		if (is_array($restore['tables_to_restore'])&&sizeof($restore['tables_to_restore'])>0&&in_array($restore['actual_table'],$restore['tables_to_restore']))
 		{
 			@mysqli_query($config['dbconnection'], '/*!40000 ALTER TABLE `'.$restore['actual_table'].'` DISABLE KEYS */;');
+
+		} elseif (!is_array($restore['tables_to_restore']) &&
+			(is_array($restore['tables_to_restore']) && sizeof($restore['tables_to_restore']) == 0) &&
+			($restore['actual_table']>'' && $restore['actual_table']!='unbekannt')) {
+				@mysqli_query($config['dbconnection'], '/*!40000 ALTER TABLE `'.$restore['actual_table'].'` DISABLE KEYS */;');
 		}
-		elseif ((!is_array($restore['tables_to_restore'])||sizeof($restore['tables_to_restore'])==0)&&($restore['actual_table']>''&&$restore['actual_table']!='unbekannt')) @mysqli_query($config['dbconnection'], '/*!40000 ALTER TABLE `'.$restore['actual_table'].'` DISABLE KEYS */;');
-		
-		WHILE (($a<$restore['anzahl_zeilen'])&&(!$restore['fileEOF'])&&($dauer<$restore['max_zeit'])&&!$restore['EOB'])
+
+		while (($a<$restore['anzahl_zeilen'])&&(!$restore['fileEOF'])&&($dauer<$restore['max_zeit'])&&!$restore['EOB'])
 		{
 			$sql_command=get_sqlbefehl();
 			if ($sql_command>'')
 			{
 				//WriteLog(htmlspecialchars($sql_command));
 				$res=mysqli_query($config['dbconnection'], $sql_command);
-				if (!$res===false)
+				if ($res!==false)
 				{
 					$anzsql=mysqli_affected_rows($config['dbconnection']);
 					// Anzahl der eingetragenen Datensaetze ermitteln (Indexaktionen nicht zaehlen)
@@ -143,7 +145,7 @@ if ($restore['filehandle'])
 				else
 				{
 					// Bei MySQL-Fehlern sofort abbrechen und Info ausgeben
-					$meldung=@((is_object($config['dbconnection'])) ? mysqli_error($config['dbconnection']) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false));
+					$meldung=@mysqli_error($config['dbconnection']);
 					if ($meldung!='')
 					{
 						if (strtolower(substr($meldung,0,15))=='duplicate entry')
@@ -173,7 +175,7 @@ if ($restore['filehandle'])
 		}
 		$eingetragen=$a-1;
 	}
-	
+
 	$restore['offset']=($restore['compressed']) ? gztell($restore['filehandle']) : ftell($restore['filehandle']);
 	$restore['compressed'] ? gzclose($restore['filehandle']) : fclose($restore['filehandle']);
 	$restore['aufruf']++;
@@ -185,7 +187,7 @@ if ($restore['filehandle'])
 			$prozent=0;
 	}
 	if ($prozent>100) $prozent=100;
-	
+
 	if ($aus1!='') $aus[]='<br>'.$aus1.'<br><br>';
 	$aus[]=sprintf($lang['L_RESTORE_DB'],$databases['db_actual'],$config['dbhost']).'<br>'.$lang['L_FILE'].': <b>'.$restore['filename'].'</b><br>'.$lang['L_CHARSET'].': <strong>'.$restore['dump_encoding'].'</strong><br>';
 	if ($restore['part']>0) $aus[]='<br>Multipart File <strong>'.$restore['part'].'</strong><br>';
@@ -200,7 +202,7 @@ if ($restore['filehandle'])
 	else
 		$aus[]=sprintf($lang['L_RESTORE_RUN0'],$done);
 	$aus[]=sprintf($lang['L_RESTORE_RUN2'],$restore['actual_table']).$lang['L_PROGRESS_OVER_ALL'].'<br>';
-	
+
 	//Fortschrittsbalken
 	$prozentbalken=(round($prozent,0)*3);
 	if ($restore['anzahl_eintraege']>0&&$restore['tables_to_restore']===false)
@@ -211,15 +213,15 @@ if ($restore['filehandle'])
 	}
 	else
 		$aus[]=' <b>'.$lang['L_UNKNOWN_NUMBER_OF_RECORDS'].'</b><br><br>';
-		
+
 	//Speed-Anzeige
 	$fw=($config['maxspeed']==$config['minspeed']) ? 300 : round(($restore['anzahl_zeilen']-$config['minspeed'])/($config['maxspeed']-$config['minspeed'])*300,0);
 	$aus[]='<br><table border="0" cellpadding="0" cellspacing="0"><tr>'.'<td width="60" valign="top" align="center" style="color:#990000; font-size:10px;" >'.'<strong>Speed</strong><br>'.$restore['anzahl_zeilen'].'</td><td width="300">'.'<table border="0" width="100%" cellpadding="0" cellspacing="0"><tr>'.'<td align="left"class="small" width="300" nowrap="nowrap">'.'<img src="'.$config['files']['iconpath'].'progressbar_speed.gif" name="speedbalken" alt="" width="'.$fw.'" height="12" border="0" vspace="0" hspace="0">'.'</td></tr></table><table border="0" width="100%" cellpadding="0" cellspacing="0">'.'<tr style="padding:0;margin:0;"><td align="left" nowrap="nowrap" style="font-size:10px;" >'.$config['minspeed'].'</td>'.'<td style="text-align:right;font-size:10px;" nowrap="nowrap">'.$config['maxspeed'].'</td>'.'</tr></table></td></tr></table>';
-	
+
 	//Status-Text
 	$aus[]='<p class="small">'.zeit_format(time()-$restore['xtime']).', '.$restore['aufruf'].' '.$lang['L_PAGE_REFRESHS'].(($restore['part']>0) ? ', file '.$restore['part'] : '').(($restore['errors']>0) ? ', <span class="error">'.$restore['errors'].' errors</span>' : '').(($restore['notices']>0) ? ', <span class="notice">'.$restore['notices'].' notices</span>' : '').'</p>';
 	$restore['summe_eintraege']+=$eingetragen;
-	
+
 	//Zeitanpassung
 	if ($dauer<$restore['max_zeit'])
 	{
@@ -301,7 +303,7 @@ else
 {
 	$aus[]=$page_parameter;
 	$_SESSION['restore']=$restore;
-	$selbstaufruf='<script language="javascript" type="text/javascript">setTimeout("document.restore.submit()",10);</script>';
+	$selbstaufruf='<script>setTimeout("document.restore.submit()",10);</script>';
 	$complete_page=$pageheader.(($aus!='') ? implode("\n",$aus) : '').$selbstaufruf.$pagefooter;
 }
 echo $complete_page;

@@ -7,34 +7,34 @@ $buffer=10*1024;
 function new_file($last_groesse=0)
 {
 	global $dump,$databases,$config,$out,$lang,$nl,$mysql_commentstring;
-	
+
 	// Dateiname aus Datum und Uhrzeit bilden
 	if ($dump['part']-$dump['part_offset']==1) $dump['filename_stamp']=date("Y_m_d_H_i",time());
-	if ($config['multi_part']==1)
+	if (isset($config['multi_part']) && ($config['multi_part']==1))
 	{
 		$dateiname=$databases['Name'][$dump['dbindex']].'_'.$dump['filename_stamp'].'_part_'.($dump['part']-$dump['part_offset']);
 	}
 	else
 		$dateiname=$databases['Name'][$dump['dbindex']].'_'.date("Y_m_d_H_i",time());
-	$endung=($config['compression']) ? '.sql.gz':'.sql';
+	$endung=(isset($config['compression']) && ($config['compression'])) ? '.sql.gz':'.sql';
 	$dump['backupdatei']=$dateiname.$endung;
-	
+
 	if (file_exists($config['paths']['backup'].$dump['backupdatei'])) unlink($config['paths']['backup'].$dump['backupdatei']);
 	$cur_time=date("Y-m-d H:i");
 	$statuszeile=GetStatusLine().$nl.$mysql_commentstring.' Dump by MySQLDumper '.MSD_VERSION.' ('.$config['homepage'].')'.$nl;
 	$statuszeile.='/*!40101 SET NAMES \''.$dump['dump_encoding'].'\' */;'.$nl;
 	$statuszeile.='SET FOREIGN_KEY_CHECKS=0;'.$nl;
-	
+
 	if ($dump['part']-$dump['part_offset']==1)
 	{
-		if ($config['multi_part']==0)
+		if (isset($config['multi_part']) && ($config['multi_part']==0))
 		{
-			if ($config['multi_dump']==1 && $dump['dbindex']==0) WriteLog('starting Multidump with '.count($databases['multi']).' Datenbases.');
+			if (isset($config['multi_part']) && $config['multi_dump']==1 && $dump['dbindex']==0) WriteLog('starting Multidump with '.count($databases['multi']).' Datenbases.');
 			WriteLog('Start Dump \''.$dump['backupdatei'].'\'');
 		}
 		else
 			WriteLog('Start Multipart-Dump \''.$dateiname.'\'');
-		
+
 		$out.='<strong>'.$lang['L_STARTDUMP'].' `'.$databases['Name'][$dump['dbindex']].'`</strong>'.(($databases['praefix'][$dump['dbindex']]!="") ? ' ('.$lang['L_WITHPRAEFIX'].' <span style="color:blue">'.$databases['praefix'][$dump['dbindex']].'</span>)':'').'...   ';
 		if ($dump['part']==1)
 		{
@@ -50,7 +50,7 @@ function new_file($last_groesse=0)
 		{
 			WriteLog('Continue Multipart-Dump with File '.($dump['part']-$dump['part_offset']).' (last file was '.$last_groesse.' Bytes)');
 			$dump['data']=$statuszeile.$mysql_commentstring.' This is part '.($dump['part']-$dump['part_offset']).' of the backup.'.$nl.$nl.$dump['data'];
-		
+
 		}
 	}
 	WriteToDumpFile();
@@ -64,26 +64,26 @@ function GetStatusLine($kind="php")
 		Aufbau Backupflags (1 Zeichen pro Flag, 0 oder 1, 2=unbekannt)
 		(complete inserts)(extended inserts)(ignore inserts)(delayed inserts)(downgrade)(lock tables)(optimize tables)
 	*/
-	
+
 	global $databases,$config,$lang,$dump,$mysql_commentstring;
-	
+
 	$t_array=explode("|",$databases['db_actual_tableselected']);
 	$t=0;
 	$r=0;
 	$t_zeile="$mysql_commentstring\n$mysql_commentstring TABLE-INFO\r\n";
 	MSD_mysql_connect();
-	$res=mysqli_query($GLOBALS["___mysqli_ston"], "SHOW TABLE STATUS FROM `".$databases['Name'][$dump['dbindex']]."`");
+	$res=mysqli_query($config['dbconnection'], "SHOW TABLE STATUS FROM `".$databases['Name'][$dump['dbindex']]."`");
 	$numrows=intval(@mysqli_num_rows($res));
 	for($i=0;$i<$numrows;$i++)
 	{
 		$erg=mysqli_fetch_array($res);
 		// Get nr of records -> need to do it this way because of incorrect returns when using InnoDBs
 		$sql_2="SELECT count(*) as `count_records` FROM `".$databases['Name'][$dump['dbindex']]."`.`".$erg['Name']."`";
-		$res2=@mysqli_query($GLOBALS["___mysqli_ston"], $sql_2);
+		$res2=@mysqli_query($config['dbconnection'], $sql_2);
 		if ($res2===false)
 		{
 			// error reading table definition
-			$read_create_error=sprintf($lang['L_FATAL_ERROR_DUMP'],$databases['Name'][$dump['dbindex']],$erg['Name']).': '.((is_object($config['dbconnection'])) ? mysqli_error($config['dbconnection']) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false));
+			$read_create_error=sprintf($lang['L_FATAL_ERROR_DUMP'],$databases['Name'][$dump['dbindex']],$erg['Name']).': '.mysqli_error($config['dbconnection']);
 			Errorlog("DUMP",$databases['Name'][$dump['dbindex']],'',$read_create_error,0);
 			WriteLog($read_create_error);
 			if ($config['stop_with_error']>0)
@@ -97,7 +97,7 @@ function GetStatusLine($kind="php")
 		{
 			$row2=mysqli_fetch_array($res2);
 			$erg['Rows']=$row2['count_records'];
-			
+
 			if (($databases['db_actual_tableselected']==''||($databases['db_actual_tableselected']!=''&&(in_array($erg[0],$t_array))))&&(substr($erg[0],0,strlen($databases['praefix'][$dump['dbindex']]))==$databases['praefix'][$dump['dbindex']]))
 			{
 				$t++;
@@ -109,7 +109,7 @@ function GetStatusLine($kind="php")
 	}
 	//$dump['totalrecords']=$r;
 	$flags=1;
-	
+
 	$mp=($config['multi_part']==1) ? $mp="MP_".($dump['part']-$dump['part_offset']):'MP_0';
 	$statusline="$mysql_commentstring Status:$t:$r:$mp:".$databases['Name'][$dump['dbindex']].":$kind:".MSD_VERSION.":".$dump['kommentar'].":";
 	$statusline.=MSD_MYSQL_VERSION.":$flags:::".$dump['dump_encoding'].":EXTINFO\n".$t_zeile."$mysql_commentstring"." EOF TABLE-INFO\n$mysql_commentstring";
@@ -120,7 +120,7 @@ function GetStatusLine($kind="php")
 function get_def($db,$table,$withdata=1)
 {
 	global $config,$nl,$mysql_commentstring,$dump;
-	
+
 	$def="\n\n$mysql_commentstring\n$mysql_commentstring Create Table `$table`\n$mysql_commentstring\n\n";
 	if ($dump['table_types'][getDBIndex($db,$table)]=='VIEW')
 	{
@@ -129,7 +129,7 @@ function get_def($db,$table,$withdata=1)
 	}
 	else
 		$def.="DROP TABLE IF EXISTS `$table`;\n";
-	mysqli_select_db($GLOBALS["___mysqli_ston"], $db);
+	mysqli_select_db($config['dbconnection'], $db);
 	$result=mysqli_query($config['dbconnection'], 'SHOW CREATE TABLE `'.$table.'`');
 	$row=@mysqli_fetch_row($result);
 	if ($row===false) return false;
@@ -146,20 +146,24 @@ function get_def($db,$table,$withdata=1)
 function get_content($db,$table)
 {
 	global $config,$nl,$dump,$buffer;
-	
+
 	$content='';
 	$complete=Fieldlist($db,$table).' ';
-	
+
+	if (!isset($config['dbconnection'])) MSD_mysql_connect();
+
 	$table_ready=0;
 	$query='SELECT * FROM `'.$table.'` LIMIT '.$dump['zeilen_offset'].','.($dump['restzeilen']+1);
-	mysqli_select_db($GLOBALS["___mysqli_ston"], $db);
+	mysqli_select_db($config['dbconnection'], $db);
 	$result=mysqli_query($config['dbconnection'], $query);
 	$ergebnisse=@mysqli_num_rows($result);
 	if ($ergebnisse!==false)
 	{
-		$num_felder=(($___mysqli_tmp = mysqli_num_fields($result)) ? $___mysqli_tmp : false);
+		// $num_felder=mysqli_field_count($result);
+		$num_felder=mysqli_field_count($config['dbconnection']);
+
 		$first=1;
-		
+
 		if ($ergebnisse>$dump['restzeilen'])
 		{
 			$dump['zeilen_offset']+=$dump['restzeilen'];
@@ -178,20 +182,32 @@ function get_content($db,$table)
 		{
 			$row=mysqli_fetch_row($result);
 			$ax++;
-			
+
 			$insert='INSERT INTO `'.$table.'` '.$complete.'VALUES (';
-			
+
 			for($j=0;$j<$num_felder;$j++)
 			{
-				if (!isset($row[$j])) $insert.='NULL,';
-				else 
-					if ($row[$j]!='') $insert.='\''. mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $row[$j]) .'\',';
+				if (!isset($row[$j]))
+					$insert .= 'NULL,';
+				else
+				{
+					$fieldinfo = mysqli_fetch_field_direct($result, $j);
+					if (($fieldinfo->flags & 128) == true && isset($config['use_binary_container']) && $config['use_binary_container'] == 1)
+						if ($row[$j] != '')
+							$insert .= '_binary 0x' . bin2hex($row[$j]) . ',';
+						else
+							$insert .= '_binary \'\',';
 					else
-						$insert.='\'\',';
+						if ($row[$j] != '')
+							$insert .= '\'' . mysqli_real_escape_string($config['dbconnection'], $row[$j]) . '\',';
+						else
+							$insert .= '\'\',';
+				}
 			}
 			$insert=substr($insert,0,-1).');'.$nl;
 			$dump['data'].=$insert;
 			$dump['countdata']++;
+			$config['memory_limit'] = isset($config['memory_limit']) ? $config['memory_limit'] : 0;
 			if (strlen($dump['data'])>$config['memory_limit']||($config['multi_part']==1&&strlen($dump['data'])+$buffer>$config['multipart_groesse']))
 			{
 				WriteToDumpFile();
@@ -211,17 +227,17 @@ function get_content($db,$table)
 			WriteToDumpFile();
 		}
 	}
-	@((mysqli_free_result($result) || (is_object($result) && (get_class($result) == "mysqli_result"))) ? true : false);
+	@mysqli_free_result($result);
 }
 
 function WriteToDumpFile()
 {
 	global $config,$dump,$buffer;
 	$dump['filesize']=0;
-	
+
 	$df=$config['paths']['backup'].$dump['backupdatei'];
-	
-	if ($config['compression']==1)
+
+	if (isset($config['compression']) && ($config['compression']==1))
 	{
 		if ($dump['data']!='')
 		{
@@ -242,10 +258,10 @@ function WriteToDumpFile()
 	$dump['data']='';
 	if (!isset($dump['fileoperations'])) $dump['fileoperations']=0;
 	$dump['fileoperations']++;
-	
-	if ($config['multi_part']==1) clearstatcache();
+
+	if (isset($config['multi_part']) && ($config['multi_part']==1)) clearstatcache();
 	$dump['filesize']=filesize($df);
-	if ($config['multi_part']==1&&$dump['filesize']+$buffer>$config['multipart_groesse'])
+	if ((isset($config['multi_part']) && $config['multi_part']==1) && ($dump['filesize']+$buffer>$config['multipart_groesse']))
 	{
 		@chmod($df,0777);
 		new_file($dump['filesize']); // Wenn maximale Dateigroesse erreicht -> neues File starten
@@ -264,35 +280,35 @@ function ExecuteCommand($when)
 	}
 	else
 	{
-		
+
 		$cd=$databases['command_after_dump'][$dump['dbindex']];
 		//WriteLog('DbIndex: '.$dump['dbindex'].' After: '.$databases['command_after_dump'][$dump['dbindex']]);
 	}
-	
+
 	if ($cd!='')
 	{
 		//jetzt ausführen
 		if (substr(strtolower($cd),0,7)!='system:')
 		{
 			$cad=array();
-			mysqli_select_db($GLOBALS["___mysqli_ston"], $databases['Name'][$dump['dbindex']]);
+			mysqli_select_db($config['dbconnection'], $databases['Name'][$dump['dbindex']]);
 			if (strpos($cd,';'))
 			{
 				$cad=explode(';',$cd);
 			}
 			else
 				$cad[0]=$cd;
-			
+
 			for($i=0;$i<sizeof($cad);$i++)
 			{
 				if (trim($cad[$i])>'')
 				{
 					$result=@mysqli_query($config['dbconnection'], $cad[$i]);
-					
+
 					if ($result===false)
 					{
-						WriteLog("Error executing Query '$cad[$i]'! MySQL returns: ".trim(((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false))));
-						ErrorLog("Error executing Query '$cad[$i]'!",$databases['Name'][$dump['dbindex']],$cad[$i],((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)),0);
+						WriteLog("Error executing Query '$cad[$i]'! MySQL returns: ".trim(mysqli_error($config['dbconnection'])));
+						ErrorLog("Error executing Query '$cad[$i]'!",$databases['Name'][$dump['dbindex']],$cad[$i],mysqli_error($config['dbconnection']),0);
 						$dump['errors']++;
 						$out.='<span class="error">Error executing Query '.$cad[$i].'</span>'.$lf;
 					}
@@ -327,7 +343,7 @@ function ExecuteCommand($when)
 function DoEmail()
 {
 	global $config,$dump,$databases,$email,$lang,$out,$REMOTE_ADDR;
-	
+
 	$header="";
 	if ($config['cron_use_sendmail']==1)
 	{
@@ -341,7 +357,7 @@ function DoEmail()
 	}
 	if (ini_get("SMTP")!=$config['cron_smtp']) @ini_set("SMTP",$config['cron_smtp']);
 	if (ini_get("smtp_port")!=25) @ini_set("smtp_port",25);
-	
+
 	if ($config['multi_part']==0)
 	{
 		$file=$dump['backupdatei'];
@@ -439,7 +455,7 @@ function DoEmail()
 		ErrorLog("Email ",$databases['Name'][$dump['dbindex']],'Subject: '.stripslashes($subject),$lang['L_MAILERROR']);
 		$dump['errors']++;
 	}
-	
+
 	if (isset($mpdatei)&&$config['send_mail_dump']==1)
 	{ // && ($config['email_maxsize']==0 || ($config['email_maxsize']>0 && $config['multipartgroesse2']<=$config['email_maxsize']))) {
 		for($i=0;$i<count($mpdatei);$i++)
@@ -472,7 +488,7 @@ function DoEmail()
 			$msg_body.="--Message-Boundary--\n";
 			$email_log="Email with $mpdatei[$i] was sent to '".$config['email_recipient']."'";
 			$email_out=$lang['L_EMAIL_WAS_SEND']."`".$config['email_recipient']."`".$lang['L_WITH']."`".$mpdatei[$i]."`.<br>";
-			
+
 			if (@mail($config['email_recipient'],stripslashes($subject),$msg_body,$header))
 			{
 				$out.='<span class="success">'.$email_out.'</span>';
@@ -492,7 +508,7 @@ function DoEmail()
 function DoFTP($i)
 {
 	global $config,$dump,$out;
-	
+
 	if ($config['multi_part']==0)
 	{
 		SendViaFTP($i,$dump['backupdatei'],1);
@@ -521,7 +537,7 @@ function SendViaFTP($i,$source_file,$conn_msg=1)
 		// Einloggen mit Benutzername und Kennwort
 	$login_result=@ftp_login($conn_id,$config['ftp_user'][$i],$config['ftp_pass'][$i]);
 	if ($config['ftp_mode'][$i]==1) ftp_pasv($conn_id,true);
-	
+
 	// Verbindung überprüfen
 	if ((!$conn_id)||(!$login_result))
 	{
@@ -531,12 +547,12 @@ function SendViaFTP($i,$source_file,$conn_msg=1)
 	{
 		if ($conn_msg==1) $out.='<span class="success">'.$lang['L_FTPCONNECTED1'].$config['ftp_server'][$i].$lang['L_FTPCONNERROR1'].$config['ftp_user'][$i].'</span><br>';
 	}
-	
+
 	// Upload der Datei
 	$dest=$config['ftp_dir'][$i].$source_file;
 	$source=$config['paths']['backup'].$source_file;
 	$upload=@ftp_put($conn_id,$dest,$source,FTP_BINARY);
-	
+
 	// Upload-Status überprüfen
 	if (!$upload)
 	{
@@ -547,8 +563,30 @@ function SendViaFTP($i,$source_file,$conn_msg=1)
 		$out.='<span class="success">'.$lang['L_FILE'].' <a href="'.$config['paths']['backup'].$source_file.'" class="smallblack">'.$source_file.'</a>'.$lang['L_FTPCONNECTED2'].$config['ftp_server'][$i].$lang['L_FTPCONNECTED3'].'</span><br>';
 		WriteLog("'$source_file' sent via FTP.");
 	}
-	
+
 	// Schließen des FTP-Streams
 	@ftp_quit($conn_id);
 }
-?>
+
+
+
+function DoSFTP($i)
+{
+	global $config,$dump,$out;
+
+	if ($config['multi_part']==0)
+	{
+		SendViaSFTP($i,$dump['backupdatei'],1);
+	}
+	else
+	{
+		$dateistamm=substr($dump['backupdatei'],0,strrpos($dump['backupdatei'],"part_"))."part_";
+		$dateiendung=($config['compression']==1) ? ".sql.gz":".sql";
+		for($a=1;$a<($dump['part']-$dump['part_offset']);$a++)
+		{
+			$mpdatei=$dateistamm.$a.$dateiendung;
+			SendViaSFTP($i,$mpdatei,$a);
+		}
+	}
+}
+

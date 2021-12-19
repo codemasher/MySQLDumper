@@ -84,6 +84,3 @@ Você deve colocar seus dados do banco de dados manualmente depois de terminada 
 Clique em \"configurações\" \"Parâmetros de Conexão - exibir\" e digite ali o nome do banco de dados.";
 $lang['L_SAFEMODEDESC']="Because PHP is running in safe_mode you need to create the following directories manually using your FTP-Programm:";
 $lang['L_ENTER_DB_INFO']="First click the button \"Connect to MySQL\". Only if no database could be detected you need to provide a database name here.";
-
-
-?>
