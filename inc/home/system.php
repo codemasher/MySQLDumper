@@ -1,92 +1,78 @@
 <?php
-if (!defined('MSD_VERSION')) die('No direct access.');
-$sysaction=(isset($_GET['dosys'])) ? $_GET['dosys'] : 0;
-$msg="";
-$res=@mysqli_query($config['dbconnection'], "SHOW VARIABLES LIKE 'datadir'");
-if ($res)
-{
-	$row=mysqli_fetch_array($res);
-	$data_dir=$row[1];
+if(!defined('MSD_VERSION')){
+	die('No direct access.');
 }
-switch ($sysaction)
-{
+$sysaction = (isset($_GET['dosys'])) ? $_GET['dosys'] : 0;
+$msg       = '';
+$res       = @mysqli_query($config['dbconnection'], "SHOW VARIABLES LIKE 'datadir'");
+if($res){
+	$row      = mysqli_fetch_array($res);
+	$data_dir = $row[1];
+}
+switch($sysaction){
 	case 1: //FLUSH PRIVILEGES
-		$msg="&gt; operating FLUSH PRIVILEGES<br>";
-		$res=@mysqli_query($config['dbconnection'], "FLUSH PRIVILEGES");
-		$meldung=mysqli_error($config['dbconnection']);
-		if ($meldung!="")
-		{
-			$msg.='&gt; MySQL-Error: '.$meldung;
+		$msg     = '&gt; operating FLUSH PRIVILEGES<br>';
+		$res     = @mysqli_query($config['dbconnection'], 'FLUSH PRIVILEGES');
+		$meldung = mysqli_error($config['dbconnection']);
+		if($meldung != ''){
+			$msg .= '&gt; MySQL-Error: '.$meldung;
 		}
-		else
-		{
-			$msg.="&gt; Privileges were reloaded.";
+		else{
+			$msg .= '&gt; Privileges were reloaded.';
 		}
 		break;
 	case 2: //FLUSH STATUS
-		$msg="&gt; operating FLUSH STATUS<br>";
-		$res=@mysqli_query($config['dbconnection'], "FLUSH STATUS");
-		$meldung=mysqli_error($config['dbconnection']);
-		if ($meldung!="")
-		{
-			$msg.='&gt; MySQL-Error: '.$meldung;
+		$msg     = '&gt; operating FLUSH STATUS<br>';
+		$res     = @mysqli_query($config['dbconnection'], 'FLUSH STATUS');
+		$meldung = mysqli_error($config['dbconnection']);
+		if($meldung != ''){
+			$msg .= '&gt; MySQL-Error: '.$meldung;
 		}
-		else
-		{
-			$msg.="&gt; Status was reset.";
+		else{
+			$msg .= '&gt; Status was reset.';
 		}
 		break;
 	case 3: //FLUSH HOSTS
-		$msg="&gt; operating FLUSH HOSTS<br>";
-		$res=@mysqli_query($config['dbconnection'], "FLUSH HOSTS");
-		$meldung=mysqli_error($config['dbconnection']);
-		if ($meldung!="")
-		{
-			$msg.='&gt; MySQL-Error: '.$meldung;
+		$msg     = '&gt; operating FLUSH HOSTS<br>';
+		$res     = @mysqli_query($config['dbconnection'], 'FLUSH HOSTS');
+		$meldung = mysqli_error($config['dbconnection']);
+		if($meldung != ''){
+			$msg .= '&gt; MySQL-Error: '.$meldung;
 		}
-		else
-		{
-			$msg.="&gt; Hosts were reloaded.";
-			;
+		else{
+			$msg .= '&gt; Hosts were reloaded.';
 		}
 		break;
 	case 4: //SHOW MASTER LOGS
-		$msg="> operating SHOW MASTER LOGS<br>";
-		$res=@mysqli_query($config['dbconnection'], "SHOW MASTER LOGS");
-		$meldung=mysqli_error($config['dbconnection']);
-		if ($meldung!="")
-		{
-			$msg.='&gt; MySQL-Error: '.$meldung;
+		$msg     = '> operating SHOW MASTER LOGS<br>';
+		$res     = @mysqli_query($config['dbconnection'], 'SHOW MASTER LOGS');
+		$meldung = mysqli_error($config['dbconnection']);
+		if($meldung != ''){
+			$msg .= '&gt; MySQL-Error: '.$meldung;
 		}
-		else
-		{
-			$numrows=mysqli_num_rows($res);
-			if ($numrows==0||$numrows===false)
-			{
-				$msg.='&gt; there are no master log-files';
+		else{
+			$numrows = mysqli_num_rows($res);
+			if($numrows == 0 || $numrows === false){
+				$msg .= '&gt; there are no master log-files';
 			}
-			else
-			{
-				$msg.='&gt; there are '.$numrows.' logfiles<br>';
-				for ($i=0; $i<$numrows; $i++)
-				{
-					$row=mysqli_fetch_row($res);
-					$msg.='&gt; '.$row[0].'&nbsp;&nbsp;&nbsp;'.(($data_dir) ? byte_output(@filesize($data_dir.$row[0])) : '').'<br>';
+			else{
+				$msg .= '&gt; there are '.$numrows.' logfiles<br>';
+				for($i = 0; $i < $numrows; $i++){
+					$row = mysqli_fetch_row($res);
+					$msg .= '&gt; '.$row[0].'&nbsp;&nbsp;&nbsp;'.(($data_dir) ? byte_output(@filesize($data_dir.$row[0])) : '').'<br>';
 				}
 			}
 		}
 		break;
 	case 5: //RESET MASTER
-		$msg="&gt; operating RESET MASTER<br>";
-		$res=@mysqli_query($config['dbconnection'], "RESET MASTER");
-		$meldung=mysqli_error($config['dbconnection']);
-		if ($meldung!="")
-		{
-			$msg.='&gt; MySQL-Error: '.$meldung;
+		$msg     = '&gt; operating RESET MASTER<br>';
+		$res     = @mysqli_query($config['dbconnection'], 'RESET MASTER');
+		$meldung = mysqli_error($config['dbconnection']);
+		if($meldung != ''){
+			$msg .= '&gt; MySQL-Error: '.$meldung;
 		}
-		else
-		{
-			$msg.="&gt; All Masterlogs were deleted.";
+		else{
+			$msg .= '&gt; All Masterlogs were deleted.';
 		}
 		break;
 }
@@ -100,5 +86,5 @@ echo '<div id="hormenu"><ul>
 			</ul></div>';
 echo '<div align="center" class="MySQLbox">';
 echo '&gt; MySQL Dumper v'.MSD_VERSION.' - Output Console<br><br>';
-echo ($msg!="") ? $msg : '> waiting for operation ...<br>';
+echo ($msg != '') ? $msg : '> waiting for operation ...<br>';
 echo '</div>';

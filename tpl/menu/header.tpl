@@ -1,27 +1,24 @@
 {MSD_HEADER}
 {MSD_HEADLINE}
 <!-- BEGIN CONFIG_REFRESH_TRUE -->
-	{CONFIG_REFRESH}
+{CONFIG_REFRESH}
 <!-- END CONFIG_REFRESH_TRUE -->
-
 <!-- BEGIN DB_REFRESH -->
-	<script>
-	var curl=parent.MySQL_Dumper_content.location.href.split("/");
-	var cdatei=curl.pop();
-	var ca=cdatei.split(".");
-	if(ca[0]!="dump" && ca[0]!="restore" && ca[0]!="frameset" && ca[0]!="crondump") {
-		parent.MySQL_Dumper_content.location.href=parent.MySQL_Dumper_content.location.href;
+<script>
+	var curl = parent.MySQL_Dumper_content.location.href.split('/');
+	var cdatei = curl.pop();
+	var ca = cdatei.split('.');
+	if(ca[0] !== 'dump' && ca[0] !== 'restore' && ca[0] !== 'frameset' && ca[0] !== 'crondump'){
+		parent.MySQL_Dumper_content.location.href = parent.MySQL_Dumper_content.location.href; // ???
 	}
-	if(ca[0]=="sql")
-	{
-		parent.MySQL_Dumper_content.location.href='sql.php';
-		{DB_REFRESH_INDEX}
+	if(ca[0] === 'sql'){
+		parent.MySQL_Dumper_content.location.href = 'sql.php';
+        {DB_REFRESH_INDEX}
 	}
-	</script>
+</script>
 <!-- END DB_REFRESH -->
-
 <!-- BEGIN CHANGED_LANGUAGE -->
-	<script>self.location.href='menu.php';</script>
+<script>self.location.href = 'menu.php';</script>
 <!-- END CHANGED_LANGUAGE -->
 <a href="{CONFIG_HOMEPAGE}" target="_blank" title="{L_VISIT_HOMEPAGE} {CONFIG_HOMEPAGE}"><img src="css/{CONFIG_THEME}/pics/h1_logo.gif" alt="MySQLDumper - Homepage"></a>
 <div id="version">

@@ -7,62 +7,61 @@
     @lastmodified	2009-09-15 00:21:30
     @media			screen and projection
 */
-*,.normargin {
+*, .normargin{
 	margin: 0;
 	padding: 0;
 }
 
-img {
+img{
 	border: 0;
 }
 
-body {
+body{
 	font: 12px/1.5 Verdana, Helvetica, sans-serif; /* Important IE Bugfix: No spaces in font-attribute between px and slash */
-	color: #4E5665;
-	background: #C7D1D0;
+	color: #4e5665;
+	background: #c7d1d0;
 }
 
-body.content {
+body.content{
 	min-width: 540px;
 }
 
-.menu-frame {
+.menu-frame{
 	font: 12px/1.5 Verdana, Helvetica, sans-serif;
-	background-color: #738C88;
+	background-color: #738c88;
 	color: #eee;
 }
 
 /* LINKS */
-a {
-	color: #4E5665;
+a{
+	color: #4e5665;
 	text-decoration: underline;
 	font: 12px verdana, sans-serif
 }
 
-a:hover {
-	color: #E87B00;
+a:hover{
+	color: #e87b00;
 	text-decoration: none
 }
 
-a.ul {
+a.ul{
 	text-decoration: underline;
 }
 
 /* general */
-#pagetitle {
+#pagetitle{
 	font-size: 1.5em;
 	font-weight: bold;
-	background: url(pics/pagetitle.gif);
-	background-repeat: repeat-x;
+	background: url(pics/pagetitle.gif) repeat-x;
 	letter-spacing: 2px;
 	color: white;
 	padding: 2px 6px;
-	border-bottom: 1px solid #A9AFBB;
+	border-bottom: 1px solid #a9afbb;
 	height: 26px;
 	overflow: hidden;
 }
 
-#server0 {
+#server0{
 	position: absolute;
 	bottom: 4px;
 	text-align: center;
@@ -70,24 +69,24 @@ a.ul {
 	color: white;
 }
 
-#server1 {
+#server1{
 	position: absolute;
 	right: 16px;
 	text-align: center;
 	padding: 10px;
 }
 
-a.server {
-	color: #333333;
+a.server{
+	color: #333;
 	font-size: 10px;
 }
 
-a.server:hover {
+a.server:hover{
 	text-decoration: underline;
 	color: white;
 }
 
-.version {
+.version{
 	display: block;
 	position: absolute;
 	top: 31px;
@@ -99,161 +98,158 @@ a.server:hover {
 	font-weight: bold;
 }
 
-.small {
+.small{
 	font-size: 11px;
 }
 
-.ssmall {
+.ssmall{
 	font-size: 10px;
 }
 
-.success {
+.success{
 	font-weight: bold;
 }
 
-.error {
+.error{
 	color: red;
 	font-weight: bold;
 }
 
-.explain {
+.explain{
 	text-decoration: none;
 	border-bottom: 1px dotted;
 }
 
-.explain:hover {
+.explain:hover{
 	cursor: help;
 }
 
-.active_db {
+.active_db{
 	font-weight: bold;
 	border-bottom: 1px dotted;
-	color: #9AA2B1;
+	color: #9aa2b1;
 }
 
-table td {
+table td{
 	text-align: left;
 	vertical-align: top;
 	padding: 0 6px;
 }
 
-table th {
+table th{
 	padding: 0 6px;
 }
 
-table.bdr,.bdr {
+table.bdr, .bdr{
 	border: 1px solid #ddd !important;
 	border-collapse: collapse !important;
 }
 
 /* MENU */
-#wrapmenu {
-	background: url(pics/pagetitle.gif) #A9AFBB;
-	background-repeat: repeat-x;
+#wrapmenu{
+	background: #a9afbb url(pics/pagetitle.gif) repeat-x;
 }
 
-#db-select {
+#db-select{
 	font: 12px Verdana, Helvetica, sans-serif;
-	color: #4E5665;
-	background: #A9AFBB;
+	color: #4e5665;
+	background: #a9afbb;
 }
 
-#menu {
-	position:absolute;
-	margin: 0px;
+#menu{
+	position: absolute;
+	margin: 0;
 	top: 222px;
-	left:0;
-	width:190px;
-	height:160px;
-	background-color: #738C88;
-	border-top: 1px solid #9AA2B1
+	left: 0;
+	width: 190px;
+	height: 160px;
+	background-color: #738c88;
+	border-top: 1px solid #9aa2b1
 }
 
-#menu ul {
+#menu ul{
 	list-style: none;
 }
 
-#menu ul li {
+#menu ul li{
 	height: 20px;
 }
 
-#menu ul li a {
+#menu ul li a{
 	display: block;
 	position: relative; /*fuer den ie*/
 	font: 11px/20px verdana, sans-serif;
 	text-decoration: none;
-	color: #4E5665;
+	color: #4e5665;
 	background: url(pics/mainnavi.gif) repeat-x 0 -20px;
 	padding: 0 15px;
 	height: 20px;
 	text-align: left;
 }
 
-#menu ul li a:hover {
+#menu ul li a:hover{
 	color: #fff;
-	background: url(pics/mainnavi.gif) repeat-x 0 0px;
+	background: url(pics/mainnavi.gif) repeat-x 0 0;
 }
 
 /*der aktive link in der navi*/
-#menu ul li.active a {
+#menu ul li.active a{
 	font-weight: bold;
 	color: #fff;
 	background: url(pics/mainnavi.gif) repeat-x 0 -40px;
 	display: block;
 }
 
-#menu p,#menu p a {
+#menu p, #menu p a{
 	color: #fff;
 	line-height: 1.5;
 	font-size: 11px;
 }
 
-#version {
-	position:absolute;
-	top:30px;
-	left:0;
-	margin:0;
-	padding:0;
-	height:191px;
-	color: #4E5665;
-	z-index:10;
-	border-top:1px solid #A9AFBB;
+#version{
+	position: absolute;
+	top: 30px;
+	left: 0;
+	margin: 0;
+	padding: 0;
+	height: 191px;
+	color: #4e5665;
+	z-index: 10;
+	border-top: 1px solid #a9afbb;
 }
-.version-line
-{
-	position:absolute;
-	top:-1px;
-	left:0;
-	width:190px;
-	text-align:center;
+
+.version-line{
+	position: absolute;
+	top: -1px;
+	left: 0;
+	width: 190px;
+	text-align: center;
 	font: 11px/20px verdana, sans-serif;
 }
 
 #version a:link,
 #version a:active,
 #version a:hover,
-#version a:visited
-{ 	color: #4E5665; }
-	
+#version a:visited{ color: #4e5665; }
 
-#selectConfig 
-{
-	position:absolute;
-	top:380px;	
-	left:0;
-	width:190px;
+
+#selectConfig{
+	position: absolute;
+	top: 380px;
+	left: 0;
+	width: 190px;
 	height: 196px;
-	z-index:5;
+	z-index: 5;
 }
 
-table.bdr,.bdr {
-	border: 1px solid #4E5665 !important;
+table.bdr, .bdr{
+	border: 1px solid #4e5665 !important;
 	border-collapse: collapse !important;
 }
 
-#db-selectbox,#config-selectbox {
+#db-selectbox, #config-selectbox{
 	position: relative;
-	top: 0px;
+	top: 0;
 	width: 190px;
 	background: transparent;
 	text-align: center;
@@ -261,55 +257,55 @@ table.bdr,.bdr {
 	color: white;
 }
 
-#db-selectbox a,#config-selectbox a {
+#db-selectbox a, #config-selectbox a{
 	font: 11px/1.5 Verdana, Helvetica, sans-serif;
 	color: white;
 	text-decoration: underline;
 }
 
-#db-selectbox a:hover,#config-selectbox a:hover {
+#db-selectbox a:hover, #config-selectbox a:hover{
 	text-decoration: none
 }
 
-fieldset {
+fieldset{
 	margin: 10px;
 	padding: 5px;
 	border: 1px solid #ddd;
 	color: #256777;
 }
 
-body.content legend {
+body.content legend{
 	font-weight: bold;
 }
 
-body.menu fieldset p {
+body.menu fieldset p{
 	margin: 5px 0 0;
 	text-align: center;
 }
 
-#configSelect legend,#dbSelect legend,#dbSelect a {
+#configSelect legend, #dbSelect legend, #dbSelect a{
 	font: 11px/1.5 Verdana, Helvetica, sans-serif;
 	color: #eee;
 }
 
 /* MAIN */
-#topnavi {
+#topnavi{
 	list-style: none;
 	margin: 10px 0 20px;
-	padding: 5px 0px;
+	padding: 5px 0;
 }
 
-#topnavi li {
+#topnavi li{
 	float: left;
 	margin-right: 6px;
 }
 
-#topnavi li a {
+#topnavi li a{
 	float: left;
 	font: 0.8em verdana, arial, sans-serif;
-	border: 1px solid #4E5665;
-	background-color: #A9B2B1;
-	color: #4E5665;
+	border: 1px solid #4e5665;
+	background-color: #a9b2b1;
+	color: #4e5665;
 	margin: 3px;
 	padding: 3px 23px 4px 23px;
 	cursor: pointer;
@@ -317,133 +313,132 @@ body.menu fieldset p {
 	white-space: nowrap;
 }
 
-#topnavi li a span {
+#topnavi li a span{
 	display: none;
 }
 
-#content {
+#content{
 	margin-left: 12px;
-	background-color: #C7D1D0;
+	background-color: #c7d1d0;
 }
 
-#content p {
+#content p{
 	margin-bottom: 8px;
 }
 
 /*Tabellen */
-table tr.dbrow {
-	background: #E4E9E8;
+table tr.dbrow{
+	background: #e4e9e8;
 }
 
-table tr.dbrow1 {
-	background: #D5DDDC;
+table tr.dbrow1{
+	background: #d5dddc;
 }
 
-table tr.dbrowsel {
+table tr.dbrowsel{
 	background: #fff;
 }
 
-table td.treffer {
+table td.treffer{
 	background: #000;
 }
 
 /* Treffer bei der MySQL-Suche */
-table tr.dbrow .treffer,table tr.dbrow1 .treffer {
+table tr.dbrow .treffer, table tr.dbrow1 .treffer{
 	color: yellow;
-	background-color: #738C88;
+	background-color: #738c88;
 }
 
-table.bordersmall,table.border {
-	border: 2px solid #738C88;
+table.bordersmall, table.border{
+	border: 2px solid #738c88;
 	width: 84%;
 }
 
-table.border th,table.bordersmall th {
+table.border th, table.bordersmall th{
 	font-size: 11px;
-	color: #738C88;
+	color: #738c88;
 }
 
-table tr.thead th,table tr.thead td {
-	background-color: #A5B6B4;
-	color: #738C88;
-	border: 1px solid #738C88;
+table tr.thead th, table tr.thead td{
+	background-color: #a5b6b4;
+	color: #738c88;
+	border: 1px solid #738c88;
 }
 
-table.border tr.thead,table.bordersmall tr.thead {
+table.border tr.thead, table.bordersmall tr.thead{
 	height: 24px;
 }
 
-table td.sum {
+table td.sum{
 	background-color: red;
 	font-weight: bold;
 	text-align: right;
 }
 
-table.bordersmall input,table.bordersmall select,table.bordersmall td,#sqlheaderbox select
-	{
-	border: 1px solid #738C88;
+table.bordersmall input, table.bordersmall select, table.bordersmall td, #sqlheaderbox select{
+	border: 1px solid #738c88;
 	font-size: 11px;
 }
 
-.tdcompact {
+.tdcompact{
 	width: 100px;
 	height: 16px;
 	overflow: hidden;
 	font-size: 11px;
 }
 
-.tdnormal {
+.tdnormal{
 	white-space: nowrap;
 	padding: 4px;
 }
 
-.sqlheadmenu a {
-	
+.sqlheadmenu a{
+
 }
 
 /* FORM-Elements */
-#content .Formbutton,#content .Formtext {
+#content .Formbutton, #content .Formtext{
 	white-space: nowrap;
 	margin: 6px;
 	font: 10px verdana, sans-serif;
-	border: 1px solid #4E5665;
-	background: #A9B2B1;
-	color: #4E5665;
+	border: 1px solid #4e5665;
+	background: #a9b2b1;
+	color: #4e5665;
 	padding: 2px 10px;
 	cursor: pointer;
 	overflow: visible;
 	text-decoration: none;
 }
 
-#content a.Formbutton {
+#content a.Formbutton{
 	padding: 2px 23px 3px 23px;
 }
 
-label {
+label{
 	cursor: pointer;
 }
 
-.Formbutton {
+.Formbutton{
 	cursor: pointer;
 }
 
-.Formbutton:disabled {
+.Formbutton:disabled{
 	cursor: default !important;
 }
 
-#content .Formtext {
+#content .Formtext{
 	padding: 2px;
 	overflow: hidden;
 	cursor: text;
 }
 
-#content .SQLbutton {
+#content .SQLbutton{
 	font-size: 11px;
-	background: #E4E9E8;
+	background: #e4e9e8;
 	cursor: pointer;
 }
 
-#content textarea #thta {
+#content textarea #thta{
 	font-size: 11px;
 	color: blue;
 	width: 400px;
@@ -451,258 +446,258 @@ label {
 	overflow: scroll;
 }
 
-#content textarea {
+#content textarea{
 	width: 100%;
-	background: #B3C2C0;
+	background: #b3c2c0;
 }
 
-input.radio,input.checkbox {
+input.radio, input.checkbox{
 	background-color: transparent;
 }
 
 /* Colors for Formelements */
-input.text,input.small {
-	background: #B3C2C0;
-	color: #4E5665;
+input.text, input.small{
+	background: #b3c2c0;
+	color: #4e5665;
 }
 
-select {
-	background: #B3C2C0;
-	color: #4E5665;
+select{
+	background: #b3c2c0;
+	color: #4e5665;
 }
 
-textarea {
-	background: #B3C2C0;
-	color: #4E5665;
+textarea{
+	background: #b3c2c0;
+	color: #4e5665;
 }
 
 /* for Geckos */
-input[disabled] {
+input[disabled]{
 	color: #888 !important;
 }
 
 /*horizontales Men� */
-#hormenu {
-	
+#hormenu{
+
 }
 
-#hormenu ul {
-	border-bottom: thin solid #D5DDDC;
+#hormenu ul{
+	border-bottom: thin solid #d5dddc;
 	margin-bottom: 8px;
 	width: 80%;
 }
 
-#hormenu ul li {
+#hormenu ul li{
 	display: inline;
 }
 
-#hormenu ul li a {
+#hormenu ul li a{
 	font: 11px/20px verdana, sans-serif;
 	text-decoration: none;
-	color: #4E5665;
+	color: #4e5665;
 	padding: 0 14px;
 	border: 0;
 }
 
-#hormenu ul li a:hover {
-	color: #E87B00;
+#hormenu ul li a:hover{
+	color: #e87b00;
 }
 
-#hormenu ul li#active a {
+#hormenu ul li#active a{
 	font: bold 11px/20px verdana, sans-serif;
 	text-decoration: none;
-	color: #E87B00;
+	color: #e87b00;
 	float: left;
 	padding: 0 14px;
 }
 
-#hormenu ul li#active a:hover {
-	color: #E87B00;
+#hormenu ul li#active a:hover{
+	color: #e87b00;
 }
 
 /* spezielle Elemente */
-.MySQLbox {
+.MySQLbox{
 	font-size: 10pt;
 	padding: 6px;
 	background: #000;
 	color: #fff;
-	border: thin solid #999999;
+	border: thin solid #999;
 	height: 200px;
 	width: 80%;
 	text-align: left;
 	overflow: auto;
 }
 
-#content #mysqlbox {
-	border: 1px solid #738C88;
-	background: #D5DDDC;
+#content #mysqlbox{
+	border: 1px solid #738c88;
+	background: #d5dddc;
 }
 
-#content #sqlheaderbox,.sqlbox-warning {
+#content #sqlheaderbox, .sqlbox-warning{
 	white-space: nowrap;
 	vertical-align: top;
 	padding: 8px;
-	border: 1px solid #738C88;
+	border: 1px solid #738c88;
 	color: #256777;
 	line-height: 22px;
 }
 
-#sqlheaderbox .Formbutton {
+#sqlheaderbox .Formbutton{
 	line-height: 12px;
 	padding: 2px;
-	margin: 0px;
+	margin: 0;
 }
 
-#sqltextarea {
+#sqltextarea{
 	width: 100% !important;
 	overflow: auto;
-	background-color: #B3C2C0;
+	background-color: #b3c2c0;
 }
 
-#content #sqlheaderbox {
+#content #sqlheaderbox{
 	white-space: nowrap;
 	height: 20px;
 	vertical-align: middle;
 	padding-top: 2px;
 }
 
-#content #sqleditbox {
-	border: 1px solid #738C88;
-	background: #E4E9E8;
+#content #sqleditbox{
+	border: 1px solid #738c88;
+	background: #e4e9e8;
 	margin-bottom: 10px;
 }
 
-#content #sqleditbox form {
+#content #sqleditbox form{
 	margin: 10px;
 }
 
-#content #sqleditbox p {
-	background: #A5B6B4;
+#content #sqleditbox p{
+	background: #a5b6b4;
 	font-weight: bold;
 	text-align: center;
 }
 
-#content #sqlnewbox {
-	border: 1px solid #738C88;
-	background: #E4E9E8;
+#content #sqlnewbox{
+	border: 1px solid #738c88;
+	background: #e4e9e8;
 }
 
-#content #sqlnewbox p {
-	background: #A5B6B4;
+#content #sqlnewbox p{
+	background: #a5b6b4;
 	font-weight: bold;
 	text-align: center;
 }
 
-#content #sqloutbox {
+#content #sqloutbox{
 	font-size: 11px;
 	width: 700px;
 	padding: 6px;
-	background: #D5DDDC;
-	border: 1px solid #738C88;
+	background: #d5dddc;
+	border: 1px solid #738c88;
 	overflow: auto;
 	height: 240px;
 }
 
-#content p.autodel {
+#content p.autodel{
 	font-size: 11px;
 	border-bottom: 1px dashed #fff;
 	margin-bottom: 12px;
 }
 
-#content .Logbox {
+#content .Logbox{
 	font: 12px/1.2 "Courier New", Courier, monospace;
 	padding: 6px;
-	border: thin solid #738C88;
+	border: thin solid #738c88;
 	height: 320px;
 	width: 90%;
 	text-align: left;
 	overflow: auto;
 }
 
-#content .Logbox span {
-	color: #738C88;
+#content .Logbox span{
+	color: #738c88;
 }
 
-#content .backupmsg {
+#content .backupmsg{
 	padding-left: 20px;
 	font-size: 11px;
 }
 
-#content .backupmsg .success,#content .backupmsg a {
+#content .backupmsg .success, #content .backupmsg a{
 	color: #999;
 	font-size: 11px;
 }
 
-#content .backupmsg .error {
+#content .backupmsg .error{
 	color: red;
 }
 
 /* TEXT */
-h1 {
+h1{
 	font-size: 16px;
 }
 
-h5 {
+h5{
 	font-size: 14px;
 	margin: 12px 0;
 }
 
-h6 {
+h6{
 	font-size: 11px;
-	background: #D1D4DC;
-	border: 1px solid #9AA2B1;
+	background: #d1d4dc;
+	border: 1px solid #9aa2b1;
 	text-indent: 12px;
 	margin: 8px 0;
 }
 
 /* Config */
-#configleft {
+#configleft{
 	float: left;
 	width: 160px;
 	margin-top: 24px;
 }
 
-#configleft .Formbutton {
+#configleft .Formbutton{
 	width: 130px;
 	margin: 8px 0;
 }
 
-#configleft .ConfigButton {
+#configleft .ConfigButton{
 	width: 130px;
 	font-size: 11px;
-	background: #E4E9E8;
+	background: #e4e9e8;
 	cursor: pointer;
 }
 
-#configleft .ConfigButtonSelected {
+#configleft .ConfigButtonSelected{
 	width: 130px;
 	font-size: 11px;
-	background: #D5DDDC;
+	background: #d5dddc;
 }
 
-#configright {
+#configright{
 	font-size: 11px;
 	margin-left: 160px;
 }
 
-#configright fieldset {
-	border: 1px solid #D5DDDC;
+#configright fieldset{
+	border: 1px solid #d5dddc;
 	padding: 12px;
 	width: 90%;
 }
 
-#configright legend {
+#configright legend{
 	color: #646968;
 	margin: 8px 0;
 }
 
-#footer {
+#footer{
 	font-size: 11px;
 	text-align: center;
 	border-top: 1px dashed #eee;
 	margin-top: 36px;
 }
 
-#footer a {
+#footer a{
 	font-size: 11px;
 }

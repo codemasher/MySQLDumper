@@ -1,44 +1,42 @@
 <?php
-if (!defined('MSD_VERSION')) die('No direct access.');
-include ('./language/'.$config['language'].'/lang_sql.php');
+if(!defined('MSD_VERSION')){
+	die('No direct access.');
+}
+include('./language/'.$config['language'].'/lang_sql.php');
 echo MSDHeader();
 echo headline($lang['L_HTACC_EDIT']);
 
-$htaccessdontexist=0;
+$htaccessdontexist = 0;
 
-if (isset($_POST['hta_dir'])&&isset($_POST['hta_file'])&&is_dir($_POST['hta_dir']))
-{
-	$hta_dir=$_POST['hta_dir'];
-	$hta_file=$_POST['hta_file'];
+if(isset($_POST['hta_dir']) && isset($_POST['hta_file']) && is_dir($_POST['hta_dir'])){
+	$hta_dir  = $_POST['hta_dir'];
+	$hta_file = $_POST['hta_file'];
 }
-else
-{
-	$hta_dir=$config['paths']['root'];
-	$hta_file='.htaccess';
+else{
+	$hta_dir  = $config['paths']['root'];
+	$hta_file = '.htaccess';
 }
-if ($hta_dir!=''&substr($hta_dir,-1)!='/') $hta_dir.='/';
-$hta_complete=$hta_dir.$hta_file;
+if($hta_dir != '' & substr($hta_dir, -1) != '/'){
+	$hta_dir .= '/';
+}
+$hta_complete = $hta_dir.$hta_file;
 
-if ((isset($_GET['create'])&&$_GET['create']==1)||(isset($_POST['create'])&&$_POST['create']==1))
-{
-	$fp=fopen($hta_complete,'w');
-	fwrite($fp,"# created by MySQLDumper ".MSD_VERSION."\n");
+if((isset($_GET['create']) && $_GET['create'] == 1) || (isset($_POST['create']) && $_POST['create'] == 1)){
+	$fp = fopen($hta_complete, 'w');
+	fwrite($fp, '# created by MySQLDumper '.MSD_VERSION."\n");
 	fclose($fp);
 }
 
-if (isset($_POST['submit'])&&isset($_POST['thta']))
-{
-	$fp=fopen($hta_complete,'w');
-	fwrite($fp,$_POST['thta']);
+if(isset($_POST['submit']) && isset($_POST['thta'])){
+	$fp = fopen($hta_complete, 'w');
+	fwrite($fp, $_POST['thta']);
 	fclose($fp);
 }
-if (file_exists($hta_complete))
-{
-	$htaccess_exist=file($hta_complete);
+if(file_exists($hta_complete)){
+	$htaccess_exist = file($hta_complete);
 }
-else
-{
-	$htaccessdontexist=1;
+else{
+	$htaccessdontexist = 1;
 }
 
 echo $lang['L_HTACCESS32'];
@@ -47,9 +45,8 @@ echo '<table>';
 echo '<tr><td>'.$lang['L_DIR'].':</td><td><input type="text" name="hta_dir" value="'.$hta_dir.'" size="60"></td></tr>';
 echo '<tr><td>'.$lang['L_FILE'].':</td><td><input type="text" name="hta_file" value="'.$hta_file.'"></td></tr>';
 echo '</table>';
-if ($htaccessdontexist!=1)
-{
-	echo '<table class="bdr"><tr><td style="width:70%;"><textarea rows="25" cols="40" name="thta" id="thta">'.htmlspecialchars(implode("",$htaccess_exist)).'</textarea><br><br>';
+if($htaccessdontexist != 1){
+	echo '<table class="bdr"><tr><td style="width:70%;"><textarea rows="25" cols="40" name="thta" id="thta">'.htmlspecialchars(implode('', $htaccess_exist)).'</textarea><br><br>';
 	echo '</td><td valign="top">';
 	//Presets
 	echo '<h6>Presets</h6><p><strong>'.$lang['L_HTACCESS30'].'</strong><p>
@@ -73,8 +70,7 @@ if ($htaccessdontexist!=1)
 	echo '<input type="submit" name="newload" value=" '.$lang['L_HTACCESS19'].' " class="Formbutton">';
 	echo '</td></tr></table></form>';
 }
-else
-{
+else{
 	echo '<br>'.$lang['L_FILE_MISSING'].': '.$hta_complete.'<br><br>';
 	echo '<form action="" method="post"><input type="hidden" name="hta_dir" value="'.$hta_dir.'"><input type="hidden" name="hta_file" value="'.$hta_file.'"><input type="hidden" name="create" value="1"><input type="submit" name="createhtaccess" value="'.$lang['L_CREATE'].'" class="Formbutton"></form>';
 }
