@@ -193,7 +193,7 @@ function SetDefault($load_default = false){
 		$databases['db_selected_index'] = 0;
 		$databases['db_actual']         = $databases['Name'][0];
 	}
-	WriteParams(1, $restore_values);
+	WriteParams(true, $restore_values);
 	if($load_default === true){
 		WriteLog('default settings loaded.');
 	}
@@ -201,7 +201,7 @@ function SetDefault($load_default = false){
 	return $out;
 }
 
-function WriteParams($as = 0, $restore_values = false){
+function WriteParams(bool $as = false, array $restore_values = null):bool{
 	// wenn $as=1 wird versucht den aktuellen Index der Datenbank nach dem Einlesen wieder zu ermitteln
 	// auch wenn sich die Indexnummer durch Loeschaktionen geaendert hat
 	global $config, $databases, $config_dontsave;
@@ -215,7 +215,6 @@ function WriteParams($as = 0, $restore_values = false){
 			}
 			else{
 				//den Index der konkreten Datenbank aus der alten Konfiguration ermitteln
-				$db_names = [];
 				$db_names = array_flip($databases['Name']);
 				if(isset($db_names[$restore_values['db_actual']])){
 					// alte Db existiert noch -> Index uebernehmen
@@ -251,8 +250,8 @@ function WriteParams($as = 0, $restore_values = false){
 	if(!isset($config['cron_execution_path'])){
 		$config['cron_execution_path'] = 'msd_cron/';
 	}
-	if($as == 0){
-		$config['paths']['root'] = addslashes(basePath());
+	if(!$as){
+		$config['paths']['root'] = addslashes($config['paths']['root']);
 	}
 	$config['files']['parameter'] = $config['paths']['config'].$config['config_file'].'.php';
 	$config['theme']              ??= 'msd';
@@ -274,11 +273,12 @@ function WriteParams($as = 0, $restore_values = false){
 			}
 		}
 	}
+	// @todo: implode
 	foreach($databases as $var => $val){
 		if(is_array($val)){
-			$pars_all .= '$databases[\''.$var.'\']=array();'.$nl;
+			$pars_all .= '$databases[\''.$var.'\']=[];'.$nl;
 			foreach($val as $var2 => $val2){
-				if($as == 1){
+				if($as){
 					$pars_all .= '$databases[\''.$var.'\']['.((is_int($var2)) ? $var2 : "'".$var2."'").'] = \''.my_addslashes(stripslashes($val2))."';$nl";
 				}
 				else{
@@ -287,7 +287,7 @@ function WriteParams($as = 0, $restore_values = false){
 			}
 		}
 		else{
-			if($as == 1){
+			if($as){
 				$pars_all .= '$databases[\''.$var.'\'] = \''.addslashes($val)."';$nl";
 			}
 			else{
@@ -297,24 +297,24 @@ function WriteParams($as = 0, $restore_values = false){
 	}
 
 	//Datei öffnen und schreiben
-	$ret  = true;
 	$file = $config['paths']['config'].$config['config_file'].'.php';
 	if($fp = fopen($file, 'wb')){
+
 		if(!fwrite($fp, $pars_all)){
-			$ret = false;
+			return false;
 		}
+
 		if(!fclose($fp)){
-			$ret = false;
+			return false;
 		}
+
 		chmod($file, 0777);
 	}
 	else{
-		$ret = false;
+		return false;
 	}
 
-	$ret = WriteCronScript($restore_values);
-
-	return $ret;
+	return WriteCronScript($restore_values);
 }
 
 function escape_specialchars($text){

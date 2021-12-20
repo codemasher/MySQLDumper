@@ -135,9 +135,10 @@ header('content-type: text/html; charset=utf-8');
 
 		case 0: // Anfang - Sprachauswahl
 			// da viele ja nicht in die Anleitung schauen -> versuchen die Perldateien automatisch richtig zu chmodden
-			chmod('./msd_cron/crondump.pl', 0755);
-			chmod('./msd_cron/perltest.pl', 0755);
-			chmod('./msd_cron/simpletest.pl', 0755);
+			$path = realpath(__DIR__.'/../msd_cron/');
+			chmod($path.'/crondump.pl', 0755);
+			chmod($path.'/perltest.pl', 0755);
+			chmod($path.'/simpletest.pl', 0755);
 
 			echo '<form action="install.php" method="get"><input type="hidden" name="phase" value="1">';
 			echo '<table class="bdr"><tr class="thead"><th>Language</th><th>Tools</th></tr>';
@@ -344,10 +345,10 @@ header('content-type: text/html; charset=utf-8');
 			echo '<h6>'.$lang['L_CREATEDIRS'].'</h6>';
 			$check_dirs = [
 
-				'work/',
-				'work/config/',
-				'work/log/',
-				'work/backup/',
+				__DIR__.'/../work/',
+				__DIR__.'/../work/config/',
+				__DIR__.'/../work/log/',
+				__DIR__.'/../work/backup/',
 			];
 			$msg        = '';
 			foreach($check_dirs as $d){
@@ -361,10 +362,10 @@ header('content-type: text/html; charset=utf-8');
 				echo '<b>'.$msg.'</b>';
 			}
 
-			$iw[0] = IsWritable('work');
-			$iw[1] = IsWritable('work/config');
-			$iw[2] = IsWritable('work/log');
-			$iw[3] = IsWritable('work/backup');
+			$iw[0] = IsWritable(__DIR__.'/../work');
+			$iw[1] = IsWritable(__DIR__.'/../work/config');
+			$iw[2] = IsWritable(__DIR__.'/../work/log');
+			$iw[3] = IsWritable(__DIR__.'/../work/backup');
 
 			if($iw[0] && $iw[1] && $iw[2] && $iw[3]){
 				echo '<script>';
@@ -375,9 +376,9 @@ header('content-type: text/html; charset=utf-8');
 			echo '<form action="install.php?language='.$language.'&phase=4" method="post"><table class="bdr"><tr class="thead">';
 			echo '<th>'.$lang['L_DIR'].'</th><th>'.$lang['L_RECHTE'].'</th><th>'.$lang['L_STATUS'].'</th></tr>';
 			echo '<tr><td><strong>work</strong></td><td>'.Rechte('work').'</td><td>'.(($iw[0]) ? $img_ok : $img_failed).'</td></tr>';
-			echo '<tr><td><strong>work/config</strong></td><td>'.Rechte('work/config').'</td><td>'.(($iw[1]) ? $img_ok : $img_failed).'</td></tr>';
-			echo '<tr><td><strong>work/log</strong></td><td>'.Rechte('work/log').'</td><td>'.(($iw[2]) ? $img_ok : $img_failed).'</td></tr>';
-			echo '<tr><td><strong>work/backup</strong></td><td>'.Rechte('work/backup').'</td><td>'.(($iw[3]) ? $img_ok : $img_failed).'</td></tr>';
+			echo '<tr><td><strong>work/config</strong></td><td>'.Rechte(__DIR__.'/../work/config').'</td><td>'.(($iw[1]) ? $img_ok : $img_failed).'</td></tr>';
+			echo '<tr><td><strong>work/log</strong></td><td>'.Rechte(__DIR__.'/../work/log').'</td><td>'.(($iw[2]) ? $img_ok : $img_failed).'</td></tr>';
+			echo '<tr><td><strong>work/backup</strong></td><td>'.Rechte(__DIR__.'/../work/backup').'</td><td>'.(($iw[3]) ? $img_ok : $img_failed).'</td></tr>';
 			echo '<tr><td colspan="3" align="right"><input type="hidden" name="connstr" value="'.$connstr.'"><input class="Formbutton" type="submit" name="dir_check" value=" '.$lang['L_CHECK_DIRS'].' "></td></tr>';
 			if($iw[0] && $iw[1] && $iw[2] && $iw[3]){
 				echo '<tr><td colspan="2">'.$lang['L_DIRS_CREATED'].'<br><br><input class="Formbutton" type="Button" value=" '.$lang['L_INSTALL_CONTINUE'].' " onclick="location.href=\'install.php?language='.$language.'&phase=5&connstr='.$connstr.'\'"></td></tr>';

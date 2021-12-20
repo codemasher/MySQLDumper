@@ -22,12 +22,12 @@ if(!defined('databases') || !is_array($databases)){
 }
 
 //Pfade und Files
-$config['paths']['root']     = basePath();
-$config['paths']['work']     = 'work/';
+$config['paths']['root']     = realpath(__DIR__.'/../').DIRECTORY_SEPARATOR;
+$config['paths']['work']     = $config['paths']['root'].'../work/';
 $config['paths']['backup']   = $config['paths']['work'].'backup/';
 $config['paths']['log']      = $config['paths']['work'].'log/';
 $config['paths']['config']   = $config['paths']['work'].'config/';
-$config['paths']['perlexec'] = 'msd_cron/';
+$config['paths']['perlexec'] = $config['paths']['root'].'../msd_cron/';
 
 if(isset($_SESSION['config_file'])){
 	$config['config_file']            = $_SESSION['config_file'];

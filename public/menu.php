@@ -82,7 +82,7 @@ if(isset($_POST['dbindex'])){
 	$databases['db_actual']         = $databases['Name'][$dbindex];
 
 	SelectDB($dbindex);
-	WriteParams(0);
+	WriteParams();
 	$tpl->assign_block_vars('DB_REFRESH', []);
 }
 else{
@@ -94,7 +94,7 @@ if(isset($_GET['dbindex'])){
 	$databases['db_selected_index'] = $dbindex;
 	$databases['db_actual']         = $databases['Name'][$dbindex];
 	SelectDB($dbindex);
-	WriteParams(0);
+	WriteParams();
 }
 
 if(isset($databases['Name']) && count($databases['Name']) > 0){

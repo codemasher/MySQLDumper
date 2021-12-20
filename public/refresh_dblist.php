@@ -32,7 +32,7 @@ include(APPLICATION_PATH.'/inc/functions.php');
 include(APPLICATION_PATH.'/inc/mysql.php');
 include('language/en/lang.php');
 // load default configuration
-include('work/config/mysqldumper.php');
+include(__DIR__.'/../work/config/mysqldumper.php');
 GetLanguageArray();
 
 $configFiles = get_config_filenames();

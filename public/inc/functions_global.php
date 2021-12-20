@@ -1,7 +1,7 @@
 <?php
 #ini_set('display_errors', 0);
 
-$mod_path = realpath(dirname(__FILE__).'/../').'/';
+$mod_path = realpath(__DIR__.'/../').'/';
 if(!defined('MSD_PATH')){
 	define('MSD_PATH', $mod_path);
 }
@@ -21,7 +21,7 @@ use League\Flysystem\PhpseclibV2\SftpAdapter;
 use League\Flysystem\PhpseclibV2\SftpConnectionProvider;
 use League\Flysystem\UnixVisibility\PortableVisibilityConverter;
 
-require_once './vendor/autoload.php';
+require_once __DIR__.'/../../vendor/autoload.php';
 
 // places all Page Parameters in hidden-fields (needed fpr backup and restore in PHP)
 function get_page_parameter($parameter, $ziel = 'dump'){
@@ -937,33 +937,6 @@ function SendViaSFTP($i, $source_file, $conn_msg = 1){
 		WriteLog("'$source_file' sent via sFTP.");
 	}
 
-}
-
-/**
- * Get current MSD home path
- *
- * @return string
- */
-function basePath(){
-	$path = dirname(__FILE__).'/../';
-	if(function_exists('realpath')){
-		$path = realpath($path).'/';
-	}
-
-	return $path;
-}
-
-function Realpfad($p){
-	global $config;
-	$dir = dirname(__FILE__);
-	$dir = str_replace('inc', '', $dir);
-	$dir = str_replace('\\', '/', $dir);
-	$dir = str_replace('//', '/', $dir);
-	if(substr($dir, -1) != '/'){
-		$dir .= '/';
-	}
-
-	return $dir;
 }
 
 // liest die Dateiliste aller vorhanden Konfigurationsfiles
