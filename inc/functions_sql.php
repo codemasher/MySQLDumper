@@ -22,7 +22,7 @@ function ReadSQL(){
 	if(!is_file($sf)){
 		$fp = fopen($sf, 'w+');
 		fclose($fp);
-		@chmod($sf, 0777);
+		chmod($sf, 0777);
 	}
 
 	if((is_array($SQL_ARRAY) && count($SQL_ARRAY) == 0) && filesize($sf) > 0){
@@ -651,7 +651,7 @@ function GetCollationArray(){
 	}
 
 	$res = mysqli_query($config['dbconnection'], 'SHOW Collation');
-	$num = @mysqli_num_rows($res);
+	$num = mysqli_num_rows($res);
 	$r   = [];
 	if(is_array($r)){
 		for($i = 0; $i < $num; $i++){

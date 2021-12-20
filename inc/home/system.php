@@ -4,7 +4,7 @@ if(!defined('MSD_VERSION')){
 }
 $sysaction = (isset($_GET['dosys'])) ? $_GET['dosys'] : 0;
 $msg       = '';
-$res       = @mysqli_query($config['dbconnection'], "SHOW VARIABLES LIKE 'datadir'");
+$res       = mysqli_query($config['dbconnection'], "SHOW VARIABLES LIKE 'datadir'");
 if($res){
 	$row      = mysqli_fetch_array($res);
 	$data_dir = $row[1];
@@ -12,7 +12,7 @@ if($res){
 switch($sysaction){
 	case 1: //FLUSH PRIVILEGES
 		$msg     = '&gt; operating FLUSH PRIVILEGES<br>';
-		$res     = @mysqli_query($config['dbconnection'], 'FLUSH PRIVILEGES');
+		$res     = mysqli_query($config['dbconnection'], 'FLUSH PRIVILEGES');
 		$meldung = mysqli_error($config['dbconnection']);
 		if($meldung != ''){
 			$msg .= '&gt; MySQL-Error: '.$meldung;
@@ -23,7 +23,7 @@ switch($sysaction){
 		break;
 	case 2: //FLUSH STATUS
 		$msg     = '&gt; operating FLUSH STATUS<br>';
-		$res     = @mysqli_query($config['dbconnection'], 'FLUSH STATUS');
+		$res     = mysqli_query($config['dbconnection'], 'FLUSH STATUS');
 		$meldung = mysqli_error($config['dbconnection']);
 		if($meldung != ''){
 			$msg .= '&gt; MySQL-Error: '.$meldung;
@@ -34,7 +34,7 @@ switch($sysaction){
 		break;
 	case 3: //FLUSH HOSTS
 		$msg     = '&gt; operating FLUSH HOSTS<br>';
-		$res     = @mysqli_query($config['dbconnection'], 'FLUSH HOSTS');
+		$res     = mysqli_query($config['dbconnection'], 'FLUSH HOSTS');
 		$meldung = mysqli_error($config['dbconnection']);
 		if($meldung != ''){
 			$msg .= '&gt; MySQL-Error: '.$meldung;
@@ -45,7 +45,7 @@ switch($sysaction){
 		break;
 	case 4: //SHOW MASTER LOGS
 		$msg     = '> operating SHOW MASTER LOGS<br>';
-		$res     = @mysqli_query($config['dbconnection'], 'SHOW MASTER LOGS');
+		$res     = mysqli_query($config['dbconnection'], 'SHOW MASTER LOGS');
 		$meldung = mysqli_error($config['dbconnection']);
 		if($meldung != ''){
 			$msg .= '&gt; MySQL-Error: '.$meldung;
@@ -59,14 +59,14 @@ switch($sysaction){
 				$msg .= '&gt; there are '.$numrows.' logfiles<br>';
 				for($i = 0; $i < $numrows; $i++){
 					$row = mysqli_fetch_row($res);
-					$msg .= '&gt; '.$row[0].'&nbsp;&nbsp;&nbsp;'.(($data_dir) ? byte_output(@filesize($data_dir.$row[0])) : '').'<br>';
+					$msg .= '&gt; '.$row[0].'&nbsp;&nbsp;&nbsp;'.(($data_dir) ? byte_output(filesize($data_dir.$row[0])) : '').'<br>';
 				}
 			}
 		}
 		break;
 	case 5: //RESET MASTER
 		$msg     = '&gt; operating RESET MASTER<br>';
-		$res     = @mysqli_query($config['dbconnection'], 'RESET MASTER');
+		$res     = mysqli_query($config['dbconnection'], 'RESET MASTER');
 		$meldung = mysqli_error($config['dbconnection']);
 		if($meldung != ''){
 			$msg .= '&gt; MySQL-Error: '.$meldung;

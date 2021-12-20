@@ -1,6 +1,6 @@
 <?php
-if(!@ob_start('ob_gzhandler')){
-	@ob_start();
+if(!ob_start('ob_gzhandler')){
+	ob_start();
 }
 session_name('MySQLDumper');
 session_start();
@@ -83,7 +83,7 @@ $pageheader                  = MSDheader().headline($lang['L_RESTORE']);
 $aus1                        = $page_parameter = '';
 $RestoreFertig               = $eingetragen = $dauer = $filegroesse = 0;
 MSD_mysql_connect($restore['dump_encoding'], true, $restore['actual_table']);
-@mysqli_select_db($config['dbconnection'], $databases['db_actual']) or die($lang['L_DB_SELECT_ERROR'].$databases['db_actual'].$lang['L_DB_SELECT_ERROR2']);
+mysqli_select_db($config['dbconnection'], $databases['db_actual']) or die($lang['L_DB_SELECT_ERROR'].$databases['db_actual'].$lang['L_DB_SELECT_ERROR2']);
 
 // open backup file
 $restore['filehandle'] = ($restore['compressed'] == 1) ? gzopen($config['paths']['backup'].$restore['filename'], 'r') : fopen($config['paths']['backup'].$restore['filename'], 'r');
@@ -130,13 +130,13 @@ if($restore['filehandle']){
 		$restore['EOB'] = false;
 		// Disable Keys of actual table to speed up restoring
 		if(is_array($restore['tables_to_restore']) && sizeof($restore['tables_to_restore']) > 0 && in_array($restore['actual_table'], $restore['tables_to_restore'])){
-			@mysqli_query($config['dbconnection'], '/*!40000 ALTER TABLE `'.$restore['actual_table'].'` DISABLE KEYS */;');
+			mysqli_query($config['dbconnection'], '/*!40000 ALTER TABLE `'.$restore['actual_table'].'` DISABLE KEYS */;');
 
 		}
 		elseif(!is_array($restore['tables_to_restore'])
 		       && (is_array($restore['tables_to_restore']) && sizeof($restore['tables_to_restore']) == 0)
 		       && ($restore['actual_table'] > '' && $restore['actual_table'] != 'unbekannt')){
-			@mysqli_query($config['dbconnection'], '/*!40000 ALTER TABLE `'.$restore['actual_table'].'` DISABLE KEYS */;');
+			mysqli_query($config['dbconnection'], '/*!40000 ALTER TABLE `'.$restore['actual_table'].'` DISABLE KEYS */;');
 		}
 
 		while(($a < $restore['anzahl_zeilen']) && (!$restore['fileEOF']) && ($dauer < $restore['max_zeit']) && !$restore['EOB']){
@@ -157,7 +157,7 @@ if($restore['filehandle']){
 				}
 				else{
 					// Bei MySQL-Fehlern sofort abbrechen und Info ausgeben
-					$meldung = @mysqli_error($config['dbconnection']);
+					$meldung = mysqli_error($config['dbconnection']);
 					if($meldung != ''){
 						if(strtolower(substr($meldung, 0, 15)) == 'duplicate entry'){
 							ErrorLog('RESTORE', $databases['db_actual'], $sql_command, $meldung, 1);

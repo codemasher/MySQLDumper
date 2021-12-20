@@ -261,7 +261,7 @@ function MSD_mysql_connect($encoding = 'utf8mb4', $keycheck_off = false, $actual
 	// starting with PHP 8.1
 	mysqli_report(MYSQLI_REPORT_OFF);
 
-	$config['dbconnection'] = @mysqli_connect($config['dbhost'].$port.$socket, $config['dbuser'], $config['dbpass']);
+	$config['dbconnection'] = mysqli_connect($config['dbhost'].$port.$socket, $config['dbuser'], $config['dbpass']);
 
 	if(!$config['dbconnection']){
 		die(SQLError('Error establishing a database connection!', mysqli_connect_error()));
@@ -275,7 +275,7 @@ function MSD_mysql_connect($encoding = 'utf8mb4', $keycheck_off = false, $actual
 	}
 
 	if($config['mysql_standard_character_set'] != $encoding){
-		$set_encoding = @mysqli_query($config['dbconnection'], 'SET NAMES \''.$encoding.'\'');
+		$set_encoding = mysqli_query($config['dbconnection'], 'SET NAMES \''.$encoding.'\'');
 		if($set_encoding === false){
 			$config['mysql_can_change_encoding'] = false;
 		}
@@ -370,7 +370,7 @@ function Highlight_SQL($sql){
 	$end       = '';
 	$tickstart = false;
 	if(function_exists('token_get_all')){
-		$a = @token_get_all("<?php $sql?>");
+		$a = token_get_all("<?php $sql?>");
 	}
 	else{
 		return $sql;
@@ -487,7 +487,7 @@ function getDBInfos(){
 
 					// Get nr of records -> need to do it this way because of incorrect returns when using InnoDBs
 					$sql_2 = 'SELECT count(*) as `count_records` FROM `'.$databases['Name'][$dump['dbindex']].'`.`'.$row['Name'].'`';
-					$res2  = @mysqli_query($config['dbconnection'], $sql_2);
+					$res2  = mysqli_query($config['dbconnection'], $sql_2);
 					if($res2 === false){
 						$read_error = mysqli_error($config['dbconnection']);
 						SQLError($read_error, $sql_2);
@@ -497,7 +497,7 @@ function getDBInfos(){
 						}
 					}
 					else{
-						$row2                 = @mysqli_fetch_array($res2);
+						$row2                 = mysqli_fetch_array($res2);
 						$row['Rows']          = $row2['count_records'];
 						$dump['totalrecords'] += $row['Rows'];
 					}

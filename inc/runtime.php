@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 
 if(function_exists('date_default_timezone_set')){
-	date_default_timezone_set(@date_default_timezone_get());
+	date_default_timezone_set(date_default_timezone_get());
 }
 //Konstanten
 if(!defined('MSD_VERSION')){
@@ -12,7 +12,7 @@ if(!defined('MSD_OS')){
 	define('MSD_OS', PHP_OS);
 }
 if(!defined('MSD_OS_EXT')){
-	define('MSD_OS_EXT', @php_uname());
+	define('MSD_OS_EXT', php_uname());
 }
 if(!defined('config') || !is_array($config)){
 	$config = [];

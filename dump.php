@@ -1,6 +1,6 @@
 <?php
-if(!@ob_start('ob_gzhandler')){
-	@ob_start();
+if(!ob_start('ob_gzhandler')){
+	ob_start();
 }
 session_name('MySQLDumper');
 session_start();
@@ -177,7 +177,7 @@ else{
 					for($i = 1; $i < ($dump['part'] - $dump['part_offset']); $i++){
 						$mpdatei = $dateistamm.$i.$dateiendung;
 						clearstatcache();
-						$sz  = byte_output(@filesize($config['paths']['backup'].$mpdatei));
+						$sz  = byte_output(filesize($config['paths']['backup'].$mpdatei));
 						$out .= $lang['L_FILE'].' <a href="'.$config['paths']['backup'].$mpdatei.'" class="smallblack">'.$mpdatei.' ('.$sz.')</a> '.$lang['L_DUMP_SUCCESSFUL'].'<br>';
 					}
 				}
@@ -396,7 +396,7 @@ else{
 			clearstatcache();
 			for($i = 1; $i < ($dump['part'] - $dump['part_offset']); $i++){
 				$mpdatei = $dateistamm.$i.$dateiendung;
-				$sz      = byte_output(@filesize($config['paths']['backup'].$mpdatei));
+				$sz      = byte_output(filesize($config['paths']['backup'].$mpdatei));
 				$out     .= "\n".$lang['L_FILE'].' <a href="'.$config['paths']['backup'].$mpdatei.'" class="smallblack">'.$mpdatei.' ('.$sz.')</a> '.$lang['L_DUMP_SUCCESSFUL'].'<br>';
 			}
 

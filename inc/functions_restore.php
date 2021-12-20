@@ -289,11 +289,11 @@ function submit_create_action($sql){
 		}
 	}
 
-	$res = @mysqli_query($config['dbconnection'], $sql);
+	$res = mysqli_query($config['dbconnection'], $sql);
 	if($res === false){
 		// erster Versuch fehlgeschlagen -> zweiter Versuch - vielleicht versteht der Server die Inline-Kommentare nicht?
 		$sql = del_inline_comments($sql);
-		$res = @mysqli_query($config['dbconnection'], downgrade($sql));
+		$res = mysqli_query($config['dbconnection'], downgrade($sql));
 	}
 	if($res === false){
 		// wenn wir hier angekommen sind hat nichts geklappt -> Fehler ausgeben und abbrechen

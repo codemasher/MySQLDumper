@@ -1,6 +1,6 @@
 <?php
-if(!@ob_start('ob_gzhandler')){
-	@ob_start();
+if(!ob_start('ob_gzhandler')){
+	ob_start();
 }
 function print_save_button(){
 	global $lang;
@@ -60,9 +60,9 @@ if(isset($_GET['config_delete'])){
 		read_config($config['config_file']); // Standard laden
 	}
 
-	$del = @unlink($config['paths']['config'].$del_config.'.php');
+	$del = unlink($config['paths']['config'].$del_config.'.php');
 	if($del){
-		$del = @unlink($config['paths']['config'].$del_config.'.conf.php');
+		$del = unlink($config['paths']['config'].$del_config.'.conf.php');
 	}
 	if($del === false){
 		$msg = '<p class="error">'.sprintf($lang['L_ERROR_DELETING_CONFIGFILE'], $del_config).'</p>';
@@ -525,7 +525,7 @@ if(isset($_POST['save'])){
 		}
 		else{
 			if(MSD_mysql_connect()){
-				$res = @mysqli_select_db($config['dbconnection'], $to_add);
+				$res = mysqli_select_db($config['dbconnection'], $to_add);
 				if(!$res === false){
 					$databases['Name'][] = $to_add;
 					//Menü aktualisieren, damit die DB in der Selectliste erscheint

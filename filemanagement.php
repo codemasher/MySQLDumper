@@ -52,8 +52,8 @@ if($action == 'dl'){
 	//readfile($file);
 	exit();
 }
-if(!@ob_start('ob_gzhandler')){
-	@ob_start();
+if(!ob_start('ob_gzhandler')){
+	ob_start();
 }
 echo MSDHeader();
 
@@ -104,7 +104,7 @@ if(isset($_POST['dump'])){
 		exit();
 	}
 	else{
-		@$check_dir = TestWorkDir();
+		$check_dir = TestWorkDir();
 		if(!$check_dir === true){
 			die($check_dir);
 		}
@@ -261,7 +261,7 @@ if(isset($_POST['upload'])){
 			else{
 				if(!$error){
 					if(move_uploaded_file($_FILES['upfile']['tmp_name'], $fpath.$_FILES['upfile']['name'])){
-						@chmod($fpath.$upfile_name, 0777);
+						chmod($fpath.$upfile_name, 0777);
 					}
 					else{
 						$error .= "<font color=\"red\">".$lang['L_FM_UPLOADMOVEERROR'].'<br>';

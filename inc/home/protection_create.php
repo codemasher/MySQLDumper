@@ -82,10 +82,10 @@ if(isset($_POST['username'])){
 				break;
 		}
 		$htpasswd = $username.':'.$userpass;
-		@chmod($config['paths']['root'], 0777);
+		chmod($config['paths']['root'], 0777);
 
 		// save .htpasswd
-		if($file_htpasswd = @fopen('.htpasswd', 'w')){
+		if($file_htpasswd = fopen('.htpasswd', 'w')){
 			$saved = fputs($file_htpasswd, $htpasswd);
 			fclose($file_htpasswd);
 		}
@@ -95,7 +95,7 @@ if(isset($_POST['username'])){
 
 		// save .htaccess
 		if(false !== $saved){
-			$file_htaccess = @fopen('.htaccess', 'w');
+			$file_htaccess = fopen('.htaccess', 'w');
 			if($file_htaccess){
 				$saved = fputs($file_htaccess, $htaccess);
 				fclose($file_htaccess);
@@ -111,7 +111,7 @@ if(isset($_POST['username'])){
 				'HTACCESS' => htmlspecialchars($htaccess),
 				'HTPASSWD' => htmlspecialchars($htpasswd),
 			]);
-			@chmod($config['paths']['root'], 0755);
+			chmod($config['paths']['root'], 0755);
 		}
 		else{
 			$tpl->assign_block_vars('CREATE_ERROR', [

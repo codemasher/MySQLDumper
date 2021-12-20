@@ -320,7 +320,7 @@ function PartListe($f, $nr){
 		if($i > 1){
 			$s .= '<br>';
 		}
-		$s .= '<a href="'.$fpath.urlencode($dateistamm.$i.$dateiendung).'">'.$dateistamm.$i.$dateiendung.'</a>&nbsp;&nbsp;&nbsp;'.byte_output(@filesize($config['paths']['backup'].$dateistamm.$i.$dateiendung));
+		$s .= '<a href="'.$fpath.urlencode($dateistamm.$i.$dateiendung).'">'.$dateistamm.$i.$dateiendung.'</a>&nbsp;&nbsp;&nbsp;'.byte_output(filesize($config['paths']['backup'].$dateistamm.$i.$dateiendung));
 		$s .= '&nbsp;<a href="filemanagement.php?action=dl&amp;f='.urlencode($dateistamm.$i.$dateiendung).'" title="'.$lang['L_DOWNLOAD_FILE'].'" alt="'.$lang['L_DOWNLOAD_FILE'].'"><img src="'.$config['files']['iconpath'].'/openfile.gif"></a>';
 
 	}

@@ -123,7 +123,7 @@ function SetDefault($load_default = false){
 		= isset($config['language']) && in_array($config['language'], $lang['languages']) ? $config['language'] : '';
 	if($load_default == true){
 		if(file_exists($config['files']['parameter'])){
-			@unlink($config['files']['parameter']);
+			unlink($config['files']['parameter']);
 		}
 		include('./config.php');
 		if(is_array($preConfig)){
@@ -171,7 +171,7 @@ function SetDefault($load_default = false){
 	for($i = 0; $i < count($found_dbs); $i++){
 		$found_db = $found_dbs[$i];
 		// Testverbindung - Tabelle erstellen, nachschauen, ob es geklappt hat und dann wieder löschen
-		$use = @mysqli_select_db($config['dbconnection'], $found_db);
+		$use = mysqli_select_db($config['dbconnection'], $found_db);
 		if($use){
 			if(isset($old_db) && $found_db == $old_db){
 				$databases['db_selected_index'] = $a;
@@ -306,7 +306,7 @@ function WriteParams($as = 0, $restore_values = false){
 		if(!fclose($fp)){
 			$ret = false;
 		}
-		@chmod($file, 0777);
+		chmod($file, 0777);
 	}
 	else{
 		$ret = false;
@@ -554,7 +554,7 @@ function WriteCronScript($restore_values = false){
 	$ret   = true;
 	$sfile = $config['paths']['config'].$config['config_file'].'.conf.php';
 	if(file_exists($sfile)){
-		@unlink($sfile);
+		unlink($sfile);
 	}
 
 	if($fp = fopen($sfile, 'wb')){
@@ -564,7 +564,7 @@ function WriteCronScript($restore_values = false){
 		if(!fclose($fp)){
 			$ret = false;
 		}
-		@chmod("$sfile", 0777);
+		chmod("$sfile", 0777);
 	}
 	else{
 		$ret = false;
@@ -580,7 +580,7 @@ function WriteCronScript($restore_values = false){
 			if(!fclose($fp)){
 				$ret = false;
 			}
-			@chmod("$sfile", 0777);
+			chmod("$sfile", 0777);
 		}
 		else{
 			$ret = false;
@@ -609,13 +609,13 @@ function LogFileInfo($logcompression){
 		$l['perllogcomplete'] = $config['files']['perllogcomplete'];
 		$l['errorlog']        = $config['paths']['log'].'error.log';
 	}
-	$l['log_size']             += @filesize($l['log']);
+	$l['log_size']             += filesize($l['log']);
 	$sum                       += $l['log_size'];
-	$l['perllog_size']         += @filesize($l['perllog']);
+	$l['perllog_size']         += filesize($l['perllog']);
 	$sum                       += $l['perllog_size'];
-	$l['perllogcomplete_size'] += @filesize($l['perllogcomplete']);
+	$l['perllogcomplete_size'] += filesize($l['perllogcomplete']);
 	$sum                       += $l['perllogcomplete_size'];
-	$l['errorlog_size']        += @filesize($l['errorlog']);
+	$l['errorlog_size']        += filesize($l['errorlog']);
 	$sum                       += $l['errorlog_size'];
 	$l['log_totalsize']        += $sum;
 
@@ -627,22 +627,22 @@ function DeleteLog(){
 	//Datei öffnen und schreiben
 	$log = date('d.m.Y H:i:s')." Log created.\n";
 	if(file_exists($config['files']['log'].'.gz')){
-		@unlink($config['files']['log'].'.gz');
+		unlink($config['files']['log'].'.gz');
 	}
 	if(file_exists($config['files']['log'].'.gz')){
-		@unlink($config['files']['log']);
+		unlink($config['files']['log']);
 	}
 	if($config['logcompression'] == 1){
-		$fp = @gzopen($config['files']['log'].'.gz', 'wb');
-		@gzwrite($fp, $log);
-		@gzclose($fp);
-		@chmod($config['files']['log'].'.gz', 0777);
+		$fp = gzopen($config['files']['log'].'.gz', 'wb');
+		gzwrite($fp, $log);
+		gzclose($fp);
+		chmod($config['files']['log'].'.gz', 0777);
 	}
 	else{
-		$fp = @fopen($config['files']['log'], 'wb');
-		@fwrite($fp, $log);
-		@fclose($fp);
-		@chmod($config['files']['log'], 0777);
+		$fp = fopen($config['files']['log'], 'wb');
+		fwrite($fp, $log);
+		fclose($fp);
+		chmod($config['files']['log'], 0777);
 	}
 }
 
@@ -698,18 +698,18 @@ function ftp_mkdirs($config, $dirname){
 	$dir  = preg_split('/\//', $dirname);
 	for($i = 0; $i < count($dir) - 1; $i++){
 		$path .= $dir[$i].'/';
-		@ftp_mkdir($config['dbconnection'], $path);
+		ftp_mkdir($config['dbconnection'], $path);
 	}
-	if(@ftp_mkdir($config['dbconnection'], $dirname)){
+	if(ftp_mkdir($config['dbconnection'], $dirname)){
 		return 1;
 	}
 }
 
 function IsWritable($dir){
 	$testfile = $dir.'/.writetest';
-	if($writable = @fopen($testfile, 'w')){
-		@fclose($writable);
-		@unlink($testfile);
+	if($writable = fopen($testfile, 'w')){
+		fclose($writable);
+		unlink($testfile);
 	}
 
 	return $writable;
@@ -718,7 +718,7 @@ function IsWritable($dir){
 function IsAccessProtected(){
 	$rc      = false;
 	$url     = sprintf('%s://%s%s', $_SERVER['REQUEST_SCHEME'], $_SERVER['HTTP_HOST'], dirname($_SERVER['PHP_SELF']));
-	$headers = @get_headers($url);
+	$headers = get_headers($url);
 	if(is_array($headers) && count($headers) > 0){
 		$rc = (preg_match('/\s+(?:401|403)\s+/', $headers[0])) ? 1 : 0;
 	}
@@ -751,7 +751,7 @@ function SearchDatabases($printout, $db = ''){
 		$databases['db_selected_index'] = 0;
 		for($i = 0; $i < sizeof($db_list); $i++){
 			// Test-Select um zu sehen, ob Berechtigungen existieren
-			if(!@mysqli_query($config['dbconnection'], 'SHOW TABLES FROM `'.$db_list[$i].'`') === false){
+			if(!mysqli_query($config['dbconnection'], 'SHOW TABLES FROM `'.$db_list[$i].'`') === false){
 				$databases['Name'][$i]                = $db_list[$i];
 				$databases['praefix'][$i]             = '';
 				$databases['command_before_dump'][$i] = '';

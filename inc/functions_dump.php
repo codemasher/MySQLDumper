@@ -73,12 +73,12 @@ function GetStatusLine($kind = 'php'){
 	$t_zeile = "$mysql_commentstring\n$mysql_commentstring TABLE-INFO\r\n";
 	MSD_mysql_connect();
 	$res     = mysqli_query($config['dbconnection'], 'SHOW TABLE STATUS FROM `'.$databases['Name'][$dump['dbindex']].'`');
-	$numrows = intval(@mysqli_num_rows($res));
+	$numrows = intval(mysqli_num_rows($res));
 	for($i = 0; $i < $numrows; $i++){
 		$erg = mysqli_fetch_array($res);
 		// Get nr of records -> need to do it this way because of incorrect returns when using InnoDBs
 		$sql_2 = 'SELECT count(*) as `count_records` FROM `'.$databases['Name'][$dump['dbindex']].'`.`'.$erg['Name'].'`';
-		$res2  = @mysqli_query($config['dbconnection'], $sql_2);
+		$res2  = mysqli_query($config['dbconnection'], $sql_2);
 		if($res2 === false){
 			// error reading table definition
 			$read_create_error = sprintf($lang['L_FATAL_ERROR_DUMP'], $databases['Name'][$dump['dbindex']], $erg['Name']).': '.mysqli_error($config['dbconnection']);
@@ -128,7 +128,7 @@ function get_def($db, $table, $withdata = 1){
 	}
 	mysqli_select_db($config['dbconnection'], $db);
 	$result = mysqli_query($config['dbconnection'], 'SHOW CREATE TABLE `'.$table.'`');
-	$row    = @mysqli_fetch_row($result);
+	$row    = mysqli_fetch_row($result);
 	if($row === false){
 		return false;
 	}
@@ -156,7 +156,7 @@ function get_content($db, $table){
 	$query       = 'SELECT * FROM `'.$table.'` LIMIT '.$dump['zeilen_offset'].','.($dump['restzeilen'] + 1);
 	mysqli_select_db($config['dbconnection'], $db);
 	$result     = mysqli_query($config['dbconnection'], $query);
-	$ergebnisse = @mysqli_num_rows($result);
+	$ergebnisse = mysqli_num_rows($result);
 	if($ergebnisse !== false){
 		// $num_felder=mysqli_field_count($result);
 		$num_felder = mysqli_field_count($config['dbconnection']);
@@ -225,7 +225,7 @@ function get_content($db, $table){
 			WriteToDumpFile();
 		}
 	}
-	@mysqli_free_result($result);
+	mysqli_free_result($result);
 }
 
 function WriteToDumpFile(){
@@ -259,7 +259,7 @@ function WriteToDumpFile(){
 	}
 	$dump['filesize'] = filesize($df);
 	if((isset($config['multi_part']) && $config['multi_part'] == 1) && ($dump['filesize'] + $buffer > $config['multipart_groesse'])){
-		@chmod($df, 0777);
+		chmod($df, 0777);
 		new_file($dump['filesize']); // Wenn maximale Dateigroesse erreicht -> neues File starten
 	}
 }
@@ -294,7 +294,7 @@ function ExecuteCommand($when){
 
 			for($i = 0; $i < sizeof($cad); $i++){
 				if(trim($cad[$i]) > ''){
-					$result = @mysqli_query($config['dbconnection'], $cad[$i]);
+					$result = mysqli_query($config['dbconnection'], $cad[$i]);
 
 					if($result === false){
 						WriteLog("Error executing Query '$cad[$i]'! MySQL returns: ".trim(mysqli_error($config['dbconnection'])));
@@ -311,7 +311,7 @@ function ExecuteCommand($when){
 		}
 		elseif(substr(strtolower($cd), 0, 7) == 'system:'){
 			$command = substr($cd, 7);
-			$result  = @system($command, $returnval);
+			$result  = system($command, $returnval);
 			if(!$result){
 				WriteLog("Error while executing System Command '$command'");
 				$dump['errors']++;
@@ -333,20 +333,20 @@ function DoEmail(){
 	if($config['cron_use_sendmail'] == 1){
 		//sendmail
 		if(ini_get('sendmail_path') != $config['cron_sendmail']){
-			@ini_set('SMTP', $config['cron_sendmail']);
+			ini_set('SMTP', $config['cron_sendmail']);
 		}
 		if(ini_get('sendmail_from') != $config['email_sender']){
-			@ini_set('SMTP', $config['email_sender']);
+			ini_set('SMTP', $config['email_sender']);
 		}
 	}
 	else{
 		//SMTP
 	}
 	if(ini_get('SMTP') != $config['cron_smtp']){
-		@ini_set('SMTP', $config['cron_smtp']);
+		ini_set('SMTP', $config['cron_smtp']);
 	}
 	if(ini_get('smtp_port') != 25){
-		@ini_set('smtp_port', 25);
+		ini_set('smtp_port', 25);
 	}
 
 	if($config['multi_part'] == 0){
@@ -426,14 +426,14 @@ function DoEmail(){
 		$mpfiles     = '';
 		for($i = 1; $i < ($dump['part'] - $dump['part_offset']); $i++){
 			$mpdatei[$i - 1] = $dateistamm.$i.$dateiendung;
-			$sz              = byte_output(@filesize($config['paths']['backup'].$mpdatei[$i - 1]));
+			$sz              = byte_output(filesize($config['paths']['backup'].$mpdatei[$i - 1]));
 			$mpfiles         .= $mpdatei[$i - 1].' ('.$sz.')<br>';
 		}
 		$msg_body  = ($config['send_mail_dump'] == 1) ? sprintf(addslashes($lang['L_EMAILBODY_MP_ATTACH']), $databases['Name'][$dump['dbindex']], $mpfiles) : sprintf(addslashes($lang['L_EMAILBODY_MP_NOATTACH']), $databases['Name'][$dump['dbindex']], $mpfiles);
 		$email_log = "Email was sent to '".$config['email_recipient']."'";
 		$email_out = $lang['L_EMAIL_WAS_SEND'].'`'.$config['email_recipient'].'`<br>';
 	}
-	if(@mail($config['email_recipient'], stripslashes($subject), $msg_body, $header)){
+	if(mail($config['email_recipient'], stripslashes($subject), $msg_body, $header)){
 		$out .= '<span class="success">'.$email_out.'</span>';
 		WriteLog("$email_log");
 	}
@@ -477,7 +477,7 @@ function DoEmail(){
 			$email_log = "Email with $mpdatei[$i] was sent to '".$config['email_recipient']."'";
 			$email_out = $lang['L_EMAIL_WAS_SEND'].'`'.$config['email_recipient'].'`'.$lang['L_WITH'].'`'.$mpdatei[$i].'`.<br>';
 
-			if(@mail($config['email_recipient'], stripslashes($subject), $msg_body, $header)){
+			if(mail($config['email_recipient'], stripslashes($subject), $msg_body, $header)){
 				$out .= '<span class="success">'.$email_out.'</span>';
 				WriteLog("$email_log");
 			}
@@ -515,13 +515,13 @@ function SendViaFTP($i, $source_file, $conn_msg = 1){
 	}
 	// Herstellen der Basis-Verbindung
 	if($config['ftp_useSSL'][$i] == 0){
-		$conn_id = @ftp_connect($config['ftp_server'][$i], $config['ftp_port'][$i], $config['ftp_timeout'][$i]);
+		$conn_id = ftp_connect($config['ftp_server'][$i], $config['ftp_port'][$i], $config['ftp_timeout'][$i]);
 	}
 	else{
-		$conn_id = @ftp_ssl_connect($config['ftp_server'][$i], $config['ftp_port'][$i], $config['ftp_timeout'][$i]);
+		$conn_id = ftp_ssl_connect($config['ftp_server'][$i], $config['ftp_port'][$i], $config['ftp_timeout'][$i]);
 	}
 	// Einloggen mit Benutzername und Kennwort
-	$login_result = @ftp_login($conn_id, $config['ftp_user'][$i], $config['ftp_pass'][$i]);
+	$login_result = ftp_login($conn_id, $config['ftp_user'][$i], $config['ftp_pass'][$i]);
 	if($config['ftp_mode'][$i] == 1){
 		ftp_pasv($conn_id, true);
 	}
@@ -539,7 +539,7 @@ function SendViaFTP($i, $source_file, $conn_msg = 1){
 	// Upload der Datei
 	$dest   = $config['ftp_dir'][$i].$source_file;
 	$source = $config['paths']['backup'].$source_file;
-	$upload = @ftp_put($conn_id, $dest, $source, FTP_BINARY);
+	$upload = ftp_put($conn_id, $dest, $source, FTP_BINARY);
 
 	// Upload-Status überprüfen
 	if(!$upload){
@@ -551,7 +551,7 @@ function SendViaFTP($i, $source_file, $conn_msg = 1){
 	}
 
 	// Schließen des FTP-Streams
-	@ftp_quit($conn_id);
+	ftp_quit($conn_id);
 }
 
 function DoSFTP($i){

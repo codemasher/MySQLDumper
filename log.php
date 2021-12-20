@@ -1,6 +1,6 @@
 <?php
-if(!@ob_start('ob_gzhandler')){
-	@ob_start();
+if(!ob_start('ob_gzhandler')){
+	ob_start();
 }
 include('./inc/header.php');
 include_once('./language/'.$config['language'].'/lang_log.php');
@@ -21,16 +21,16 @@ if(isset($_POST['kill'])){
 		DeleteLog();
 	}
 	elseif($_POST['r'] == 1){
-		@unlink($config['files']['perllog']);
-		@unlink($config['files']['perllog'].'.gz');
+		unlink($config['files']['perllog']);
+		unlink($config['files']['perllog'].'.gz');
 	}
 	elseif($_POST['r'] == 2){
-		@unlink($config['files']['perllogcomplete']);
-		@unlink($config['files']['perllogcomplete'].'.gz');
+		unlink($config['files']['perllogcomplete']);
+		unlink($config['files']['perllogcomplete'].'.gz');
 	}
 	elseif($_POST['r'] == 3){
-		@unlink($config['paths']['log'].'error.log');
-		@unlink($config['paths']['log'].'error.log.gz');
+		unlink($config['paths']['log'].'error.log');
+		unlink($config['paths']['log'].'error.log.gz');
 	}
 	$r = 0;
 }

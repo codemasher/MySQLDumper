@@ -1,6 +1,6 @@
 <?php
-if(!@ob_start('ob_gzhandler')){
-	@ob_start();
+if(!ob_start('ob_gzhandler')){
+	ob_start();
 }
 $install_ftp_server = $install_ftp_user_name = $install_ftp_user_pass = $install_ftp_path = '';
 $dbhost             = $dbuser = $dbpass = $dbport = $dbsocket = $manual_db = '';
@@ -135,9 +135,9 @@ header('content-type: text/html; charset=utf-8');
 
 		case 0: // Anfang - Sprachauswahl
 			// da viele ja nicht in die Anleitung schauen -> versuchen die Perldateien automatisch richtig zu chmodden
-			@chmod('./msd_cron/crondump.pl', 0755);
-			@chmod('./msd_cron/perltest.pl', 0755);
-			@chmod('./msd_cron/simpletest.pl', 0755);
+			chmod('./msd_cron/crondump.pl', 0755);
+			chmod('./msd_cron/perltest.pl', 0755);
+			chmod('./msd_cron/simpletest.pl', 0755);
 
 			echo '<form action="install.php" method="get"><input type="hidden" name="phase" value="1">';
 			echo '<table class="bdr"><tr class="thead"><th>Language</th><th>Tools</th></tr>';
@@ -154,7 +154,7 @@ header('content-type: text/html; charset=utf-8');
 			echo '<script>show_tooldivs("'.$language.'");</script>';
 			break;
 		case 1: // checken
-			@chmod('config.php', 0666);
+			chmod('config.php', 0666);
 			echo '<h6>'.$lang['L_DBPARAMETER'].'</h6>';
 			if(!is_writable('config.php')){
 				echo '<p class="warning">'.$lang['L_CONFIGNOTWRITABLE'].'</p>';
@@ -271,7 +271,7 @@ header('content-type: text/html; charset=utf-8');
 
 		case 2: //
 			echo '<h6>MySQLDumper - '.$lang['L_CONFBASIC'].'</h6>';
-			$tmp    = @file('config.php');
+			$tmp    = file('config.php');
 			$stored = 0;
 			for($i = 0; $i < count($tmp); $i++){
 				if(substr($tmp[$i], 0, 17) == '$config[\'dbhost\']'){
@@ -304,7 +304,7 @@ header('content-type: text/html; charset=utf-8');
 				if(!fwrite($fp, implode('', $tmp))){
 					$ret = false;
 				}
-				@chmod('config.php', 0644);
+				chmod('config.php', 0644);
 			}
 			if(!$ret){
 				echo '<p class="warnung">'.$lang['L_SAVE_ERROR'].'</p>';
@@ -450,14 +450,14 @@ function rec_rmdir($path){
 		return -1;
 	}
 	// oeffne das Verzeichnis
-	$dir = @opendir($path);
+	$dir = opendir($path);
 	// Fehler?
 	if(!$dir){
 		return -2;
 	}
 
 	// gehe durch das Verzeichnis
-	while($entry = @readdir($dir)){
+	while($entry = readdir($dir)){
 		// wenn der Eintrag das aktuelle Verzeichnis oder das Elternverzeichnis
 		// ist, ignoriere es
 		if($entry == '.' || $entry == '..'){
@@ -469,49 +469,49 @@ function rec_rmdir($path){
 			$res = rec_rmdir($path.'/'.$entry);
 			// wenn ein Fehler aufgetreten ist
 			if($res == -1){ // dies duerfte gar nicht passieren
-				@closedir($dir); // Verzeichnis schliessen
+				closedir($dir); // Verzeichnis schliessen
 
 				return -2; // normalen Fehler melden
 			}
 			elseif($res == -2){ // Fehler?
-				@closedir($dir); // Verzeichnis schliessen
+				closedir($dir); // Verzeichnis schliessen
 
 				return -2; // Fehler weitergeben
 			}
 			elseif($res == -3){ // nicht unterstuetzer Dateityp?
-				@closedir($dir); // Verzeichnis schliessen
+				closedir($dir); // Verzeichnis schliessen
 
 				return -3; // Fehler weitergeben
 			}
 			elseif($res != 0){ // das duerfe auch nicht passieren...
-				@closedir($dir); // Verzeichnis schliessen
+				closedir($dir); // Verzeichnis schliessen
 
 				return -2; // Fehler zurueck
 			}
 		}
 		elseif(is_file($path.'/'.$entry) || is_link($path.'/'.$entry)){
 			// ansonsten loesche diese Datei / diesen Link
-			$res = @unlink($path.'/'.$entry);
+			$res = unlink($path.'/'.$entry);
 			// Fehler?
 			if(!$res){
-				@closedir($dir); // Verzeichnis schliessen
+				closedir($dir); // Verzeichnis schliessen
 
 				return -2; // melde ihn
 			}
 		}
 		else{
 			// ein nicht unterstuetzer Dateityp
-			@closedir($dir); // Verzeichnis schliessen
+			closedir($dir); // Verzeichnis schliessen
 
 			return -3; // tut mir schrecklich leid...
 		}
 	}
 
 	// schliesse nun das Verzeichnis
-	@closedir($dir);
+	closedir($dir);
 
 	// versuche nun, das Verzeichnis zu loeschen
-	$res = @rmdir($path);
+	$res = rmdir($path);
 
 	// gab's einen Fehler?
 	if(!$res){
@@ -525,7 +525,7 @@ function rec_rmdir($path){
 function Rechte($file){
 	clearstatcache();
 
-	return @substr(decoct(fileperms($file)), -3);
+	return substr(decoct(fileperms($file)), -3);
 }
 
 function extractValue($s){

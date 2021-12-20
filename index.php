@@ -1,6 +1,6 @@
 <?php
-if(!@ob_start('ob_gzhandler')){
-	@ob_start();
+if(!ob_start('ob_gzhandler')){
+	ob_start();
 }
 include('./inc/functions.php');
 $page = (isset($_GET['page'])) ? $_GET['page'] : 'main.php';

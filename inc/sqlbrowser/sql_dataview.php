@@ -99,7 +99,7 @@ else{
 		}
 		else{
 			$sql_temp = 'SELECT count(*) as anzahl FROM ('.$sql_temp.') as query;';
-			$res      = @MSD_query($sql_temp, false);
+			$res      = MSD_query($sql_temp, false);
 			if($res){
 				if($row = mysqli_fetch_object($res)){
 					$numrowsabs = $row->anzahl;
@@ -117,7 +117,7 @@ $sqltmp = $sql['sql_statement'].$sql['order_statement'].(strpos(strtolower($sql[
 if(!$skip_mysql_execution){
 	$res = MSD_query($sqltmp);
 }
-$numrows = @mysqli_num_rows($res);
+$numrows = mysqli_num_rows($res);
 if($numrowsabs == -1){
 	$numrowsabs = $numrows;
 }

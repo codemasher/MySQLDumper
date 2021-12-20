@@ -128,7 +128,7 @@ function DBDetailInfo($index){
 	if(isset($databases['Name'][$index])){
 		mysqli_select_db($config['dbconnection'], $databases['Name'][$index]);
 		$databases['Detailinfo']['Name'] = $databases['Name'][$index];
-		$res                             = @mysqli_query(
+		$res                             = mysqli_query(
 			$config['dbconnection'],
 			'SHOW TABLE STATUS FROM `'.$databases['Name'][$index].'`'
 		);
@@ -164,7 +164,7 @@ function getmicrotime(){
 
 function MD_FreeDiskSpace(){
 	global $lang;
-	$dfs = @diskfreespace('../');
+	$dfs = diskfreespace('../');
 
 	return ($dfs) ? byte_output($dfs) : $lang['L_NOTAVAIL'];
 }
@@ -273,27 +273,27 @@ function WriteLog($aktion){
 
 	$logfile               = (isset($config['logcompression']) && $config['logcompression'] == 1) ? $config['files']['log'].'.gz' : $config['files']['log'];
 	$config['log_maxsize'] ??= 0;
-	if(@filesize($logfile) + strlen($log) > $config['log_maxsize']){
-		@unlink($logfile);
+	if(filesize($logfile) + strlen($log) > $config['log_maxsize']){
+		unlink($logfile);
 	}
 
 	//Datei öffnen und schreiben
 	if($config['logcompression'] == 1){
 
-		$fp = @gzopen($logfile, 'a');
+		$fp = gzopen($logfile, 'a');
 		if($fp){
-			@gzwrite($fp, $log).'<br>';
-			@gzclose($fp);
+			gzwrite($fp, $log).'<br>';
+			gzclose($fp);
 		}
 		else{
 			echo '<p class="warnung">'.$lang['L_LOGFILENOTWRITABLE'].' ('.$logfile.')</p>';
 		}
 	}
 	else{
-		$fp = @fopen($logfile, 'ab');
+		$fp = fopen($logfile, 'ab');
 		if($fp){
-			@fwrite($fp, $log);
-			@fclose($fp);
+			fwrite($fp, $log);
+			fclose($fp);
 		}
 		else{
 			echo '<p class="warnung">'.$lang['L_LOGFILENOTWRITABLE'].' ('.$logfile.')</p>';
@@ -326,17 +326,17 @@ function ErrorLog($dest, $db, $sql, $error, $art = 1){
 
 	//Datei öffnen und schreiben
 	if($config['logcompression'] == 1){
-		$fp = @gzopen($config['paths']['log'].'error.log.gz', 'ab');
+		$fp = gzopen($config['paths']['log'].'error.log.gz', 'ab');
 		if($fp){
-			@gzwrite($fp, ($errormsg));
-			@gzclose($fp);
+			gzwrite($fp, ($errormsg));
+			gzclose($fp);
 		}
 	}
 	else{
-		$fp = @fopen($config['paths']['log'].'error.log', 'ab');
+		$fp = fopen($config['paths']['log'].'error.log', 'ab');
 		if($fp){
-			@fwrite($fp, ($errormsg));
-			@fclose($fp);
+			fwrite($fp, ($errormsg));
+			fclose($fp);
 		}
 	}
 }
@@ -404,7 +404,7 @@ function SetFileRechte($file, $is_dir = 1, $perm = 0777){
 	if(!file_exists($file)){
 		// Wenn es sich um ein Verzeichnis handelt -> anlegen
 		if($is_dir == 1){
-			$ret = @mkdir($file, $perm);
+			$ret = mkdir($file, $perm);
 			if(!$ret === true){
 				// Hat nicht geklappt -> Rueckmeldung
 				$ret = sprintf($lang['L_CANT_CREATE_DIR'], $file);
@@ -414,7 +414,7 @@ function SetFileRechte($file, $is_dir = 1, $perm = 0777){
 
 	// wenn bisher alles ok ist -> Rechte setzen - egal ob Datei oder Verzeichnis
 	if($ret === true){
-		$ret = @chmod($file, $perm);
+		$ret = chmod($file, $perm);
 		if(!$ret === true){
 			$ret = sprintf($lang['L_WRONG_RIGHTS'], $file, decoct($perm));
 		}
@@ -458,7 +458,7 @@ function SelectDB($index){
 function EmptyDB($dbn){
 	global $config;
 	$t_sql = [];
-	@mysqli_query($config['dbconnection'], 'SET FOREIGN_KEY_CHECKS=0');
+	mysqli_query($config['dbconnection'], 'SET FOREIGN_KEY_CHECKS=0');
 	$res = mysqli_query($config['dbconnection'], 'SHOW TABLE STATUS FROM `'.$dbn.'`') or die('EmptyDB: '.mysqli_error($config['dbconnection']));
 	while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
 		if(substr(strtoupper($row['Comment']), 0, 4) == 'VIEW'){
@@ -473,7 +473,7 @@ function EmptyDB($dbn){
 			$res = mysqli_query($config['dbconnection'], $t_sql[$i]) or die('EmptyDB-Error: '.mysqli_error($config['dbconnection']));
 		}
 	}
-	@mysqli_query($config['dbconnection'], 'SET FOREIGN_KEY_CHECKS=1');
+	mysqli_query($config['dbconnection'], 'SET FOREIGN_KEY_CHECKS=1');
 }
 
 function AutoDelete(){
@@ -538,7 +538,7 @@ function AutoDelete(){
 							if($out == ''){
 								$out .= $lang['L_FM_AUTODEL1'].'<br>';
 							}
-							if(@unlink('./'.$config['paths']['backup'].$f)){
+							if(unlink('./'.$config['paths']['backup'].$f)){
 								$out .= '<span class="nomargin">'.sprintf($lang['L_DELETE_FILE_SUCCESS'], $f)
 								        .'</span><br>';
 							}
@@ -567,7 +567,7 @@ function DeleteFile($files, $function = 'max'){
 	$part    = $delfile[2];
 	if($part > 0){
 		for($i = $part; $i > 0; $i--){
-			$delete = @unlink($config['paths']['backup'].$delfile[3]);
+			$delete = unlink($config['paths']['backup'].$delfile[3]);
 			if($delete){
 				WriteLog("autodeleted ($function) '$delfile[3]'.");
 			}
@@ -715,13 +715,13 @@ function TesteFTP($i){
 		$s = $lang['L_CONNECT_TO'].' `'.$config['ftp_server'][$i].'` Port '.$config['ftp_port'][$i];
 
 		if($config['ftp_useSSL'][$i] == 0){
-			$conn_id = @ftp_connect($config['ftp_server'][$i], $config['ftp_port'][$i], $config['ftp_timeout'][$i]);
+			$conn_id = ftp_connect($config['ftp_server'][$i], $config['ftp_port'][$i], $config['ftp_timeout'][$i]);
 		}
 		else{
-			$conn_id = @ftp_ssl_connect($config['ftp_server'][$i], $config['ftp_port'][$i], $config['ftp_timeout'][$i]);
+			$conn_id = ftp_ssl_connect($config['ftp_server'][$i], $config['ftp_port'][$i], $config['ftp_timeout'][$i]);
 		}
 		if($conn_id){
-			$login_result = @ftp_login($conn_id, $config['ftp_user'][$i], $config['ftp_pass'][$i]);
+			$login_result = ftp_login($conn_id, $config['ftp_user'][$i], $config['ftp_pass'][$i]);
 		}
 		if(!$conn_id || (!$login_result)){
 			$s .= '<br><span class="error">'.$lang['L_CONN_NOT_POSSIBLE'].'</span>';
@@ -736,7 +736,7 @@ function TesteFTP($i){
 
 	if($pass == 2){
 		$s    .= '<br><strong>Login ok</strong><br>'.$lang['L_CHANGEDIR'].' `'.$config['ftp_dir'][$i].'` ';
-		$dirc = @ftp_chdir($conn_id, $config['ftp_dir'][$i]);
+		$dirc = ftp_chdir($conn_id, $config['ftp_dir'][$i]);
 		if(!$dirc){
 			$s .= '<br><span class="error">'.$lang['L_CHANGEDIRERROR'].'</span>';
 		}
@@ -744,7 +744,7 @@ function TesteFTP($i){
 			$pass = 3;
 			$s    .= '<span class="success">'.$lang['L_OK'].'</span>';
 		}
-		@ftp_close($conn_id);
+		ftp_close($conn_id);
 	}
 
 	if($pass == 3){

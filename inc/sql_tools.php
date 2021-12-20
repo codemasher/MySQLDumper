@@ -71,7 +71,7 @@ if(isset($_POST['dbwantaction'])){
 					$sqlc .= ' DEFAULT CHARACTER SET `'.$db_default_charset[0].'`';
 				}
 			}
-			$db_default_collation = @explode('|', $col);
+			$db_default_collation = explode('|', $col);
 			if(isset($db_default_collation[1])){
 				$sqlc .= ' COLLATE `'.$db_default_collation[1].'`';
 			}

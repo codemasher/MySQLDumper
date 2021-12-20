@@ -249,7 +249,7 @@ class MSDTemplate{
 
 		$filename = $this->files[$handle];
 
-		$str = implode('', @file($filename));
+		$str = implode('', file($filename));
 		if(empty($str)){
 			die("Template->loadfile(): File $filename for handle $handle is empty");
 		}

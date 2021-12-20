@@ -1,6 +1,6 @@
 <?php
-if(!@ob_start('ob_gzhandler')){
-	@ob_start();
+if(!ob_start('ob_gzhandler')){
+	ob_start();
 }
 $download = (isset($_POST['f_export_submit']) && (isset($_POST['f_export_sendresult']) && $_POST['f_export_sendresult'] == 1));
 include('./inc/header.php');
@@ -15,7 +15,7 @@ $key = '';
 if(isset($_GET['rk'])){
 	$rk  = urldecode($_GET['rk']);
 	$key = urldecode($rk);
-	if(!$rk = @unserialize($key)){
+	if(!$rk = unserialize($key)){
 		$rk = $key;
 	}
 }
@@ -27,7 +27,7 @@ $mode = isset($_GET['mode']) ? $_GET['mode'] : '';
 if(isset($_GET['recordkey'])){
 	$recordkey = $_GET['recordkey'];
 	$key       = isset($_GET['recordkey']) ? urldecode($recordkey) : $recordkey;
-	if(!$recordkey = @unserialize(urldecode($key))){
+	if(!$recordkey = unserialize(urldecode($key))){
 		$recordkey = urldecode($key);
 	}
 }
