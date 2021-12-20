@@ -353,10 +353,10 @@ function my_implode($arr, $mode = 0) // 0=String, 1=intval
 		}
 	}
 	if($mode == 0){
-		$ret = '("'.implode('","', $arr).'");'.$nl;
+		$ret = '["'.implode('\',\'', $arr).'"];'.$nl;
 	}
 	else{
-		$ret = '('.implode(',', $arr).');'.$nl;
+		$ret = '['.implode(',', $arr).'];'.$nl;
 	}
 
 	return $ret;
@@ -523,20 +523,20 @@ function WriteCronScript($restore_values = false){
 	$cronscript .= '$cron_smtp="'.escape_specialchars($config['cron_smtp']).'";'.$nl;
 	$cronscript .= '$cron_smtp_port="'.$config['cron_smtp_port'].'";'.$nl;
 
-	$cronscript .= '@cron_db_array='.my_implode($cron_db_array);
-	$cronscript .= '@cron_dbpraefix_array='.my_implode($cron_dbpraefix_array);
-	$cronscript .= '@cron_command_before_dump='.my_implode($cron_command_before_dump);
-	$cronscript .= '@cron_command_after_dump='.my_implode($cron_command_after_dump);
+	$cronscript .= '$cron_db_array='.my_implode($cron_db_array);
+	$cronscript .= '$cron_dbpraefix_array='.my_implode($cron_dbpraefix_array);
+	$cronscript .= '$cron_command_before_dump='.my_implode($cron_command_before_dump);
+	$cronscript .= '$cron_command_after_dump='.my_implode($cron_command_after_dump);
 
-	$cronscript .= '@ftp_server='.my_implode($config['ftp_server']);
-	$cronscript .= '@ftp_port='.my_implode($config['ftp_port'], 1);
-	$cronscript .= '@ftp_mode='.my_implode($config['ftp_mode'], 1);
-	$cronscript .= '@ftp_user='.my_implode($config['ftp_user']);
-	$cronscript .= '@ftp_pass='.my_implode($config['ftp_pass']);
-	$cronscript .= '@ftp_dir='.my_implode($config['ftp_dir']);
-	$cronscript .= '@ftp_timeout='.my_implode($config['ftp_timeout'], 1);
-	$cronscript .= '@ftp_useSSL='.my_implode($config['ftp_useSSL'], 1);
-	$cronscript .= '@ftp_transfer='.my_implode($config['ftp_transfer'], 1);
+	$cronscript .= '$ftp_server='.my_implode($config['ftp_server']);
+	$cronscript .= '$ftp_port='.my_implode($config['ftp_port'], 1);
+	$cronscript .= '$ftp_mode='.my_implode($config['ftp_mode'], 1);
+	$cronscript .= '$ftp_user='.my_implode($config['ftp_user']);
+	$cronscript .= '$ftp_pass='.my_implode($config['ftp_pass']);
+	$cronscript .= '$ftp_dir='.my_implode($config['ftp_dir']);
+	$cronscript .= '$ftp_timeout='.my_implode($config['ftp_timeout'], 1);
+	$cronscript .= '$ftp_useSSL='.my_implode($config['ftp_useSSL'], 1);
+	$cronscript .= '$ftp_transfer='.my_implode($config['ftp_transfer'], 1);
 	$cronscript .= '$mp='.$config['multi_part'].';'.$nl;
 	$cronscript .= '$multipart_groesse='.$config['multipart_groesse'].';'.$nl;
 	$cronscript .= '$email_maxsize='.$config['email_maxsize'].';'.$nl;
